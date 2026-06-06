@@ -1,23 +1,27 @@
 <!DOCTYPE html>
-<html lang="vi">
+<html lang="vi" style="background-color: #0b1329;">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>AI Reading Practice</title>
     <style>
         /* CSS THUẦN TỰ LÀM ĐẸP - KHÔNG CẦN CHẠY INTERNET VẪN ĐẸP TRÀN VIỀN */
+        html, body {
+            background-color: #0b1329 !important;
+            margin: 0;
+            padding: 0;
+            width: 100%;
+            height: 100%;
+            overflow: hidden;
+            box-sizing: border-box;
+        }
         body {
-            background-color: #0b1329;
             color: #f8fafc;
             font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
-            margin: 0;
             padding: 10px;
-            box-sizing: border-box;
-            min-height: 100vh;
             display: flex;
             flex-direction: column;
             justify-content: flex-start;
-            overflow-x: hidden;
         }
 
         /* Khung Tiêu Đề */
@@ -28,6 +32,7 @@
             border: 1px solid rgba(59, 130, 246, 0.2);
             margin-bottom: 10px;
             text-align: center;
+            flex-shrink: 0;
         }
         header h1 {
             font-size: 14px;
@@ -75,7 +80,7 @@
             color: #cbd5e1;
         }
 
-        /* TIÊU CHUẨN 1: BÀI ĐỌC TỰ ĐỘNG THU GỌN VÀ CHỈ CUỘN RIÊNG BIỆT */
+        /* BÀI ĐỌC TỰ ĐỘNG THU GỌN VÀ CHỈ CUỘN RIÊNG BIỆT */
         .reading-title {
             font-size: 12px;
             font-weight: bold;
@@ -90,12 +95,12 @@
             padding: 10px;
             border-radius: 8px;
             border: 1px solid #334155;
-            max-height: 160px; /* Khóa cứng chiều cao tối đa của bài đọc */
+            max-height: 120px; /* Khóa cứng chiều cao tối đa của bài đọc tránh đẩy dốc đáp án */
             overflow-y: auto;  /* Chỉ xuất hiện thanh cuộn tại đây nếu bài đọc dài */
             font-family: Georgia, serif;
         }
 
-        /* TIÊU CHUẨN 2: KHUNG CÂU HỎI TĨNH - KHÔNG CUỘN TOÀN TRANG */
+        /* KHUNG CÂU HỎI TĨNH - KHÔNG CUỘN TOÀN TRANG */
         .question-header {
             display: flex;
             justify-content: space-between;
@@ -121,7 +126,7 @@
         .option-label {
             display: flex;
             align-items: center;
-            padding: 10px 12px;
+            padding: 8px 12px;
             background-color: #0b1329;
             border: 1px solid #334155;
             border-radius: 8px;
@@ -129,11 +134,7 @@
             font-size: 11px;
             margin-bottom: 6px;
             cursor: pointer;
-            transition: all 0.2s;
             box-sizing: border-box;
-        }
-        .option-label:active {
-            transform: scale(0.98);
         }
         .option-label input {
             margin-right: 10px;
@@ -142,21 +143,21 @@
         
         /* Trạng thái đáp án khi được chọn */
         .option-selected {
-            background-color: rgba(99, 102, 241, 0.15);
-            border-color: #6366f1;
-            color: #a5b4fc;
+            background-color: rgba(99, 102, 241, 0.15) !important;
+            border-color: #6366f1 !important;
+            color: #a5b4fc !important;
             font-weight: bold;
         }
         .option-correct {
-            background-color: rgba(16, 185, 129, 0.15);
-            border-color: #10b981;
-            color: #34d399;
+            background-color: rgba(16, 185, 129, 0.15) !important;
+            border-color: #10b981 !important;
+            color: #34d399 !important;
             font-weight: bold;
         }
         .option-wrong {
-            background-color: rgba(244, 63, 94, 0.15);
-            border-color: #f43f5e;
-            color: #f43f5e;
+            background-color: rgba(244, 63, 94, 0.15) !important;
+            border-color: #f43f5e !important;
+            color: #f43f5e !important;
             font-weight: bold;
         }
 
@@ -174,7 +175,7 @@
 
         /* PHẦN ĐIỀU HƯỚNG GHIM CHẶT SÁT ĐÁY MÀN HÌNH */
         .navigation-section {
-            border-t: 1px solid #334155;
+            border-top: 1px solid #334155;
             padding-top: 8px;
             display: flex;
             flex-direction: column;
@@ -226,7 +227,6 @@
             height: 7px;
             border-radius: 50%;
             background-color: #334155;
-            transition: all 0.2s;
         }
         .dot-active {
             background-color: #6366f1;
@@ -263,18 +263,32 @@
             text-align: center;
             font-size: 9px;
             color: #475569;
-            margin-top: 15px;
+            margin-top: auto;
             border-top: 1px solid #1e293b;
             padding-top: 8px;
+            flex-shrink: 0;
         }
     </style>
 </head>
 <body>
 
+    <!-- BỘ TỰ CHẨN ĐOÁN LỖI HỆ THỐNG - NẾU CÓ LỖI SẼ HIỆN MÀN HÌNH ĐỎ -->
+    <script>
+        window.onerror = function(message, source, lineno, colno, error) {
+            document.body.innerHTML = '<div style="background-color: #991b1b; color: #fef2f2; padding: 20px; font-family: sans-serif; border-radius: 12px; border: 2px solid #ef4444; margin: 10px; box-sizing: border-box;">' +
+                '<h3 style="margin-top: 0; font-size: 16px;">❌ PHÁT HIỆN LỖI CODE (BUG):</h3>' +
+                '<p style="font-size: 12px; line-height: 1.5; font-family: monospace;">' + message + '</p>' +
+                '<p style="font-size: 11px; opacity: 0.8;">Dòng: ' + lineno + ' | Cột: ' + colno + '</p>' +
+                '<p style="font-size: 11px; opacity: 0.8; word-break: break-all;">Nguồn: ' + source + '</p>' +
+                '</div>';
+            return true;
+        };
+    </script>
+
     <!-- Header cố định -->
     <header>
         <h1 id="header-title">Khảo Thí Đọc Hiểu AI</h1>
-        <p>Động cơ kết nối thông minh tràn màn hình</p>
+        <p>Động cơ kết nối chống dẹp màn hình</p>
     </header>
 
     <!-- MÀN HÌNH CHỜ NHẬN TÍN HIỆU -->
@@ -290,10 +304,10 @@
     </div>
 
     <!-- KHUNG CHIA ĐÔI MÀN HÌNH CHÍNH (Ẩn mặc định, hiện khi nhận được dữ liệu) -->
-    <div id="split-screen-container" class="hidden">
+    <div id="split-screen-container" class="hidden" style="display: flex; flex-direction: column; flex: 1; overflow: hidden;">
         
         <!-- NỬA TRÊN: BÀI ĐỌC TỰ CO GIÃN THEO NỘI DUNG -->
-        <div class="card">
+        <div class="card" style="flex-shrink: 0; margin-bottom: 8px; padding: 10px;">
             <div class="badge-container">
                 <span id="badge-level" class="badge badge-level">LEVEL --</span>
                 <span id="badge-topic" class="badge badge-topic">TOPIC --</span>
@@ -305,22 +319,25 @@
         </div>
 
         <!-- NỬA DƯỚI: HIỂN THỊ CÂU HỎI (Tuyệt đối không cuộn trang) -->
-        <div class="card">
-            <div class="question-header">
-                <span id="current-question-num" class="question-num">CÂU HỎI 1/10</span>
-                <span class="badge badge-level" style="font-size: 8px;">KIỂM TRA ĐỌC</span>
+        <div class="card" style="flex: 1; display: flex; flex-direction: column; justify-content: space-between; overflow: hidden; margin-bottom: 0; padding: 10px;">
+            
+            <div style="overflow-y: auto; flex: 1; margin-bottom: 8px;" id="question-box-scroll">
+                <div class="question-header">
+                    <span id="current-question-num" class="question-num">CÂU HỎI 1/10</span>
+                    <span class="badge badge-level" style="font-size: 8px;">KIỂM TRA ĐỌC</span>
+                </div>
+
+                <p id="question-text" class="question-text">Đang tải câu hỏi...</p>
+                
+                <!-- Danh sách đáp án A, B, C, D -->
+                <div id="options-grid"></div>
+
+                <!-- Lời giải thích -->
+                <div id="question-explanation" class="explanation-box hidden"></div>
             </div>
 
-            <p id="question-text" class="question-text">Đang tải câu hỏi...</p>
-            
-            <!-- Danh sách đáp án A, B, C, D -->
-            <div id="options-grid"></div>
-
-            <!-- Lời giải thích -->
-            <div id="question-explanation" class="explanation-box hidden"></div>
-
             <!-- THANH ĐIỀU HƯỚNG GHIM TĨNH PHÍA DƯỚI -->
-            <div class="navigation-section">
+            <div class="navigation-section" style="flex-shrink: 0;">
                 <!-- 10 đốm tròn câu hỏi -->
                 <div class="dots-row">
                     <span id="bubble-0" class="dot"></span>
@@ -386,8 +403,8 @@
         }
 
         function parseParameters() {
-            var level = "Chưa nhận";
-            var topic = "Chưa nhận";
+            var level = "";
+            var topic = "";
 
             // Đọc từ URL trình duyệt
             var urlLevel = getQueryParam("level");
@@ -416,10 +433,6 @@
                     }
                 }
             }
-
-            // Làm sạch ký tự lạ do học sinh gõ nhầm
-            level = level.replace(/[^a-zA-Z0-9]/g, ""); 
-            topic = topic.trim();
 
             return { level: level, topic: topic };
         }
@@ -490,7 +503,9 @@
         // XỬ LÝ KHỞI TẠO ĐỀ THI THEO CẤU HÌNH THỰC
         function processNewConfig(level, topic) {
             document.getElementById("waiting-screen").classList.add("hidden");
-            document.getElementById("split-screen-container").classList.remove("hidden");
+            
+            var container = document.getElementById("split-screen-container");
+            container.classList.remove("hidden");
 
             document.getElementById("badge-level").innerText = "LEVEL: " + level;
             document.getElementById("badge-topic").innerText = "TOPIC: " + topic;
@@ -522,7 +537,10 @@
             optionsGrid.innerHTML = "";
 
             var optKeys = ["A", "B", "C", "D"];
-            optKeys.forEach(function(key) {
+            
+            // SỬ DỤNG VÒNG LẶP FOR CỔ ĐIỂN CHỐNG SẬP TRÊN THIẾT BỊ CŨ
+            for (var i = 0; i < optKeys.length; i++) {
+                var key = optKeys[i];
                 var isChosen = selectedAnswers[idx] === key;
                 
                 var label = document.createElement("label");
@@ -546,9 +564,13 @@
                     if (isChosen) {
                         labelClass += "option-selected";
                     }
-                    label.onclick = function() {
-                        selectOption(key);
-                    };
+                    
+                    // Closure an toàn trong ES5
+                    (function(currentKey) {
+                        label.onclick = function() {
+                            selectOption(currentKey);
+                        };
+                    })(key);
                 }
 
                 label.className = labelClass;
@@ -559,7 +581,7 @@
                 label.appendChild(spanText);
 
                 optionsGrid.appendChild(label);
-            });
+            }
 
             var expBox = document.getElementById("question-explanation");
             if (isSubmitted) {
@@ -574,6 +596,10 @@
 
             updateProgressBubbles();
             updateSubmitButton();
+
+            // Reset cuộn hộp câu hỏi lên trên cùng
+            var qBox = document.getElementById("question-box-scroll");
+            if (qBox) qBox.scrollTop = 0;
         }
 
         function selectOption(key) {
@@ -624,7 +650,13 @@
         function updateSubmitButton() {
             var btnSubmit = document.getElementById("btn-submit");
             var total = quizData ? quizData.questions.length : 10;
-            var answeredCount = Object.keys(selectedAnswers).length;
+            var answeredCount = 0;
+            
+            for (var key in selectedAnswers) {
+                if (selectedAnswers.hasOwnProperty(key)) {
+                    answeredCount++;
+                }
+            }
 
             if (isSubmitted) {
                 btnSubmit.classList.add("hidden");
@@ -643,7 +675,13 @@
             if (!quizData) return;
 
             var total = quizData.questions.length;
-            var answeredCount = Object.keys(selectedAnswers).length;
+            var answeredCount = 0;
+            
+            for (var key in selectedAnswers) {
+                if (selectedAnswers.hasOwnProperty(key)) {
+                    answeredCount++;
+                }
+            }
 
             if (answeredCount < total) {
                 alert("Bạn mới chọn đáp án cho " + answeredCount + "/" + total + " câu hỏi. Hãy làm hết bài trước khi nộp nhé!");
@@ -653,11 +691,12 @@
             isSubmitted = true;
             var score = 0;
 
-            quizData.questions.forEach(function(q, idx) {
+            for (var idx = 0; idx < quizData.questions.length; idx++) {
+                var q = quizData.questions[idx];
                 if (selectedAnswers[idx] === q.answer) {
                     score++;
                 }
-            });
+            }
 
             var resDiv = document.getElementById("result");
             resDiv.classList.remove("hidden");
@@ -677,7 +716,7 @@
         function checkConnection() {
             var params = parseParameters();
             
-            if (params.level !== "Chưanhận" && params.topic !== "Chưanhận") {
+            if (params.level && params.topic) {
                 var currentConfigStr = params.level + "|" + params.topic;
                 if (currentConfigStr !== lastReceivedConfig) {
                     lastReceivedConfig = currentConfigStr;
