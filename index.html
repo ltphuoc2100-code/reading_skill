@@ -12,7 +12,6 @@
             padding: 0;
             width: 100%;
             height: 100%;
-            overflow: hidden;
             box-sizing: border-box;
         }
         body {
@@ -22,6 +21,8 @@
             display: flex;
             flex-direction: column;
             justify-content: flex-start;
+            min-height: 520px; /* Ép buộc chiều cao tối thiểu để chống lỗi sập màn hình về 0px trên Android */
+            overflow-y: auto;
         }
 
         /* Khung Tiêu Đề */
@@ -385,16 +386,19 @@
         var selectedAnswers = {};  
         var isSubmitted = false;   
 
+        // HÀM TÌM VỊ TRÍ PHẦN TỬ TRONG MẢNG (HỖ TRỢ THIẾT BỊ ANDROID QUÁ CŨ KHÔNG CÓ ARRAY.INDEXOF)
+        function arrayIndexOf(arr, val) {
+            for (var i = 0; i < arr.length; i++) {
+                if (arr[i] === val) return i;
+            }
+            return -1;
+        }
+
         // HÀM HELPER THAY THẾ CLASSLIST CHỐNG SẬP TRÊN THIẾT BỊ ANDROID CŨ
         function showElement(id) {
             var el = document.getElementById(id);
             if (el) {
-                var classes = el.className.split(" ");
-                var index = classes.indexOf("hidden");
-                if (index > -1) {
-                    classes.splice(index, 1);
-                    el.className = classes.join(" ");
-                }
+                el.className = el.className.replace(/\bhidden\b/g, "").trim();
             }
         }
 
@@ -402,7 +406,7 @@
             var el = document.getElementById(id);
             if (el) {
                 var classes = el.className.split(" ");
-                if (classes.indexOf("hidden") === -1) {
+                if (arrayIndexOf(classes, "hidden") === -1) {
                     classes.push("hidden");
                     el.className = classes.join(" ");
                 }
@@ -416,11 +420,12 @@
         // TỰ ĐỘNG BÓC TÁCH THAM SỐ KHÔNG SỢ LỖI KÝ TỰ
         function getQueryParam(name) {
             var query = window.location.search.substring(1);
+            if (!query) return "";
             var vars = query.split("&");
             for (var i = 0; i < vars.length; i++) {
                 var pair = vars[i].split("=");
                 if (pair[0] === name) {
-                    return decodeURIComponent(pair[1]);
+                    return pair[1] ? decodeURIComponent(pair[1]) : "";
                 }
             }
             return "";
@@ -436,8 +441,8 @@
             if (urlLevel) level = urlLevel.trim();
             if (urlTopic) topic = urlTopic.trim();
 
-            // Đọc từ WebViewString bộ nhớ đệm
-            if (window.AppInventor && window.AppInventor.getWebViewString) {
+            // Đọc từ WebViewString bộ nhớ đệm an toàn
+            if (window.AppInventor && typeof window.AppInventor.getWebViewString === 'function') {
                 var wvs = window.AppInventor.getWebViewString();
                 if (wvs && wvs.trim() !== "") {
                     if (wvs.indexOf("?") !== -1) {
@@ -446,14 +451,14 @@
                             var vars = queryString.split("&");
                             for (var i = 0; i < vars.length; i++) {
                                 var pair = vars[i].split("=");
-                                if (pair[0] === "level") level = decodeURIComponent(pair[1]).trim();
-                                if (pair[0] === "topic") topic = decodeURIComponent(pair[1]).trim();
+                                if (pair[0] === "level") level = pair[1] ? decodeURIComponent(pair[1]).trim() : "";
+                                if (pair[0] === "topic") topic = pair[1] ? decodeURIComponent(pair[1]).trim() : "";
                             }
                         }
                     } else if (wvs.indexOf("|") !== -1) {
                         var parts = wvs.split("|");
-                        level = parts[0].trim();
-                        topic = parts[1].trim();
+                        level = parts[0] ? parts[0].trim() : "";
+                        topic = parts[1] ? parts[1].trim() : "";
                     }
                 }
             }
@@ -730,7 +735,7 @@
 
         function sendResultToMIT(score, total) {
             var dataString = "DIEM:" + score + "/" + total;
-            if (window.AppInventor && window.AppInventor.setWebViewString) {
+            if (window.AppInventor && typeof window.AppInventor.setWebViewString === 'function') {
                 window.AppInventor.setWebViewString(dataString);
             }
         }
@@ -750,8 +755,11 @@
             }
         }
 
-        setInterval(checkConnection, 500);
-        checkConnection();
+        // CHỈ KHỞI ĐỘNG VÒNG LẶP KHI TRANG WEB ĐÃ TẢI XONG TOÀN BỘ DOM ĐỂ TRÁNH LỖI TREO TRẮNG MÀN HÌNH
+        window.onload = function() {
+            setInterval(checkConnection, 500);
+            checkConnection();
+        };
     </script>
 </body>
 </html>
