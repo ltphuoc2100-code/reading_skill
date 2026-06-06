@@ -246,6 +246,17 @@
         }
     </style>
 </head>
+    <script>
+
+const params = new URLSearchParams(window.location.search);
+
+const level = params.get("level");
+const topic = params.get("topic");
+
+console.log("Level:", level);
+console.log("Topic:", topic);
+
+</script>
 <body>
 
     <header>
