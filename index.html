@@ -1,259 +1,286 @@
 <!DOCTYPE html>
 <html>
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width,initial-scale=1">
-<title>Reading Practice</title>
-
-<style>
-body{
-font-family:Arial;
-max-width:900px;
-margin:auto;
-padding:15px;
-background:#f5f5f5;
-}
-
-.card{
-background:white;
-padding:20px;
-border-radius:10px;
-margin-bottom:15px;
-}
-
-button{
-padding:10px;
-font-size:16px;
-width:100%;
-}
-
-.question{
-margin-top:20px;
-}
-</style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>AI Reading Practice</title>
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Arial, sans-serif;
+            max-width: 600px;
+            margin: auto;
+            padding: 15px;
+            background: #0f172a;
+            color: #f1f5f9;
+        }
+        .card {
+            background: #1e293b;
+            padding: 20px;
+            border-radius: 12px;
+            margin-bottom: 15px;
+            border: 1px solid #334155;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+        }
+        h2 {
+            color: #ffffff;
+            margin-top: 0;
+            font-size: 18px;
+        }
+        p#info {
+            color: #38bdf8;
+            font-weight: bold;
+            font-size: 13px;
+            margin: 5px 0 0 0;
+        }
+        #status {
+            font-size: 13px;
+            color: #f59e0b;
+            font-weight: bold;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        button {
+            padding: 12px;
+            font-size: 14px;
+            width: 100%;
+            background-color: #2563eb;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+        button:active {
+            background-color: #1d4ed8;
+        }
+        .question {
+            margin-top: 15px;
+            border-left: 4px solid #3b82f6;
+            padding-left: 15px;
+        }
+        label {
+            display: block;
+            background: #0f172a;
+            padding: 10px 12px;
+            border-radius: 6px;
+            margin-bottom: 8px;
+            border: 1px solid #1e293b;
+            cursor: pointer;
+            font-size: 13px;
+        }
+        label:hover {
+            border-color: #475569;
+        }
+        input[type="radio"] {
+            margin-right: 8px;
+        }
+        .feedback {
+            margin-top: 8px;
+            padding: 8px;
+            border-radius: 6px;
+            font-size: 12px;
+        }
+        .correct-fb {
+            background-color: rgba(16, 185, 129, 0.1);
+            color: #34d399;
+            border: 1px solid rgba(16, 185, 129, 0.2);
+        }
+        .incorrect-fb {
+            background-color: rgba(239, 68, 68, 0.1);
+            color: #f87171;
+            border: 1px solid rgba(239, 68, 68, 0.2);
+        }
+        .explanation-text {
+            font-size: 11px;
+            color: #94a3b8;
+            margin-top: 4px;
+            line-height: 1.4;
+        }
+        #result {
+            margin-top: 15px;
+            font-size: 16px;
+            font-weight: bold;
+            text-align: center;
+            color: #10b981;
+        }
+    </style>
 </head>
-
 <body>
 
-<div class="card">
-<h2>AI Reading Practice</h2>
-<p id="info"></p>
-<div id="status">Generating quiz...</div>
-</div>
+    <div class="card">
+        <h2>AI Reading Practice</h2>
+        <p id="info">Đang chờ tham số từ điện thoại...</p>
+        <div id="status">
+            <span style="display:inline-block; width:8px; height:8px; border-radius:50%; bg-color:#f59e0b; background:#f59e0b; animation: pulse 1.5s infinite;"></span>
+            <span>Generating quiz...</span>
+        </div>
+    </div>
 
-<div id="quizArea"></div>
+    <div id="quizArea"></div>
 
-<script>
+    <script>
+        // Sử dụng API Key của bạn
+        const API_KEY = "AIzaSyAJPtlIAIxPv-zyfhqUwxiOikRmDKcdpKo";
+        let lastReceivedConfig = "";
+        let currentQuizData = null;
 
-const API_KEY = "AIzaSyAJPtlIAIxPv-zyfhqUwxiOikRmDKcdpKo";
+        // Hàm bóc tách tham số thông minh từ URL hoặc WebViewString
+        function getParameters() {
+            let level = "A2";
+            let topic = "Travel";
 
-const params = new URLSearchParams(window.location.search);
+            // 1. Quét từ URL (Nếu dùng GoToUrl)
+            const params = new URLSearchParams(window.location.search);
+            if (params.get("level")) level = params.get("level").trim();
+            if (params.get("topic")) topic = params.get("topic").trim();
 
-const level = params.get("level") || "A2";
-const topic = params.get("topic") || "Travel";
+            // 2. Quét từ WebViewString (Nếu dùng set WebViewString)
+            if (window.AppInventor && window.AppInventor.getWebViewString) {
+                const wvs = window.AppInventor.getWebViewString();
+                if (wvs && wvs !== "" && !wvs.startsWith("DIEM:")) {
+                    // Nếu wvs chứa nguyên cả đường dẫn URL
+                    if (wvs.includes("?")) {
+                        const urlParams = new URLSearchParams(wvs.split("?")[1]);
+                        if (urlParams.get("level")) level = urlParams.get("level").trim();
+                        if (urlParams.get("topic")) topic = urlParams.get("topic").trim();
+                    } else if (wvs.includes("|")) { // Nếu chỉ chứa "Trình độ|Chủ đề"
+                        const parts = wvs.split("|");
+                        level = parts[0].trim();
+                        topic = parts[1].trim();
+                    }
+                }
+            }
 
-document.getElementById("info").innerHTML =
-"Level: " + level + " | Topic: " + topic;
+            // Dọn dẹp khoảng trắng thừa nếu có
+            return {
+                level: level.replace(/\s+/g, ''),
+                topic: topic.replace(/^\s+|\s+$/g, '')
+            };
+        }
 
-let quizData = null;
+        async function createQuiz() {
+            const { level, topic } = getParameters();
+            
+            document.getElementById("info").innerHTML = "Level: " + level + " | Topic: " + topic;
+            document.getElementById("status").style.display = "flex";
+            document.getElementById("status").innerHTML = "🧠 AI Gemini đang biên soạn bài đọc trình độ " + level + "...";
+            document.getElementById("quizArea").innerHTML = "";
 
-async function createQuiz(){
+            const prompt = `Create an English reading comprehension test.\nLevel: ${level}\nTopic: ${topic}\nGenerate:\n- one reading passage\n- exactly 10 multiple choice questions\nReturn ONLY valid JSON.\n{\n"title":"",\n"passage":"",\n"questions":[\n{\n"question":"",\n"A":"",\n"B":"",\n"C":"",\n"D":"",\n"answer":"",\n"explanation":""\n}\n]\n}`;
 
-const prompt = `
-Create an English reading comprehension test.
+            try {
+                const response = await fetch(
+                    "https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=" + API_KEY,
+                    {
+                        method: "POST",
+                        headers: { "Content-Type": "application/json" },
+                        body: JSON.stringify({
+                            contents: [{ parts: [{ text: prompt }] }]
+                        })
+                    }
+                );
 
-Level: ${level}
+                const result = await response.json();
+                let text = result.candidates[0].content.parts[0].text;
+                
+                // Làm sạch JSON thô từ AI trả về
+                text = text.replace(/```json/g, "");
+                text = text.replace(/```/g, "");
+                
+                quizData = JSON.parse(text);
+                renderQuiz();
+            } catch (err) {
+                document.getElementById("status").innerHTML = "❌ Lỗi kết nối AI: " + err.message;
+            }
+        }
 
-Topic: ${topic}
+        function renderQuiz() {
+            document.getElementById("status").style.display = "none";
+            let html = `
+                <div class="card">
+                    <h2 style="color: #38bdf8;">${quizData.title}</h2>
+                    <p style="line-height: 1.6; font-size: 13.5px; color: #cbd5e1;">${quizData.passage}</p>
+                </div>
+            `;
 
-Generate:
+            quizData.questions.forEach((q, index) => {
+                html += `
+                    <div class="card question">
+                        <p style="margin-top:0; font-size: 14px;"><b>${index + 1}. ${q.question}</b></p>
+                        <label><input type="radio" name="q${index}" value="A"> A. ${q.A}</label>
+                        <label><input type="radio" name="q${index}" value="B"> B. ${q.B}</label>
+                        <label><input type="radio" name="q${index}" value="C"> C. ${q.C}</label>
+                        <label><input type="radio" name="q${index}" value="D"> D. ${q.D}</label>
+                        <div id="fb${index}"></div>
+                    </div>
+                `;
+            });
 
-- one reading passage
-- exactly 10 multiple choice questions
+            html += `
+                <div class="card">
+                    <button onclick="gradeQuiz()">Nộp Bài Chấm Điểm</button>
+                    <div id="result"></div>
+                </div>
+            `;
 
-Return ONLY valid JSON.
+            document.getElementById("quizArea").innerHTML = html;
+        }
 
-{
-"title":"",
-"passage":"",
-"questions":[
-{
-"question":"",
-"A":"",
-"B":"",
-"C":"",
-"D":"",
-"answer":"",
-"explanation":""
-}
-]
-}
-`;
+        function gradeQuiz() {
+            let score = 0;
 
-try{
+            quizData.questions.forEach((q, index) => {
+                const selected = document.querySelector('input[name="q' + index + '"]:checked');
+                const fb = document.getElementById("fb" + index);
 
-const response = await fetch(
-"https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key="+API_KEY,
-{
-method:"POST",
-headers:{
-"Content-Type":"application/json"
-},
-body:JSON.stringify({
-contents:[
-{
-parts:[
-{
-text:prompt
-}
-]
-}
-]
-})
-}
-);
+                if (selected) {
+                    if (selected.value === q.answer.trim()) {
+                        score++;
+                        fb.className = "feedback correct-fb";
+                        fb.innerHTML = "<p style='margin:0;'>✓ Đúng chính xác!</p>";
+                    } else {
+                        fb.className = "feedback incorrect-fb";
+                        fb.innerHTML = `
+                            <p style='margin:0 0 4px 0;'>✗ Chưa chính xác (Đáp án đúng: <b>${q.answer}</b>)</p>
+                            <p class="explanation-text"><b>Giải thích:</b> ${q.explanation}</p>
+                        `;
+                    }
+                } else {
+                    fb.className = "feedback incorrect-fb";
+                    fb.innerHTML = `<p style='margin:0;'>⚠️ Chưa chọn đáp án! (Đáp án đúng: <b>${q.answer}</b>)</p>`;
+                }
+            });
 
-const result = await response.json();
+            const finalResult = "DIEM:" + score + "/10";
+            document.getElementById("result").innerHTML = "<h2>Kết quả: " + score + "/10 câu đúng</h2>";
 
-let text =
-result.candidates[0].content.parts[0].text;
+            // Gửi điểm số ngược về MIT App Inventor
+            if (window.AppInventor && window.AppInventor.setWebViewString) {
+                window.AppInventor.setWebViewString(finalResult);
+            }
 
-text = text.replace(/```json/g,"");
-text = text.replace(/```/g,"");
+            window.scrollTo({ top: document.body.scrollHeight, behavior: 'smooth' });
+        }
 
-quizData = JSON.parse(text);
+        // Lắng nghe chuỗi thay đổi liên tục từ MIT App Inventor (Dành cho WebViewString)
+        function checkWebViewString() {
+            if (window.AppInventor && window.AppInventor.getWebViewString) {
+                const wvs = window.AppInventor.getWebViewString();
+                if (wvs && wvs !== "" && wvs !== lastReceivedConfig && !wvs.startsWith("DIEM:")) {
+                    lastReceivedConfig = wvs;
+                    createQuiz();
+                }
+            }
+        }
 
-renderQuiz();
+        // Khởi động lần đầu
+        createQuiz();
 
-}
-catch(err){
-
-document.getElementById("status").innerHTML =
-"Error: " + err.message;
-
-}
-
-}
-
-function renderQuiz(){
-
-document.getElementById("status").style.display =
-"none";
-
-let html = "";
-
-html += `
-<div class="card">
-<h2>${quizData.title}</h2>
-<p>${quizData.passage}</p>
-</div>
-`;
-
-quizData.questions.forEach((q,index)=>{
-
-html += `
-<div class="card question">
-
-<p><b>${index+1}. ${q.question}</b></p>
-
-<label>
-<input type="radio" name="q${index}" value="A">
-A. ${q.A}
-</label><br><br>
-
-<label>
-<input type="radio" name="q${index}" value="B">
-B. ${q.B}
-</label><br><br>
-
-<label>
-<input type="radio" name="q${index}" value="C">
-C. ${q.C}
-</label><br><br>
-
-<label>
-<input type="radio" name="q${index}" value="D">
-D. ${q.D}
-</label>
-
-<div id="fb${index}"></div>
-
-</div>
-`;
-
-});
-
-html += `
-<div class="card">
-<button onclick="gradeQuiz()">
-Submit Answers
-</button>
-<div id="result"></div>
-</div>
-`;
-
-document.getElementById("quizArea").innerHTML =
-html;
-
-}
-
-function gradeQuiz(){
-
-let score = 0;
-
-quizData.questions.forEach((q,index)=>{
-
-const selected =
-document.querySelector(
-'input[name="q'+index+'"]:checked'
-);
-
-const fb =
-document.getElementById("fb"+index);
-
-if(selected){
-
-if(selected.value === q.answer){
-
-score++;
-
-fb.innerHTML =
-"<p style='color:green'>✓ Correct</p>";
-
-}else{
-
-fb.innerHTML =
-"<p style='color:red'>✗ Incorrect</p>"
-+
-"<p>Correct answer: "
-+
-q.answer
-+
-"</p><p>"
-+
-q.explanation
-+
-"</p>";
-
-}
-
-}
-
-});
-
-document.getElementById("result").innerHTML =
-"<h2>Score: "+score+"/10</h2>";
-
-window.scrollTo(
-0,
-document.body.scrollHeight
-);
-
-}
-
-createQuiz();
-
-</script>
+        // Quét liên tục mỗi 500ms để bắt tín hiệu từ điện thoại
+        setInterval(checkWebViewString, 500);
+    </script>
 
 </body>
 </html>
