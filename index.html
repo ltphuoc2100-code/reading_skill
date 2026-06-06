@@ -1,13 +1,13 @@
 <!DOCTYPE html>
-<html lang="vi" style="background-color: #0b1329;">
+<html lang="en" style="background-color: #ffffff;">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>AI Reading Practice</title>
     <style>
-        /* CSS THUẦN TỰ LÀM ĐẸP - KHÔNG CẦN CHẠY INTERNET VẪN ĐẸP TRÀN VIỀN */
+        /* CSS THUẦN LÀM ĐẸP TÔNG SÁNG (LIGHT MODE) - FONT CHỮ SIÊU TO - TRÀN VIỀN */
         html, body {
-            background-color: #0b1329 !important;
+            background-color: #ffffff !important;
             margin: 0;
             padding: 0;
             width: 100%;
@@ -15,88 +15,91 @@
             box-sizing: border-box;
         }
         body {
-            color: #f8fafc;
+            color: #0f172a;
             font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
-            padding: 10px;
+            padding: 12px;
             display: flex;
             flex-direction: column;
             justify-content: flex-start;
-            min-height: 520px; /* Ép buộc chiều cao tối thiểu để chống lỗi sập màn hình về 0px trên Android */
+            min-height: 520px; /* Ép buộc chiều cao tối thiểu chống sập màn hình trên WebViewer */
             overflow-y: auto;
         }
 
         /* Khung Tiêu Đề */
         header {
-            background-color: #1c2541;
-            padding: 10px 15px;
+            background-color: #f1f5f9;
+            padding: 12px 15px;
             border-radius: 12px;
-            border: 1px solid rgba(59, 130, 246, 0.2);
-            margin-bottom: 10px;
+            border: 2px solid #cbd5e1;
+            margin-bottom: 12px;
             text-align: center;
             flex-shrink: 0;
         }
         header h1 {
-            font-size: 14px;
+            font-size: 18px; /* Tăng cỡ chữ tiêu đề chính */
             margin: 0;
-            color: #ffffff;
-            font-weight: bold;
+            color: #0f172a;
+            font-weight: 800;
         }
         header p {
-            font-size: 9px;
-            color: #38bdf8;
-            margin: 3px 0 0 0;
+            font-size: 11px;
+            color: #475569;
+            margin: 4px 0 0 0;
             font-weight: bold;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
         }
 
         /* Thẻ hiển thị thông tin */
         .card {
-            background-color: #1c2541;
-            border: 1px solid #1e293b;
-            border-radius: 12px;
-            padding: 12px;
-            margin-bottom: 10px;
-            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+            background-color: #f8fafc;
+            border: 2px solid #e2e8f0;
+            border-radius: 14px;
+            padding: 14px;
+            margin-bottom: 12px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
         }
 
         /* Huy hiệu Trình độ / Chủ đề */
         .badge-container {
             display: flex;
             justify-content: space-between;
-            margin-bottom: 8px;
+            margin-bottom: 10px;
         }
         .badge {
-            font-size: 9px;
+            font-size: 11px; /* Tăng cỡ chữ badge */
             font-weight: bold;
-            padding: 3px 8px;
-            border-radius: 4px;
+            padding: 4px 10px;
+            border-radius: 6px;
             text-transform: uppercase;
         }
         .badge-level {
-            background-color: rgba(99, 102, 241, 0.2);
-            color: #818cf8;
-            border: 1px solid rgba(99, 102, 241, 0.3);
+            background-color: #e0e7ff;
+            color: #4338ca;
+            border: 1px solid #c7d2fe;
         }
         .badge-topic {
-            background-color: #334155;
-            color: #cbd5e1;
+            background-color: #e2e8f0;
+            color: #334155;
+            border: 1px solid #cbd5e1;
         }
 
         /* BÀI ĐỌC TỰ ĐỘNG THU GỌN VÀ CHỈ CUỘN RIÊNG BIỆT */
         .reading-title {
-            font-size: 12px;
-            font-weight: bold;
-            color: #ffffff;
-            margin: 0 0 6px 0;
+            font-size: 15px; /* Tăng cỡ chữ tiêu đề bài đọc */
+            font-weight: 800;
+            color: #0f172a;
+            margin: 0 0 8px 0;
         }
         .passage-box {
-            font-size: 11px;
-            line-height: 1.5;
-            color: #cbd5e1;
-            background-color: #0b1329;
-            padding: 10px;
-            border-radius: 8px;
-            border: 1px solid #334155;
-            max-height: 120px; /* Khóa cứng chiều cao tối đa của bài đọc tránh đẩy dốc đáp án */
+            font-size: 15px; /* TĂNG CỠ CHỮ BÀI ĐỌC SIÊU TO RÕ RÀNG */
+            line-height: 1.6;
+            color: #1e293b;
+            background-color: #ffffff;
+            padding: 12px;
+            border-radius: 10px;
+            border: 2px solid #cbd5e1;
+            max-height: 140px; /* Khóa cứng chiều cao tối đa của bài đọc tránh đẩy dốc đáp án */
             overflow-y: auto;  /* Chỉ xuất hiện thanh cuộn tại đây nếu bài đọc dài */
             font-family: Georgia, serif;
         }
@@ -106,133 +109,138 @@
             display: flex;
             justify-content: space-between;
             align-items: center;
-            border-bottom: 1px solid #334155;
-            padding-bottom: 6px;
-            margin-bottom: 8px;
+            border-bottom: 2px solid #e2e8f0;
+            padding-bottom: 8px;
+            margin-bottom: 12px;
         }
         .question-num {
-            font-size: 10px;
-            font-weight: bold;
-            color: #94a3b8;
+            font-size: 13px; /* Tăng cỡ chữ tiêu đề question */
+            font-weight: 800;
+            color: #475569;
+            text-transform: uppercase;
         }
         .question-text {
-            font-size: 11.5px;
-            font-weight: bold;
-            color: #f1f5f9;
-            margin: 0 0 10px 0;
-            line-height: 1.4;
+            font-size: 16px; /* TĂNG CỠ CHỮ CÂU HỎI */
+            font-weight: 700;
+            color: #0f172a;
+            margin: 0 0 12px 0;
+            line-height: 1.5;
         }
 
         /* Các ô đáp án A, B, C, D thiết kế dạng nút bấm lớn dễ chạm */
         .option-label {
             display: flex;
             align-items: center;
-            padding: 8px 12px;
-            background-color: #0b1329;
-            border: 1px solid #334155;
-            border-radius: 8px;
-            color: #cbd5e1;
-            font-size: 11px;
-            margin-bottom: 6px;
+            padding: 12px 14px; /* Tăng độ dày nút bấm đáp án */
+            background-color: #ffffff;
+            border: 2px solid #cbd5e1;
+            border-radius: 10px;
+            color: #1e293b;
+            font-size: 15px; /* TĂNG CỠ CHỮ ĐÁP ÁN RÕ RÀNG */
+            margin-bottom: 8px;
             cursor: pointer;
             box-sizing: border-box;
+            transition: all 0.2s ease;
         }
         .option-label input {
-            margin-right: 10px;
-            accent-color: #6366f1;
+            margin-right: 12px;
+            transform: scale(1.3); /* Phóng to nút chọn tròn radio */
+            accent-color: #4f46e5;
         }
         
         /* Trạng thái đáp án khi được chọn */
         .option-selected {
-            background-color: rgba(99, 102, 241, 0.15) !important;
-            border-color: #6366f1 !important;
-            color: #a5b4fc !important;
+            background-color: #e0e7ff !important;
+            border-color: #4f46e5 !important;
+            color: #1e1b4b !important;
             font-weight: bold;
         }
         .option-correct {
-            background-color: rgba(16, 185, 129, 0.15) !important;
+            background-color: #d1fae5 !important;
             border-color: #10b981 !important;
-            color: #34d399 !important;
+            color: #065f46 !important;
             font-weight: bold;
         }
         .option-wrong {
-            background-color: rgba(244, 63, 94, 0.15) !important;
+            background-color: #ffe4e6 !important;
             border-color: #f43f5e !important;
-            color: #f43f5e !important;
+            color: #9f1239 !important;
             font-weight: bold;
         }
 
         /* Lời giải thích đáp án */
         .explanation-box {
-            background-color: rgba(99, 102, 241, 0.1);
-            border: 1px solid rgba(99, 102, 241, 0.2);
-            padding: 8px 10px;
-            border-radius: 6px;
-            font-size: 10px;
-            color: #a5b4fc;
-            margin-top: 8px;
-            line-height: 1.4;
+            background-color: #f0fdf4;
+            border: 2px solid #a7f3d0;
+            padding: 10px 12px;
+            border-radius: 8px;
+            font-size: 13px; /* Tăng cỡ chữ giải thích */
+            color: #065f46;
+            margin-top: 10px;
+            line-height: 1.5;
         }
 
         /* PHẦN ĐIỀU HƯỚNG GHIM CHẶT SÁT ĐÁY MÀN HÌNH */
         .navigation-section {
-            border-top: 1px solid #334155;
-            padding-top: 8px;
+            border-top: 2px solid #e2e8f0;
+            padding-top: 10px;
             display: flex;
             flex-direction: column;
-            gap: 8px;
+            gap: 10px;
         }
         .btn-row {
             display: flex;
             justify-content: space-between;
-            gap: 10px;
+            gap: 12px;
         }
         .nav-btn {
             flex: 1;
-            background-color: #334155;
-            color: #f1f5f9;
+            background-color: #475569;
+            color: #ffffff;
             border: none;
-            padding: 8px;
-            border-radius: 8px;
-            font-size: 11px;
+            padding: 10px;
+            border-radius: 10px;
+            font-size: 14px; /* Tăng cỡ chữ nút điều hướng */
             font-weight: bold;
             cursor: pointer;
             text-align: center;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
         }
         .nav-btn:disabled {
             opacity: 0.2;
             cursor: not-allowed;
+            box-shadow: none;
         }
         .submit-btn {
             background-color: #10b981;
             color: #ffffff;
             border: none;
-            padding: 10px;
-            border-radius: 8px;
+            padding: 12px;
+            border-radius: 10px;
             width: 100%;
-            font-size: 11px;
+            font-size: 15px; /* Tăng cỡ chữ nút Submit */
             font-weight: bold;
             cursor: pointer;
-            box-shadow: 0 4px 6px -1px rgba(16, 185, 129, 0.2);
+            box-shadow: 0 4px 6px -1px rgba(16, 185, 129, 0.3);
         }
 
         /* Chấm tiến trình 1-10 */
         .dots-row {
             display: flex;
             justify-content: center;
-            gap: 5px;
-            margin-bottom: 4px;
+            gap: 6px;
+            margin-bottom: 6px;
         }
         .dot {
-            width: 7px;
-            height: 7px;
+            width: 9px; /* Phóng to chấm tròn tiến trình */
+            height: 9px;
             border-radius: 50%;
-            background-color: #334155;
+            background-color: #cbd5e1;
         }
         .dot-active {
-            background-color: #6366f1;
-            box-shadow: 0 0 6px #6366f1;
-            transform: scale(1.2);
+            background-color: #4f46e5;
+            box-shadow: 0 0 6px #4f46e5;
+            transform: scale(1.3);
         }
         .dot-answered {
             background-color: #312e81;
@@ -246,15 +254,15 @@
 
         /* Kết quả chấm điểm */
         .result-box {
-            background-color: rgba(16, 185, 129, 0.1);
-            border: 1px solid rgba(16, 185, 129, 0.2);
-            color: #34d399;
-            font-size: 12px;
-            font-weight: bold;
-            padding: 8px;
-            border-radius: 8px;
+            background-color: #ecfdf5;
+            border: 2px solid #10b981;
+            color: #065f46;
+            font-size: 15px; /* Tăng cỡ chữ báo kết quả */
+            font-weight: 800;
+            padding: 10px;
+            border-radius: 10px;
             text-align: center;
-            margin-top: 8px;
+            margin-top: 10px;
         }
 
         .hidden {
@@ -262,12 +270,13 @@
         }
         footer {
             text-align: center;
-            font-size: 9px;
-            color: #475569;
+            font-size: 10px;
+            color: #64748b;
             margin-top: auto;
-            border-top: 1px solid #1e293b;
-            padding-top: 8px;
+            border-top: 1px solid #e2e8f0;
+            padding-top: 10px;
             flex-shrink: 0;
+            font-weight: bold;
         }
     </style>
 </head>
@@ -277,30 +286,29 @@
     <script>
         window.onerror = function(message, source, lineno, colno, error) {
             document.body.innerHTML = '<div style="background-color: #991b1b; color: #fef2f2; padding: 20px; font-family: sans-serif; border-radius: 12px; border: 2px solid #ef4444; margin: 10px; box-sizing: border-box;">' +
-                '<h3 style="margin-top: 0; font-size: 16px;">❌ PHÁT HIỆN LỖI CODE (BUG):</h3>' +
-                '<p style="font-size: 12px; line-height: 1.5; font-family: monospace;">' + message + '</p>' +
-                '<p style="font-size: 11px; opacity: 0.8;">Dòng: ' + lineno + ' | Cột: ' + colno + '</p>' +
-                '<p style="font-size: 11px; opacity: 0.8; word-break: break-all;">Nguồn: ' + source + '</p>' +
+                '<h3 style="margin-top: 0; font-size: 16px;">❌ SYSTEM ERROR ENCOUNTERED:</h3>' +
+                '<p style="font-size: 13px; line-height: 1.5; font-family: monospace;">' + message + '</p>' +
+                '<p style="font-size: 11px; opacity: 0.8;">Line: ' + lineno + ' | Col: ' + colno + '</p>' +
                 '</div>';
             return true;
         };
     </script>
 
-    <!-- Header cố định -->
+    <!-- Header cố định dạng tiếng Anh -->
     <header>
-        <h1 id="header-title">Khảo Thí Đọc Hiểu AI</h1>
-        <p>Động cơ kết nối chống dẹp màn hình</p>
+        <h1 id="header-title">AI Reading Comprehension Engine</h1>
+        <p>Anti-collapse layout module for mobile devices</p>
     </header>
 
-    <!-- MÀN HÌNH CHỜ NHẬN TÍN HIỆU -->
-    <div id="waiting-screen" class="card" style="text-align: center; padding: 20px 10px;">
-        <div style="font-size: 24px; margin-bottom: 10px;">📡</div>
-        <h3 style="font-size: 12px; margin: 0 0 6px 0; color: #ffffff;">Chờ lệnh từ App Inventor</h3>
-        <p style="font-size: 10px; color: #94a3b8; line-height: 1.4; margin: 0 0 12px 0;">
-            Hệ thống đang chờ bạn chọn <b>Trình độ</b> và <b>Chủ đề</b> trên điện thoại rồi nhấn nút để khởi động liên kết!
+    <!-- MÀN HÌNH CHỜ NHẬN TÍN HIỆU (100% TIẾNG ANH) -->
+    <div id="waiting-screen" class="card" style="text-align: center; padding: 25px 15px;">
+        <div style="font-size: 32px; margin-bottom: 12px;">📡</div>
+        <h3 style="font-size: 15px; margin: 0 0 8px 0; color: #0f172a; font-weight: 800;">Waiting for App Inventor</h3>
+        <p style="font-size: 13px; color: #475569; line-height: 1.5; margin: 0 0 16px 0;">
+            Please choose <b>Level</b> and <b>Topic</b> on your mobile app, then click the trigger button to load the custom quiz!
         </p>
-        <button onclick="simulateLaunch()" style="background-color: #6366f1; color: white; border: none; padding: 8px 15px; border-radius: 6px; font-size: 10px; font-weight: bold; cursor: pointer;">
-            Làm Thử Đề Mẫu Để Test Giao Diện
+        <button onclick="simulateLaunch()" style="background-color: #4f46e5; color: white; border: none; padding: 12px 20px; border-radius: 8px; font-size: 13px; font-weight: bold; cursor: pointer; box-shadow: 0 2px 4px rgba(79, 70, 229, 0.2);">
+            Try Demo Practice Offline
         </button>
     </div>
 
@@ -313,9 +321,9 @@
                 <span id="badge-level" class="badge badge-level">LEVEL --</span>
                 <span id="badge-topic" class="badge badge-topic">TOPIC --</span>
             </div>
-            <h3 id="reading-title" class="reading-title">Đang tải tiêu đề...</h3>
+            <h3 id="reading-title" class="reading-title">Loading title...</h3>
             <div id="reading-passage" class="passage-box">
-                Đang biên soạn bài đọc...
+                Loading reading material...
             </div>
         </div>
 
@@ -324,11 +332,11 @@
             
             <div style="overflow-y: auto; flex: 1; margin-bottom: 8px;" id="question-box-scroll">
                 <div class="question-header">
-                    <span id="current-question-num" class="question-num">CÂU HỎI 1/10</span>
-                    <span class="badge badge-level" style="font-size: 8px;">KIỂM TRA ĐỌC</span>
+                    <span id="current-question-num" class="question-num">QUESTION 1/10</span>
+                    <span class="badge badge-level" style="font-size: 10px;">READING UNIT</span>
                 </div>
 
-                <p id="question-text" class="question-text">Đang tải câu hỏi...</p>
+                <p id="question-text" class="question-text">Loading question content...</p>
                 
                 <!-- Danh sách đáp án A, B, C, D -->
                 <div id="options-grid"></div>
@@ -355,13 +363,13 @@
 
                 <!-- Nút điều hướng -->
                 <div class="btn-row">
-                    <button onclick="prevQuestion()" id="btn-prev" class="nav-btn">Quay lại</button>
-                    <button onclick="nextQuestion()" id="btn-next" class="nav-btn">Tiếp theo</button>
+                    <button onclick="prevQuestion()" id="btn-prev" class="nav-btn">Back</button>
+                    <button onclick="nextQuestion()" id="btn-next" class="nav-btn">Next</button>
                 </div>
 
                 <!-- Nút nộp bài -->
                 <button onclick="gradeQuiz()" id="btn-submit" class="submit-btn hidden">
-                    Nộp Bài Chấm Điểm Thử
+                    Submit Answers
                 </button>
 
                 <!-- Kết quả hiển thị tổng kết -->
@@ -483,32 +491,32 @@
                     questionText = "What is the primary theme discussed in this reading exercise?";
                     options = { A: "The rapid changes and impact of " + topic, B: "A collection of irrelevant recipes", C: "Traditional farming and agriculture", D: "The rise of sports entertainment" };
                     answer = "A";
-                    explanation = "Đoạn văn giới thiệu trực tiếp rằng đề tài thảo luận chính của bài đọc hiểu là về sự thay đổi và ảnh hưởng của '" + topic + "'.";
+                    explanation = "The passage clearly outlines that the core topic of this study is the rapid expansion and global influence of " + topic + ".";
                 } else if (i === 2) {
                     questionText = "This custom mock reading passage is specifically calibrated for which scale?";
                     options = { A: "Beginner Level (A1)", B: "Expert Level (C2)", C: "Calibrated English Proficiency: " + level, D: "Primary school level" };
                     answer = "C";
-                    explanation = "Văn bản và câu hỏi trắc nghiệm đã được hệ thống cấu hình chuẩn hóa khớp với trình độ '" + level + "'.";
+                    explanation = "The document layout and structural syntax have been adjusted to match the target scale of " + level + ".";
                 } else if (i === 3) {
                     questionText = "According to the passage, why was research in " + topic + " limited in the past?";
                     options = { A: "Due to technical constraints", B: "Because scientists were not interested", C: "Due to high financial costs", D: "Because it was illegal" };
                     answer = "A";
-                    explanation = "Dòng số 3 ghi nhận: 'research in " + topic + " was limited due to technical constraints'.";
+                    explanation = "Line 3 explicitly states that early attempts were 'limited due to technical constraints'.";
                 } else if (i === 4) {
                     questionText = "What is expected of students aiming for the " + level + " exam?";
                     options = { A: "To master terminology of " + topic, B: "To write a software application", C: "To travel to other countries", D: "To memorise the entire text word-for-word" };
                     answer = "A";
-                    explanation = "Đoạn văn nhấn mạnh học sinh ôn thi trình độ '" + level + "' cần làm chủ hệ thống thuật ngữ cốt lõi của chủ đề '" + topic + "'.";
+                    explanation = "The paragraph details that students preparing for the " + level + " exam are expected to master fundamental terminology.";
                 } else if (i === 5) {
                     questionText = "What has greatly enhanced our understanding of " + topic + " today?";
                     options = { A: "Modern educational methods", B: "The reading of old historical newspapers", C: "Traditional classroom teaching only", D: "Watching general entertainment television" };
                     answer = "A";
-                    explanation = "Đoạn văn đề cập: 'modern educational methods have vastly improved our capability to utilize " + topic + "'.";
+                    explanation = "The text remarks that 'modern educational methods have vastly improved our capability to utilize " + topic + "'.";
                 } else {
                     questionText = "Question " + i + " (Skill Test): Is active practicing of " + topic + " highly recommended for " + level + "?";
                     options = { A: "Yes, practicing this specific material is key to success.", B: "No, it is optional.", C: "It should only be studied occasionally.", D: "Not sure." };
                     answer = "A";
-                    explanation = "Việc luyện tập thường xuyên chủ đề '" + topic + "' giúp người học củng cố vốn từ và tăng phản xạ ở trình độ '" + level + "'.";
+                    explanation = "Continuous practice with " + topic + " reinforces lexical recall and improves cognitive comprehension at level " + level + ".";
                 }
 
                 questions.push({
@@ -557,7 +565,7 @@
 
             var q = quizData.questions[idx];
 
-            document.getElementById("current-question-num").innerText = "CÂU HỎI " + (idx + 1) + "/10";
+            document.getElementById("current-question-num").innerText = "QUESTION " + (idx + 1) + "/10";
             document.getElementById("question-text").innerText = q.question;
 
             var optionsGrid = document.getElementById("options-grid");
@@ -613,7 +621,7 @@
             var expBox = document.getElementById("question-explanation");
             if (isSubmitted) {
                 showElement("question-explanation");
-                expBox.innerHTML = "<strong>Giải thích câu " + (idx + 1) + ":</strong> " + q.explanation;
+                expBox.innerHTML = "<strong>Explanation (Q" + (idx + 1) + "):</strong> " + q.explanation;
             } else {
                 hideElement("question-explanation");
             }
@@ -692,7 +700,7 @@
 
             if (answeredCount >= 7 || activeQuestionIdx >= 8) {
                 showElement("btn-submit");
-                btnSubmit.innerText = "Nộp bài (Đã làm " + answeredCount + "/" + total + ")";
+                btnSubmit.innerText = "Submit Quiz (" + answeredCount + "/" + total + ")";
             } else {
                 hideElement("btn-submit");
             }
@@ -711,7 +719,7 @@
             }
 
             if (answeredCount < total) {
-                alert("Bạn mới chọn đáp án cho " + answeredCount + "/" + total + " câu hỏi. Hãy làm hết bài trước khi nộp nhé!");
+                alert("Please answer all " + total + " questions before submitting!");
                 return;
             }
 
@@ -727,7 +735,7 @@
 
             var resDiv = document.getElementById("result");
             showElement("result");
-            resDiv.innerText = "ĐIỂM SỐ CỦA BẠN: " + score + "/" + total;
+            resDiv.innerText = "YOUR SCORE: " + score + "/" + total;
 
             sendResultToMIT(score, total);
             showQuestion(activeQuestionIdx);
