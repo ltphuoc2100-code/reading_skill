@@ -110,7 +110,7 @@ button:active {
 
 <script>
 // 🔑 API Key thực tế của bạn đã được dán cố định an toàn ở đây
-const API_KEY = "AQ.Ab8RN6JCzHlJN5qBvhX6a7sTBXyen-9RHkpSQn5gZ_qXCaVScw";
+const API_KEY = "AIzaSyAJPtlIAIxPv-zyfhqUwxiOikRmDKcdpKo";
 
 // Đón nhận tham số trực tiếp từ đường link URL truyền xuống từ MIT App Inventor
 const params = new URLSearchParams(window.location.search);
@@ -173,7 +173,7 @@ async function callGeminiAPI(modelName, prompt) {
     return result.candidates[0].content.parts[0].text;
 }
 
-// Hàm khởi tạo bài thi chính với động cơ tự động chuyển đổi model (Auto-Fallback)
+// Hàm khởi tạo bài thi chính với động cơ tự động chuyển đổi sang model Gemini 2.0 mới nhất
 async function createQuiz(){
     const prompt = `
 Create an English reading comprehension test.
@@ -203,17 +203,19 @@ Return ONLY valid JSON.
 
     try {
         let textResponse = "";
+        let primaryError = null;
         
         // BƯỚC 1: Thử gọi bằng model 2.5 Flash trước
         try {
             document.getElementById("status").innerHTML = "⚡ AI đang kết nối bằng Gemini 2.5 Flash...";
             textResponse = await callGeminiAPI("gemini-2.5-flash", prompt);
         } catch (err25) {
-            console.warn("Gemini 2.5 Flash lỗi hoặc chưa kích hoạt, đang chuyển hướng sang Gemini 1.5 Flash...", err25);
+            console.warn("Gemini 2.5 Flash lỗi, lưu trữ log lỗi chính...", err25);
+            primaryError = err25.message; // Lưu trữ lỗi gốc cực kỳ quan trọng
             
-            // BƯỚC 2: Tự động chuyển đổi sang model 1.5 Flash nếu 2.5 gặp sự cố
-            document.getElementById("status").innerHTML = "🔄 Đang chuyển đổi dự phòng sang Gemini 1.5 Flash...";
-            textResponse = await callGeminiAPI("gemini-1.5-flash", prompt);
+            // BƯỚC 2: Tự động chuyển đổi sang model 2.0 Flash mới nhất (thay vì 1.5 đã chết)
+            document.getElementById("status").innerHTML = "🔄 Đang chuyển đổi dự phòng sang Gemini 2.0 Flash...";
+            textResponse = await callGeminiAPI("gemini-2.0-flash", prompt);
         }
 
         // BƯỚC 3: Phân tích và hiển thị kết quả
@@ -222,11 +224,12 @@ Return ONLY valid JSON.
 
     } catch(err) {
         // Hiển thị hộp thư báo lỗi rõ ràng bằng tiếng Việt, tuyệt đối không bị trắng màn hình
+        // Hiển thị cả lỗi chính ban đầu để người dùng dễ dàng bốc thuốc đúng bệnh
         document.getElementById("status").innerHTML = `
             <div class="error-container">
                 <strong>❌ Không thể khởi tạo đề thi AI:</strong><br>
-                <span>Chi tiết lỗi: ${err.message}</span><br><br>
-                <span style="font-size: 11px; color: #ef4444;">Gợi ý: Hãy kiểm tra xem API Key của bạn có đang bị giới hạn, hết hạn mức hoặc kết nối Internet trên điện thoại bị yếu không nhé.</span>
+                <span style="font-size: 12px; font-weight: normal; color: #b91c1c;">Lỗi kết nối chính: ${err.message}</span><br><br>
+                <span style="font-size: 11px; color: #ef4444;">💡 Gợi ý xử lý: Hãy kiểm tra xem API Key của bạn trong file HTML có bị gõ thiếu ký tự nào không nhé. Google báo lỗi này thường vì API Key của bạn không hợp lệ hoặc đã đạt hạn mức giới hạn hàng ngày.</span>
             </div>
         `;
     }
