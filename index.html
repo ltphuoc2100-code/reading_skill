@@ -2,8 +2,8 @@
 <html lang="vi">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>AI Reading Practice (Connection Test)</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>AI Reading Practice (Full Screen Test)</title>
     <!-- Nhúng Tailwind CSS hỗ trợ thiết kế giao diện di động tuyệt đẹp -->
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
@@ -20,11 +20,11 @@
         }
     </style>
 </head>
-<body class="bg-slate-950 text-slate-100 min-h-screen flex flex-col justify-between font-sans">
+<body class="bg-slate-950 text-slate-100 min-h-screen flex flex-col justify-between font-sans w-full overflow-x-hidden">
 
-    <!-- Header ứng dụng -->
-    <header class="bg-slate-900 border-b border-slate-800 py-3.5 px-4 sticky top-0 z-20 shadow-lg">
-        <div class="max-w-md mx-auto flex items-center justify-between">
+    <!-- Header ứng dụng - Giãn rộng 100% màn hình -->
+    <header class="bg-slate-900 border-b border-slate-800 py-3.5 px-4 sticky top-0 z-20 shadow-lg w-full">
+        <div class="w-full flex items-center justify-between">
             <div class="flex items-center space-x-2">
                 <span class="p-2 bg-emerald-600/20 text-emerald-400 border border-emerald-500/30 rounded-xl">
                     <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -33,22 +33,22 @@
                 </span>
                 <div>
                     <h1 class="text-xs font-bold tracking-wide text-white">Khảo Thí Đọc Hiểu</h1>
-                    <p class="text-[10px] text-emerald-400 font-semibold">Chế độ kiểm tra kết nối (Không cần API Key)</p>
+                    <p class="text-[10px] text-emerald-400 font-semibold">Chế độ kiểm tra kết nối (Toàn màn hình)</p>
                 </div>
             </div>
             
             <div id="status-badge" class="flex items-center space-x-1.5 bg-emerald-500/10 border border-emerald-500/20 px-2.5 py-1 rounded-full text-[9px] font-semibold text-emerald-400">
                 <span class="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse"></span>
-                <span id="status-badge-text">ĐÃ THÔNG LUỒNG</span>
+                <span id="status-badge-text">ĐÃ THÔNG LUỒNG</span>
             </div>
         </div>
     </header>
 
-    <!-- Màn hình tương tác chính -->
-    <main class="flex-1 max-w-md mx-auto w-full p-4 space-y-4 flex flex-col justify-start overflow-y-auto">
+    <!-- Màn hình tương tác chính - Tự động thích ứng 100% chiều rộng -->
+    <main class="flex-1 w-full p-4 space-y-4 flex flex-col justify-start overflow-y-auto">
 
-        <!-- THẺ TRẠNG THÁI HIỂN THỊ KẾT NỐI -->
-        <div class="bg-slate-900 border border-slate-800 rounded-2xl p-4 shadow-md space-y-3">
+        <!-- THỂ TRẠNG THÁI HIỂN THỊ KẾT NỐI -->
+        <div class="bg-slate-900 border border-slate-800 rounded-2xl p-4 shadow-md space-y-3 w-full">
             <h2 class="text-xs font-bold text-slate-400 uppercase tracking-wider">Hộp Thử Nghiệm Tín Hiệu:</h2>
             <div class="grid grid-cols-2 gap-2">
                 <div class="bg-slate-950 p-3 rounded-xl border border-slate-850 text-center">
@@ -63,12 +63,12 @@
             <div id="status" class="text-[11px] text-center text-amber-400 font-medium">🔄 Đang liên tục quét tín hiệu từ MIT App Inventor...</div>
         </div>
 
-        <div id="quizArea" class="space-y-4"></div>
+        <div id="quizArea" class="space-y-4 w-full"></div>
 
     </main>
 
-    <!-- Footer -->
-    <footer class="bg-slate-950 text-slate-600 text-center py-4 text-[10px] border-t border-slate-900 uppercase tracking-widest">
+    <!-- Footer - Rộng 100% -->
+    <footer class="bg-slate-950 text-slate-600 text-center py-4 text-[10px] border-t border-slate-900 uppercase tracking-widest w-full">
         MIT App Inventor Bridge Active
     </footer>
 
@@ -186,7 +186,7 @@
         function renderQuiz() {
             let html = "";
             html += `
-                <div class="bg-slate-900 border border-slate-850 rounded-2xl p-4 shadow-md space-y-3">
+                <div class="bg-slate-900 border border-slate-850 rounded-2xl p-4 shadow-md space-y-3 w-full">
                     <h3 class="text-sm font-bold text-white leading-tight">${quizData.title}</h3>
                     <div class="text-xs text-slate-300 leading-relaxed bg-slate-950/70 p-3.5 rounded-xl border border-slate-800/80 font-serif">${quizData.passage}</div>
                 </div>
@@ -194,22 +194,22 @@
 
             quizData.questions.forEach((q, index) => {
                 html += `
-                    <div class="bg-slate-900 border border-slate-850 rounded-2xl p-4 shadow-md space-y-3">
+                    <div class="bg-slate-900 border border-slate-850 rounded-2xl p-4 shadow-md space-y-3 w-full">
                         <p class="text-xs font-bold text-slate-100 leading-snug"><b>${index+1}. ${q.question}</b></p>
-                        <div class="grid grid-cols-1 gap-2">
-                            <label class="tap-scale flex items-center p-3 rounded-xl text-xs font-medium bg-slate-850 border border-slate-800 text-slate-300 cursor-pointer">
+                        <div class="grid grid-cols-1 gap-2 w-full">
+                            <label class="tap-scale flex items-center p-3 rounded-xl text-xs font-medium bg-slate-850 border border-slate-800 text-slate-300 cursor-pointer w-full">
                                 <input type="radio" name="q${index}" value="A" class="mr-3 accent-indigo-500">
                                 A. ${q.A}
                             </label>
-                            <label class="tap-scale flex items-center p-3 rounded-xl text-xs font-medium bg-slate-850 border border-slate-800 text-slate-300 cursor-pointer">
+                            <label class="tap-scale flex items-center p-3 rounded-xl text-xs font-medium bg-slate-850 border border-slate-800 text-slate-300 cursor-pointer w-full">
                                 <input type="radio" name="q${index}" value="B" class="mr-3 accent-indigo-500">
                                 B. ${q.B}
                             </label>
-                            <label class="tap-scale flex items-center p-3 rounded-xl text-xs font-medium bg-slate-850 border border-slate-800 text-slate-300 cursor-pointer">
+                            <label class="tap-scale flex items-center p-3 rounded-xl text-xs font-medium bg-slate-850 border border-slate-800 text-slate-300 cursor-pointer w-full">
                                 <input type="radio" name="q${index}" value="C" class="mr-3 accent-indigo-500">
                                 C. ${q.C}
                             </label>
-                            <label class="tap-scale flex items-center p-3 rounded-xl text-xs font-medium bg-slate-850 border border-slate-800 text-slate-300 cursor-pointer">
+                            <label class="tap-scale flex items-center p-3 rounded-xl text-xs font-medium bg-slate-850 border border-slate-800 text-slate-300 cursor-pointer w-full">
                                 <input type="radio" name="q${index}" value="D" class="mr-3 accent-indigo-500">
                                 D. ${q.D}
                             </label>
@@ -220,7 +220,7 @@
             });
 
             html += `
-                <div class="bg-slate-900 border border-slate-850 rounded-2xl p-4 shadow-md text-center space-y-3">
+                <div class="bg-slate-900 border border-slate-850 rounded-2xl p-4 shadow-md text-center space-y-3 w-full">
                     <button onclick="gradeQuiz()" class="tap-scale w-full bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-2.5 rounded-xl text-xs transition shadow-md">
                         Nộp Bài Chấm Điểm Thử
                     </button>
@@ -242,10 +242,10 @@
                 if (selected) {
                     if (selected.value === q.answer) {
                         score++;
-                        fb.className = "p-3 bg-emerald-500/10 border border-emerald-500/20 rounded-xl text-[11px] text-emerald-400 mt-2";
+                        fb.className = "p-3 bg-emerald-500/10 border border-emerald-500/20 rounded-xl text-[11px] text-emerald-400 mt-2 w-full";
                         fb.innerHTML = "<p class='font-bold'>✓ Đúng</p>";
                     } else {
-                        fb.className = "p-3 bg-rose-500/10 border border-rose-500/20 rounded-xl text-[11px] text-rose-400 mt-2 space-y-1";
+                        fb.className = "p-3 bg-rose-500/10 border border-rose-500/20 rounded-xl text-[11px] text-rose-400 mt-2 space-y-1 w-full";
                         fb.innerHTML = `
                             <p class='font-bold'>✗ Chưa chính xác</p>
                             <p><b>Đáp án đúng:</b> <span class="text-emerald-400 font-bold">${q.answer}</span></p>
@@ -253,7 +253,7 @@
                         `;
                     }
                 } else {
-                    fb.className = "p-3 bg-amber-500/10 border border-amber-500/20 rounded-xl text-[11px] text-amber-400 mt-2";
+                    fb.className = "p-3 bg-amber-500/10 border border-amber-500/20 rounded-xl text-[11px] text-amber-400 mt-2 w-full";
                     fb.innerHTML = "<p>⚠️ Bạn chưa chọn câu trả lời này!</p>";
                 }
             });
