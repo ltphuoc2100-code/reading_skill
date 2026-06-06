@@ -3,13 +3,14 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>AI Reading Practice (Full Screen Test)</title>
+    <title>AI Reading Practice (Split Screen)</title>
     <!-- Nhúng Tailwind CSS hỗ trợ thiết kế giao diện di động tuyệt đẹp -->
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
         .tap-scale:active {
             transform: scale(0.97);
         }
+        /* Thanh cuộn siêu mịn trên điện thoại di động */
         .custom-scroll::-webkit-scrollbar {
             width: 4px;
             height: 4px;
@@ -20,79 +21,157 @@
         }
     </style>
 </head>
-<body class="bg-slate-950 text-slate-100 min-h-screen flex flex-col justify-between font-sans w-full overflow-x-hidden">
+<body class="bg-slate-950 text-slate-100 h-screen w-full overflow-hidden flex flex-col font-sans">
 
-    <!-- Header ứng dụng - Giãn rộng 100% màn hình -->
-    <header class="bg-slate-900 border-b border-slate-800 py-3.5 px-4 sticky top-0 z-20 shadow-lg w-full">
+    <!-- HEADER ỨNG DỤNG - Cố định phía trên cùng -->
+    <header class="bg-slate-900 border-b border-slate-800 py-2.5 px-4 z-20 flex-shrink-0">
         <div class="w-full flex items-center justify-between">
             <div class="flex items-center space-x-2">
-                <span class="p-2 bg-emerald-600/20 text-emerald-400 border border-emerald-500/30 rounded-xl">
+                <span class="p-1.5 bg-indigo-600/20 text-indigo-400 border border-indigo-500/30 rounded-lg">
                     <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"/>
                     </svg>
                 </span>
                 <div>
-                    <h1 class="text-xs font-bold tracking-wide text-white">Khảo Thí Đọc Hiểu</h1>
-                    <p class="text-[10px] text-emerald-400 font-semibold">Chế độ kiểm tra kết nối (Toàn màn hình)</p>
+                    <h1 class="text-xs font-bold text-white">Khảo Thí Đọc Hiểu AI</h1>
+                    <p class="text-[9px] text-indigo-400 font-semibold" id="header-subtitle">Đang đợi kết nối...</p>
                 </div>
             </div>
             
-            <div id="status-badge" class="flex items-center space-x-1.5 bg-emerald-500/10 border border-emerald-500/20 px-2.5 py-1 rounded-full text-[9px] font-semibold text-emerald-400">
-                <span class="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse"></span>
-                <span id="status-badge-text">ĐÃ THÔNG LUỒNG</span>
+            <div id="status-badge" class="flex items-center space-x-1.5 bg-amber-500/10 border border-amber-500/20 px-2.5 py-0.5 rounded-full text-[9px] font-semibold text-amber-400">
+                <span class="w-1.5 h-1.5 rounded-full bg-amber-400 animate-pulse"></span>
+                <span id="status-badge-text">ĐANG CHỜ TÍN HIỆU</span>
             </div>
         </div>
     </header>
 
-    <!-- Màn hình tương tác chính - Tự động thích ứng 100% chiều rộng -->
-    <main class="flex-1 w-full p-4 space-y-4 flex flex-col justify-start overflow-y-auto">
+    <!-- KHUNG ĐỒNG BỘ CHỜ TÍN HIỆU (Hiện khi chưa nhận được Trình độ & Chủ đề) -->
+    <div id="waiting-screen" class="flex-1 flex flex-col justify-center items-center p-6 text-center space-y-4">
+        <div class="w-16 h-16 bg-slate-900 border border-slate-800 rounded-2xl flex items-center justify-center text-2xl shadow-lg">
+            📡
+        </div>
+        <div class="space-y-1.5 max-w-xs">
+            <h3 class="text-sm font-bold text-white">Chờ lệnh từ App Inventor</h3>
+            <p class="text-[11px] text-slate-400 leading-relaxed">
+                Hệ thống đang chờ bạn chọn <span class="text-indigo-400 font-semibold">Trình độ</span> và <span class="text-indigo-400 font-semibold">Chủ đề</span> trên điện thoại rồi bấm nút bắt đầu để khởi tạo đề thi!
+            </p>
+        </div>
+        <button onclick="simulateLaunch()" class="tap-scale px-4 py-2 bg-indigo-600 hover:bg-indigo-700 text-white rounded-xl text-xs font-bold shadow-md transition">
+             Luyện tập đề mẫu ngay (Chạy thử)
+        </button>
+    </div>
 
-        <!-- THỂ TRẠNG THÁI HIỂN THỊ KẾT NỐI -->
-        <div class="bg-slate-900 border border-slate-800 rounded-2xl p-4 shadow-md space-y-3 w-full">
-            <h2 class="text-xs font-bold text-slate-400 uppercase tracking-wider">Hộp Thử Nghiệm Tín Hiệu:</h2>
-            <div class="grid grid-cols-2 gap-2">
-                <div class="bg-slate-950 p-3 rounded-xl border border-slate-850 text-center">
-                    <p class="text-[9px] text-slate-500 font-bold uppercase">Trình độ nhận được</p>
-                    <p class="text-lg font-black text-indigo-400 mt-1" id="received-level">--</p>
-                </div>
-                <div class="bg-slate-950 p-3 rounded-xl border border-slate-850 text-center">
-                    <p class="text-[9px] text-slate-500 font-bold uppercase">Chủ đề nhận được</p>
-                    <p class="text-xs font-extrabold text-indigo-400 mt-2 truncate" id="received-topic">Chưa có tín hiệu</p>
-                </div>
+    <!-- KHUNG CHIA ĐÔI MÀN HÌNH CHÍNH (Chỉ hiện khi đã nhận được dữ liệu) -->
+    <div id="split-screen-container" class="hidden flex-1 flex flex-col overflow-hidden w-full">
+        
+        <!-- PHẦN 1: NỬA TRÊN - BÀI ĐỌC CỐ ĐỊNH (Cuộn độc lập) -->
+        <div class="h-[42%] border-b border-slate-800 bg-slate-900/50 p-3 overflow-y-auto custom-scroll flex flex-col justify-start space-y-2">
+            <div class="flex items-center justify-between text-[9px] font-bold">
+                <span id="badge-level" class="bg-indigo-500/10 text-indigo-400 border border-indigo-500/20 px-2 py-0.5 rounded uppercase tracking-wider">LEVEL --</span>
+                <span id="badge-topic" class="bg-slate-800 text-slate-300 px-2 py-0.5 rounded uppercase tracking-wider truncate max-w-[200px]">TOPIC --</span>
             </div>
-            <div id="status" class="text-[11px] text-center text-amber-400 font-medium">🔄 Đang liên tục quét tín hiệu từ MIT App Inventor...</div>
+            <h3 id="reading-title" class="text-xs font-extrabold text-white leading-tight">Đang tải tiêu đề...</h3>
+            <div id="reading-passage" class="text-xs text-slate-300 leading-relaxed bg-slate-950 p-3 rounded-xl border border-slate-850 font-serif overflow-y-auto custom-scroll flex-1">
+                Đang biên soạn bài đọc...
+            </div>
         </div>
 
-        <div id="quizArea" class="space-y-4 w-full"></div>
+        <!-- PHẦN 2: NỬA DƯỚI - HIỂN THỊ TỪNG CÂU HỎI TRẮC NGHIỆM -->
+        <div class="h-[58%] bg-slate-950 p-4 flex flex-col justify-between overflow-hidden">
+            
+            <!-- Nội dung câu hỏi hiện tại -->
+            <div class="flex-1 overflow-y-auto custom-scroll space-y-3 pb-2" id="question-card">
+                <div class="flex items-center justify-between border-b border-slate-900 pb-2">
+                    <span id="current-question-num" class="text-[11px] font-bold text-slate-400">CÂU HỎI 1/10</span>
+                    <span class="bg-indigo-500/10 text-indigo-400 border border-indigo-500/20 text-[9px] font-bold px-2 py-0.5 rounded uppercase tracking-wider">KIỂM TRA ĐỌC</span>
+                </div>
 
-    </main>
+                <p id="question-text" class="text-xs font-bold text-slate-100 leading-snug">Đang tải câu hỏi...</p>
+                
+                <!-- Khu vực đáp án trắc nghiệm -->
+                <div id="options-grid" class="grid grid-cols-1 gap-2">
+                    <!-- Đáp án A, B, C, D hiển thị tại đây -->
+                </div>
 
-    <!-- Footer - Rộng 100% -->
-    <footer class="bg-slate-950 text-slate-600 text-center py-4 text-[10px] border-t border-slate-900 uppercase tracking-widest w-full">
-        MIT App Inventor Bridge Active
+                <!-- Phản hồi đúng sai + Giải thích chi tiết (Ẩn đi, chỉ hiện khi đã nhấn nộp bài) -->
+                <div id="question-explanation" class="hidden p-3 bg-indigo-500/10 border border-indigo-500/20 rounded-xl text-[10px] text-indigo-300 leading-relaxed">
+                    Giải thích...
+                </div>
+            </div>
+
+            <!-- PHẦN ĐIỀU HƯỚNG: Chuyển câu hỏi & nộp bài -->
+            <div class="border-t border-slate-900 pt-3 bg-slate-950 flex flex-col space-y-2.5 flex-shrink-0">
+                
+                <!-- Đốm tròn tiến trình 1-10 -->
+                <div class="flex justify-center space-x-1.5 overflow-x-auto py-1">
+                    <span id="bubble-0" class="w-2 h-2 rounded-full bg-slate-800 transition-all"></span>
+                    <span id="bubble-1" class="w-2 h-2 rounded-full bg-slate-800 transition-all"></span>
+                    <span id="bubble-2" class="w-2 h-2 rounded-full bg-slate-800 transition-all"></span>
+                    <span id="bubble-3" class="w-2 h-2 rounded-full bg-slate-800 transition-all"></span>
+                    <span id="bubble-4" class="w-2 h-2 rounded-full bg-slate-800 transition-all"></span>
+                    <span id="bubble-5" class="w-2 h-2 rounded-full bg-slate-800 transition-all"></span>
+                    <span id="bubble-6" class="w-2 h-2 rounded-full bg-slate-800 transition-all"></span>
+                    <span id="bubble-7" class="w-2 h-2 rounded-full bg-slate-800 transition-all"></span>
+                    <span id="bubble-8" class="w-2 h-2 rounded-full bg-slate-800 transition-all"></span>
+                    <span id="bubble-9" class="w-2 h-2 rounded-full bg-slate-800 transition-all"></span>
+                </div>
+
+                <!-- Thanh nút Quay lại / Tiếp theo / Nộp bài -->
+                <div class="flex items-center justify-between gap-3">
+                    <button onclick="prevQuestion()" id="btn-prev" class="tap-scale flex-1 py-2 bg-slate-900 hover:bg-slate-800 disabled:opacity-20 disabled:pointer-events-none rounded-xl text-[11px] font-bold text-slate-300 transition">
+                        Quay lại
+                    </button>
+                    
+                    <button onclick="nextQuestion()" id="btn-next" class="tap-scale flex-1 py-2 bg-slate-900 hover:bg-slate-800 disabled:opacity-20 disabled:pointer-events-none rounded-xl text-[11px] font-bold text-slate-300 transition">
+                        Tiếp theo
+                    </button>
+                </div>
+
+                <!-- Nút nộp bài chấm điểm (Tự xuất hiện khi làm được 7/10 câu trở lên) -->
+                <button onclick="gradeQuiz()" id="btn-submit" class="tap-scale hidden w-full bg-emerald-600 hover:bg-emerald-700 text-white font-bold py-2.5 rounded-xl text-xs transition shadow-lg">
+                    Nộp Bài Chấm Điểm Thử
+                </button>
+
+                <!-- Kết quả tổng điểm sau khi nộp bài -->
+                <div id="result" class="hidden text-center text-xs font-bold text-emerald-400 bg-emerald-500/10 border border-emerald-500/20 py-2 rounded-xl animate-pulse"></div>
+            </div>
+
+        </div>
+    </div>
+
+    <!-- Chân trang cố định -->
+    <footer class="bg-slate-950 text-slate-700 text-center py-2.5 text-[9px] border-t border-slate-900 uppercase tracking-widest flex-shrink-0">
+        MIT App Inventor Dual-Pane Bridge
     </footer>
 
+    <!-- Logic quản lý truyền nhận & Chuyển slide câu hỏi -->
     <script>
         let currentLevel = "";
         let currentTopic = "";
         let quizData = null;
         let lastReceivedConfig = "";
+        
+        let activeQuestionIdx = 0; // Lưu chỉ số câu hỏi hiện tại đang hiển thị (0 đến 9)
+        let selectedAnswers = {};  // Lưu trữ câu trả lời đã chọn của học sinh {0: 'A', 1: 'C',...}
+        let isSubmitted = false;   // Trạng thái đã nộp bài chấm điểm hay chưa
 
-        // 🎯 BỘ NHẬN TÍN HIỆU SIÊU CẤP - THÁCH THỨC MỌI DẠNG BLOCKS
+        // Hàm giả lập kích hoạt đề thi nhanh (Chạy thử khi không kết nối App Inventor)
+        function simulateLaunch() {
+            processNewConfig("B2", "Artificial Intelligence");
+        }
+
+        // BỘ NHẬN TÍN HIỆU ĐƯỜNG TRUYỀN TỪ APP INVENTOR (Đọc URL & WebViewString)
         function parseParameters() {
             let level = "Chưa nhận";
             let topic = "Chưa nhận";
 
-            // Cách 1: Đọc từ tham số URL thực tế của trình duyệt (Dành cho GoToUrl)
             const urlParams = new URLSearchParams(window.location.search);
             if (urlParams.get("level")) level = urlParams.get("level").trim();
             if (urlParams.get("topic")) topic = urlParams.get("topic").trim();
 
-            // Cách 2: Đọc từ WebViewString (Dành cho set WebViewString)
             if (window.AppInventor && window.AppInventor.getWebViewString) {
                 const wvs = window.AppInventor.getWebViewString();
                 if (wvs && wvs.trim() !== "") {
-                    // TRƯỜNG HỢP ĐẶC BIỆT: Nếu dán cả link URL chứa ?level= vào WebViewString
                     if (wvs.includes("?")) {
                         const queryString = wvs.split("?")[1];
                         if (queryString) {
@@ -100,9 +179,7 @@
                             if (tempParams.get("level")) level = tempParams.get("level").trim();
                             if (tempParams.get("topic")) topic = tempParams.get("topic").trim();
                         }
-                    } 
-                    // TRƯỜNG HỢP CHUẨN: Nếu truyền dạng gạch đứng "B1|Technology"
-                    else if (wvs.includes("|")) {
+                    } else if (wvs.includes("|")) {
                         const parts = wvs.split("|");
                         level = parts[0].trim();
                         topic = parts[1].trim();
@@ -110,21 +187,21 @@
                 }
             }
 
-            // Làm sạch các ký tự đặc biệt nếu có lỗi gõ phím
+            // Làm sạch ký tự lạ do bấm nhầm trên điện thoại
             level = level.replace(/[^a-zA-Z0-9]/g, ""); 
             topic = topic.trim();
 
             return { level, topic };
         }
 
-        // ĐỘNG CƠ SINH ĐỀ THI MÔ PHỎNG DYNAMIC OFFLINE (Chứng minh kết nối thành công)
+        // ĐỘNG CƠ SINH ĐỀ THI ĐỌC HIỂU DYNAMIC 10 CÂU OFFLINE 
         function generateLocalMockQuiz(level, topic) {
-            const simulatedTitle = `Exam Study: ${topic} (Level ${level})`;
-            const simulatedPassage = `This special test passage is dynamically compiled for English proficiency <b>${level}</b> focusing on the core subject of <b>${topic}</b>. In this study, we explore how <b>${topic}</b> interacts with modern learners at the <b>${level}</b> scale. Historically, research in <b>${topic}</b> was limited. However, modern educational technologies have greatly enhanced our understanding of <b>${topic}</b>. Students aiming for <b>${level}</b> are expected to master key terminology related to <b>${topic}</b>. By practicing this specific material, you demonstrate that your MIT App Inventor and WebViewer communication channel is functioning with 100% precision.`;
+            const simulatedTitle = `Exam Study: The Evolution of ${topic}`;
+            const simulatedPassage = `This special study material is dynamically compiled for English proficiency <b>${level}</b> focusing on the core subject of <b>${topic}</b>. Today, <b>${topic}</b> is rapidly changing the global economic landscape. In past decades, research in <b>${topic}</b> was limited due to technical constraints. However, modern educational methods have vastly improved our capability to utilize <b>${topic}</b> in school systems. Students preparing for the <b>${level}</b> exam are strongly expected to master fundamental terminology and concepts of <b>${topic}</b>. By successfully reading through this text, answering all 10 questions, and submitting your answers, you verify that the split-screen view on your WebViewer is fully operational and compatible with MIT App Inventor!`;
 
             const questions = [];
             
-            // Tự động tạo 10 câu hỏi chứa đúng giá trị Trình độ và Chủ đề đã chọn
+            // Tạo 10 câu hỏi ngẫu nhiên chất lượng cao xoay quanh Chủ đề và Trình độ học sinh đã chọn
             for (let i = 1; i <= 10; i++) {
                 let questionText = "";
                 let answer = "A";
@@ -132,20 +209,35 @@
                 let explanation = "";
 
                 if (i === 1) {
-                    questionText = `What is the main subject discussed in this reading exercise?`;
-                    options = { A: topic, B: "An unrelated general subject", C: "Traditional cooking methods", D: "Extreme outdoor sports" };
+                    questionText = `What is the primary theme discussed in this reading exercise?`;
+                    options = { A: `The rapid changes and impact of ${topic}`, B: "A collection of irrelevant recipes", C: "Traditional farming and agriculture", D: "The rise of sports entertainment" };
                     answer = "A";
-                    explanation = `Đoạn văn nêu rõ chủ đề chính của bài luyện tập đọc hiểu này là về "${topic}".`;
+                    explanation = `Đoạn văn giới thiệu trực tiếp rằng đề tài thảo luận chính của bài đọc hiểu là về sự thay đổi và ảnh hưởng của "${topic}".`;
                 } else if (i === 2) {
-                    questionText = `This custom mock reading passage is calibrated for which level?`;
-                    options = { A: "Beginner Level (A1)", B: "Expert Level (C2)", C: `Calibrated Level: ${level}`, D: "Primary school level" };
+                    questionText = `This custom mock reading passage is specifically calibrated for which scale?`;
+                    options = { A: "Beginner Level (A1)", B: "Expert Level (C2)", C: `Calibrated English Proficiency: ${level}`, D: "Primary school level" };
                     answer = "C";
-                    explanation = `Văn bản ghi nhận rõ ràng bài kiểm tra này được hiệu chuẩn ở trình độ "${level}".`;
-                } else {
-                    questionText = `Question ${i} (${topic}): Is mastering ${topic} helpful for students?`;
-                    options = { A: "Yes, it is highly recommended for progress.", B: "No, it should be ignored.", C: "It is only a temporary distraction.", D: "No opinion." };
+                    explanation = `Văn bản và câu hỏi trắc nghiệm đã được hệ thống cấu hình chuẩn hóa khớp với trình độ "${level}".`;
+                } else if (i === 3) {
+                    questionText = `According to the passage, why was research in ${topic} limited in the past?`;
+                    options = { A: "Due to technical constraints", B: "Because scientists were not interested", C: "Due to high financial costs", D: "Because it was illegal" };
                     answer = "A";
-                    explanation = `Theo nội dung văn bản: "mastering ${topic} is key to unlocking new global opportunities".`;
+                    explanation = `Dòng số 3 ghi nhận: "research in ${topic} was limited due to technical constraints".`;
+                } else if (i === 4) {
+                    questionText = `What is expected of students aiming for the ${level} exam?`;
+                    options = { A: `To master terminology of ${topic}`, B: "To write a software application", C: "To travel to other countries", D: "To memorise the entire text word-for-word" };
+                    answer = "A";
+                    explanation = `Đoạn văn nhấn mạnh học sinh ôn thi trình độ "${level}" cần làm chủ hệ thống thuật ngữ cốt lõi của chủ đề "${topic}".`;
+                } else if (i === 5) {
+                    questionText = `What has greatly enhanced our understanding of ${topic} today?`;
+                    options = { A: "Modern educational methods", B: "The reading of old historical newspapers", C: "Traditional classroom teaching only", D: "Watching general entertainment television" };
+                    answer = "A";
+                    explanation = `Văn bản đề cập: "modern educational methods have vastly improved our capability to utilize ${topic}".`;
+                } else {
+                    questionText = `Question ${i} (Skill Test): Is active practicing of ${topic} highly recommended for ${level}?`;
+                    options = { A: "Yes, practicing this specific material is key to success.", B: "No, it is optional and waste of time.", C: "It should only be studied occasionally.", D: "Not sure." };
+                    answer = "A";
+                    explanation = `Việc luyện tập thường xuyên chủ đề "${topic}" giúp người học củng cố vốn từ và tăng phản xạ ở trình độ "${level}".`;
                 }
 
                 questions.push({
@@ -166,119 +258,229 @@
             };
         }
 
-        // Hàm xử lý khi phát hiện tín hiệu cấu hình thay đổi từ điện thoại
-        function handleConfigChange(level, topic) {
-            const statusDiv = document.getElementById("status");
-            statusDiv.innerHTML = `⚡ Đã bắt được tín hiệu! Đang khởi tạo đề thi mô phỏng cho <b>${level}</b> - <b>${topic}</b>...`;
+        // XỬ LÝ KHỞI TẠO ĐỀ THI THEO CẤU HÌNH THỰC
+        function processNewConfig(level, topic) {
+            document.getElementById("waiting-screen").classList.add("hidden");
+            document.getElementById("split-screen-container").classList.remove("hidden");
 
-            // Cập nhật giao diện khối nhận tín hiệu
-            document.getElementById("received-level").innerText = level;
-            document.getElementById("received-topic").innerText = topic;
+            const badgeStatusText = document.getElementById("status-badge-text");
+            const badgeStatus = document.getElementById("status-badge");
+            badgeStatusText.innerText = "ĐANG THI";
+            badgeStatus.className = "flex items-center space-x-1.5 bg-emerald-500/10 border border-emerald-500/20 px-2.5 py-0.5 rounded-full text-[9px] font-semibold text-emerald-400";
 
-            // Tự sinh đề thi mẫu offline ngay lập tức (Không tốn 1 mili-giây gọi API!)
+            document.getElementById("header-subtitle").innerText = `${level} | ${topic}`;
+            document.getElementById("badge-level").innerText = "LEVEL: " + level;
+            document.getElementById("badge-topic").innerText = "TOPIC: " + topic;
+
+            // Thiết lập lại trạng thái
+            selectedAnswers = {};
+            isSubmitted = false;
+            activeQuestionIdx = 0;
+            document.getElementById("result").classList.add("hidden");
+
+            // Tạo đề thi dựa trên trình độ và chủ đề bạn vừa bấm chọn!
             quizData = generateLocalMockQuiz(level, topic);
-            renderQuiz();
-            
-            statusDiv.innerHTML = `✅ Kết nối thành công! Đã đồng bộ đề thi trình độ <b>${level}</b>.`;
+
+            document.getElementById("reading-title").innerHTML = quizData.title;
+            document.getElementById("reading-passage").innerHTML = quizData.passage;
+
+            showQuestion(0);
         }
 
-        // Hiển thị giao diện đề thi
-        function renderQuiz() {
-            let html = "";
-            html += `
-                <div class="bg-slate-900 border border-slate-850 rounded-2xl p-4 shadow-md space-y-3 w-full">
-                    <h3 class="text-sm font-bold text-white leading-tight">${quizData.title}</h3>
-                    <div class="text-xs text-slate-300 leading-relaxed bg-slate-950/70 p-3.5 rounded-xl border border-slate-800/80 font-serif">${quizData.passage}</div>
-                </div>
-            `;
+        // HIỂN THỊ CÂU HỎI THEO CHỈ SỐ (CHỈ HIỆN 1 CÂU DUY NHẤT)
+        function showQuestion(idx) {
+            if (!quizData || idx < 0 || idx >= quizData.questions.length) return;
+            activeQuestionIdx = idx;
 
-            quizData.questions.forEach((q, index) => {
-                html += `
-                    <div class="bg-slate-900 border border-slate-850 rounded-2xl p-4 shadow-md space-y-3 w-full">
-                        <p class="text-xs font-bold text-slate-100 leading-snug"><b>${index+1}. ${q.question}</b></p>
-                        <div class="grid grid-cols-1 gap-2 w-full">
-                            <label class="tap-scale flex items-center p-3 rounded-xl text-xs font-medium bg-slate-850 border border-slate-800 text-slate-300 cursor-pointer w-full">
-                                <input type="radio" name="q${index}" value="A" class="mr-3 accent-indigo-500">
-                                A. ${q.A}
-                            </label>
-                            <label class="tap-scale flex items-center p-3 rounded-xl text-xs font-medium bg-slate-850 border border-slate-800 text-slate-300 cursor-pointer w-full">
-                                <input type="radio" name="q${index}" value="B" class="mr-3 accent-indigo-500">
-                                B. ${q.B}
-                            </label>
-                            <label class="tap-scale flex items-center p-3 rounded-xl text-xs font-medium bg-slate-850 border border-slate-800 text-slate-300 cursor-pointer w-full">
-                                <input type="radio" name="q${index}" value="C" class="mr-3 accent-indigo-500">
-                                C. ${q.C}
-                            </label>
-                            <label class="tap-scale flex items-center p-3 rounded-xl text-xs font-medium bg-slate-850 border border-slate-800 text-slate-300 cursor-pointer w-full">
-                                <input type="radio" name="q${index}" value="D" class="mr-3 accent-indigo-500">
-                                D. ${q.D}
-                            </label>
-                        </div>
-                        <div id="fb${index}"></div>
-                    </div>
-                `;
-            });
+            const q = quizData.questions[idx];
 
-            html += `
-                <div class="bg-slate-900 border border-slate-850 rounded-2xl p-4 shadow-md text-center space-y-3 w-full">
-                    <button onclick="gradeQuiz()" class="tap-scale w-full bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-2.5 rounded-xl text-xs transition shadow-md">
-                        Nộp Bài Chấm Điểm Thử
-                    </button>
-                    <div id="result" class="text-sm font-bold text-indigo-400"></div>
-                </div>
-            `;
+            document.getElementById("current-question-num").innerText = `CÂU HỎI ${idx + 1}/10`;
+            document.getElementById("question-text").innerText = q.question;
 
-            document.getElementById("quizArea").innerHTML = html;
-        }
+            const optionsGrid = document.getElementById("options-grid");
+            optionsGrid.innerHTML = "";
 
-        // Chấm điểm và truyền kết quả ngược về điện thoại qua WebViewString
-        function gradeQuiz() {
-            let score = 0;
+            const optKeys = ["A", "B", "C", "D"];
+            optKeys.forEach(key => {
+                const isChosen = selectedAnswers[idx] === key;
+                
+                const label = document.createElement("label");
+                let labelClass = "tap-scale flex items-center p-3 rounded-xl text-xs font-medium cursor-pointer transition ";
 
-            quizData.questions.forEach((q, index) => {
-                const selected = document.querySelector(`input[name="q${index}"]:checked`);
-                const fb = document.getElementById("fb" + index);
+                // Tạo nút radio ẩn
+                const radio = document.createElement("input");
+                radio.type = "radio";
+                radio.name = `q${idx}`;
+                radio.value = key;
+                radio.className = "mr-3 accent-indigo-500";
+                if (isChosen) radio.checked = true;
 
-                if (selected) {
-                    if (selected.value === q.answer) {
-                        score++;
-                        fb.className = "p-3 bg-emerald-500/10 border border-emerald-500/20 rounded-xl text-[11px] text-emerald-400 mt-2 w-full";
-                        fb.innerHTML = "<p class='font-bold'>✓ Đúng</p>";
+                // Vô hiệu hóa lựa chọn nếu đã nộp bài chấm điểm
+                if (isSubmitted) {
+                    radio.disabled = true;
+                    const correctAns = q.answer;
+                    if (key === correctAns) {
+                        labelClass += "bg-emerald-500/10 border border-emerald-500 text-emerald-400 font-bold";
+                    } else if (isChosen && key !== correctAns) {
+                        labelClass += "bg-rose-500/10 border border-rose-500 text-rose-400 font-bold";
                     } else {
-                        fb.className = "p-3 bg-rose-500/10 border border-rose-500/20 rounded-xl text-[11px] text-rose-400 mt-2 space-y-1 w-full";
-                        fb.innerHTML = `
-                            <p class='font-bold'>✗ Chưa chính xác</p>
-                            <p><b>Đáp án đúng:</b> <span class="text-emerald-400 font-bold">${q.answer}</span></p>
-                            <p class="text-slate-400"><b>Giải thích:</b> ${q.explanation}</p>
-                        `;
+                        labelClass += "bg-slate-900/30 border border-slate-900/50 opacity-40 text-slate-500";
                     }
                 } else {
-                    fb.className = "p-3 bg-amber-500/10 border border-amber-500/20 rounded-xl text-[11px] text-amber-400 mt-2 w-full";
-                    fb.innerHTML = "<p>⚠️ Bạn chưa chọn câu trả lời này!</p>";
+                    if (isChosen) {
+                        labelClass += "bg-indigo-600/30 border border-indigo-500 ring-2 ring-indigo-500/20 text-indigo-300 font-bold";
+                    } else {
+                        labelClass += "bg-slate-900 border border-slate-800 text-slate-300 hover:border-slate-700";
+                    }
+                    // Sự kiện chọn đáp án
+                    label.onclick = () => selectOption(key);
+                }
+
+                label.className = labelClass;
+                label.appendChild(radio);
+                
+                const spanText = document.createElement("span");
+                spanText.innerText = `${key}. ${q[key]}`;
+                label.appendChild(spanText);
+
+                optionsGrid.appendChild(label);
+            });
+
+            // Hiện/Ẩn lời giải giải thích
+            const expBox = document.getElementById("question-explanation");
+            if (isSubmitted) {
+                expBox.classList.remove("hidden");
+                expBox.innerHTML = `<strong>Giải thích câu ${idx + 1}:</strong> ${q.explanation}`;
+            } else {
+                expBox.classList.add("hidden");
+            }
+
+            // Cập nhật trạng thái các nút điều hướng "Quay lại" và "Tiếp theo"
+            document.getElementById("btn-prev").disabled = (idx === 0);
+            document.getElementById("btn-next").disabled = (idx === quizData.questions.length - 1);
+
+            updateProgressBubbles();
+            updateSubmitButton();
+
+            // Tự động cuộn thẻ câu hỏi lên đầu khung xem để học sinh không bị khuất đáp án
+            document.getElementById("question-card").scrollTop = 0;
+        }
+
+        // Chọn đáp án
+        function selectOption(key) {
+            if (isSubmitted) return;
+            selectedAnswers[activeQuestionIdx] = key;
+            showQuestion(activeQuestionIdx);
+        }
+
+        // Chuyển sang câu kế tiếp
+        function nextQuestion() {
+            if (activeQuestionIdx < quizData.questions.length - 1) {
+                showQuestion(activeQuestionIdx + 1);
+            }
+        }
+
+        // Quay lại câu trước đó
+        function prevQuestion() {
+            if (activeQuestionIdx > 0) {
+                showQuestion(activeQuestionIdx - 1);
+            }
+        }
+
+        // Đổ màu các bóng tròn tiến trình câu 1-10 dưới chân
+        function updateProgressBubbles() {
+            for (let i = 0; i < 10; i++) {
+                const bubble = document.getElementById("bubble-" + i);
+                if (!bubble) continue;
+
+                // Reset class
+                bubble.className = "w-2 h-2 rounded-full flex-shrink-0 transition-all ";
+
+                const isAnswered = selectedAnswers[i] !== undefined;
+                const isActive = activeQuestionIdx === i;
+
+                if (isActive) {
+                    bubble.className += "bg-indigo-500 ring-2 ring-indigo-500/30 scale-125";
+                } else if (isAnswered) {
+                    if (isSubmitted) {
+                        const q = quizData.questions[i];
+                        if (selectedAnswers[i] === q.answer) {
+                            bubble.className += "bg-emerald-500";
+                        } else {
+                            bubble.className += "bg-rose-500";
+                        }
+                    } else {
+                        bubble.className += "bg-indigo-900 border border-indigo-700";
+                    }
+                } else {
+                    bubble.className += "bg-slate-800";
+                }
+            }
+        }
+
+        // Điều kiện ẩn hiện nút nộp bài
+        function updateSubmitButton() {
+            const btnSubmit = document.getElementById("btn-submit");
+            const total = quizData ? quizData.questions.length : 10;
+            const answeredCount = Object.keys(selectedAnswers).length;
+
+            if (isSubmitted) {
+                btnSubmit.classList.add("hidden");
+                return;
+            }
+
+            // Hiện nút nộp bài khi đã trả lời 7 câu trở lên hoặc đang đứng ở câu cuối cùng
+            if (answeredCount >= 7 || activeQuestionIdx >= 8) {
+                btnSubmit.classList.remove("hidden");
+                btnSubmit.innerText = `Nộp bài chấm điểm (Đã làm ${answeredCount}/${total})`;
+            } else {
+                btnSubmit.classList.add("hidden");
+            }
+        }
+
+        // CHẤM ĐIỂM VÀ TRUYỀN DỮ LIỆU ĐIỂM SỐ VỀ MIT APP INVENTOR
+        function gradeQuiz() {
+            if (!quizData) return;
+
+            const total = quizData.questions.length;
+            const answeredCount = Object.keys(selectedAnswers).length;
+
+            if (answeredCount < total) {
+                alert(`Bạn mới chọn đáp án cho ${answeredCount}/${total} câu hỏi. Hãy bấm "Tiếp theo" hoặc "Quay lại" để làm hết toàn bộ đề thi trước khi nộp nhé!`);
+                return;
+            }
+
+            isSubmitted = true;
+            let score = 0;
+
+            quizData.questions.forEach((q, idx) => {
+                if (selectedAnswers[idx] === q.answer) {
+                    score++;
                 }
             });
 
-            document.getElementById("result").innerHTML = `
-                <h2 class="text-lg font-extrabold text-white">Điểm số: ${score}/10</h2>
-                <p class="text-[10px] text-slate-400 mt-1">Chuỗi tin nhắn gửi về điện thoại: "DIEM:${score}/10"</p>
-            `;
+            // Hiển thị kết quả điểm số cục bộ
+            const resDiv = document.getElementById("result");
+            resDiv.classList.remove("hidden");
+            resDiv.innerText = `KẾT QUẢ ĐIỂM SỐ CỦA BẠN: ${score}/${total}`;
 
-            sendResultToMIT(score, 10);
+            // Gửi điểm số chuẩn hóa về MIT App Inventor
+            sendResultToMIT(score, total);
 
-            window.scrollTo({
-                top: document.body.scrollHeight,
-                behavior: 'smooth'
-            });
+            // Cập nhật lại câu hỏi hiện tại để phủ màu Đúng/Sai và hiển thị Giải thích đáp án
+            showQuestion(activeQuestionIdx);
         }
 
         function sendResultToMIT(score, total) {
             const dataString = "DIEM:" + score + "/" + total;
             if (window.AppInventor && window.AppInventor.setWebViewString) {
                 window.AppInventor.setWebViewString(dataString);
+            } else {
+                console.log("Môi trường thường (Không có AppInventor) - Đã gửi:", dataString);
             }
         }
 
-        // Vòng lặp kiểm tra tín hiệu từ điện thoại liên tục 500ms
+        // HÀM QUÉT LIÊN TỤC LẮNG NGHE TÍN HIỆU LEVEL | TOPIC TỪ ĐIỆN THOẠI
         function checkConnection() {
             const params = parseParameters();
             
@@ -289,15 +491,15 @@
                     currentLevel = params.level;
                     currentTopic = params.topic;
                     
-                    // Kích hoạt sinh đề thi mẫu theo cấu hình thực tế nhận được!
-                    handleConfigChange(currentLevel, currentTopic);
+                    // Khởi tạo ngay đề thi chia đôi màn hình tương ứng!
+                    processNewConfig(currentLevel, currentTopic);
                 }
             }
         }
 
+        // Kiểm tra tín hiệu mỗi 500ms
         setInterval(checkConnection, 500);
         checkConnection();
     </script>
-
 </body>
 </html>
