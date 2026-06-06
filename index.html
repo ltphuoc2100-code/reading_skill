@@ -385,6 +385,30 @@
         var selectedAnswers = {};  
         var isSubmitted = false;   
 
+        // HÀM HELPER THAY THẾ CLASSLIST CHỐNG SẬP TRÊN THIẾT BỊ ANDROID CŨ
+        function showElement(id) {
+            var el = document.getElementById(id);
+            if (el) {
+                var classes = el.className.split(" ");
+                var index = classes.indexOf("hidden");
+                if (index > -1) {
+                    classes.splice(index, 1);
+                    el.className = classes.join(" ");
+                }
+            }
+        }
+
+        function hideElement(id) {
+            var el = document.getElementById(id);
+            if (el) {
+                var classes = el.className.split(" ");
+                if (classes.indexOf("hidden") === -1) {
+                    classes.push("hidden");
+                    el.className = classes.join(" ");
+                }
+            }
+        }
+
         function simulateLaunch() {
             processNewConfig("B2", "Artificial Intelligence");
         }
@@ -502,10 +526,8 @@
 
         // XỬ LÝ KHỞI TẠO ĐỀ THI THEO CẤU HÌNH THỰC
         function processNewConfig(level, topic) {
-            document.getElementById("waiting-screen").classList.add("hidden");
-            
-            var container = document.getElementById("split-screen-container");
-            container.classList.remove("hidden");
+            hideElement("waiting-screen");
+            showElement("split-screen-container");
 
             document.getElementById("badge-level").innerText = "LEVEL: " + level;
             document.getElementById("badge-topic").innerText = "TOPIC: " + topic;
@@ -513,7 +535,7 @@
             selectedAnswers = {};
             isSubmitted = false;
             activeQuestionIdx = 0;
-            document.getElementById("result").classList.add("hidden");
+            hideElement("result");
 
             quizData = generateLocalMockQuiz(level, topic);
 
@@ -585,10 +607,10 @@
 
             var expBox = document.getElementById("question-explanation");
             if (isSubmitted) {
-                expBox.classList.remove("hidden");
+                showElement("question-explanation");
                 expBox.innerHTML = "<strong>Giải thích câu " + (idx + 1) + ":</strong> " + q.explanation;
             } else {
-                expBox.classList.add("hidden");
+                hideElement("question-explanation");
             }
 
             document.getElementById("btn-prev").disabled = (idx === 0);
@@ -659,15 +681,15 @@
             }
 
             if (isSubmitted) {
-                btnSubmit.classList.add("hidden");
+                hideElement("btn-submit");
                 return;
             }
 
             if (answeredCount >= 7 || activeQuestionIdx >= 8) {
-                btnSubmit.classList.remove("hidden");
+                showElement("btn-submit");
                 btnSubmit.innerText = "Nộp bài (Đã làm " + answeredCount + "/" + total + ")";
             } else {
-                btnSubmit.classList.add("hidden");
+                hideElement("btn-submit");
             }
         }
 
@@ -699,7 +721,7 @@
             }
 
             var resDiv = document.getElementById("result");
-            resDiv.classList.remove("hidden");
+            showElement("result");
             resDiv.innerText = "ĐIỂM SỐ CỦA BẠN: " + score + "/" + total;
 
             sendResultToMIT(score, total);
