@@ -1,0 +1,806 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI Comprehensive Reading Engine</title>
+    <style>
+        /* CSS thuần tối giản, siêu nhẹ, không lỗi hiển thị trên mọi dòng điện thoại */
+        body {
+            background-color: #0b1329;
+            color: #f8fafc;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+            margin: 0;
+            padding: 0;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+        }
+        header {
+            background-color: #1c2541;
+            padding: 15px;
+            text-align: center;
+            border-bottom: 1px solid rgba(59, 130, 246, 0.2);
+        }
+        h1 {
+            font-size: 16px;
+            margin: 0;
+            color: #ffffff;
+        }
+        p.subtitle {
+            font-size: 10px;
+            color: #94a3b8;
+            margin: 5px 0 0 0;
+        }
+        main {
+            padding: 15px;
+            max-width: 480px;
+            margin: 0 auto;
+            width: 100%;
+            box-sizing: border-box;
+            flex: 1;
+        }
+        .card {
+            background-color: #1c2541;
+            border: 1px solid #1e293b;
+            border-radius: 12px;
+            padding: 15px;
+            margin-bottom: 15px;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+        }
+        .badge {
+            background-color: rgba(59, 130, 246, 0.2);
+            color: #60a5fa;
+            font-size: 9px;
+            font-weight: bold;
+            padding: 4px 8px;
+            border-radius: 4px;
+            text-transform: uppercase;
+            display: inline-block;
+            margin-right: 5px;
+            margin-bottom: 10px;
+        }
+        .passage {
+            font-size: 13px;
+            line-height: 1.6;
+            color: #cbd5e1;
+            background-color: #0b1329;
+            padding: 12px;
+            border-radius: 8px;
+            max-height: 180px;
+            overflow-y: auto;
+            border: 1px solid #1e293b;
+        }
+        .question-title {
+            font-size: 13px;
+            font-weight: bold;
+            margin-top: 0;
+            margin-bottom: 12px;
+            color: #f1f5f9;
+        }
+        .option-btn {
+            width: 100%;
+            text-align: left;
+            padding: 12px;
+            background-color: #0b1329;
+            border: 1px solid #334155;
+            border-radius: 8px;
+            color: #cbd5e1;
+            font-size: 12px;
+            margin-bottom: 8px;
+            cursor: pointer;
+            transition: all 0.2s;
+            box-sizing: border-box;
+        }
+        .option-btn:active {
+            transform: scale(0.98);
+        }
+        .option-selected {
+            background-color: rgba(99, 102, 241, 0.2);
+            border-color: #6366f1;
+            color: #a5b4fc;
+            font-weight: bold;
+        }
+        .option-correct {
+            background-color: rgba(16, 185, 129, 0.2);
+            border-color: #10b981;
+            color: #34d399;
+            font-weight: bold;
+        }
+        .option-wrong {
+            background-color: rgba(239, 68, 68, 0.2);
+            border-color: #ef4444;
+            color: #f87171;
+            font-weight: bold;
+        }
+        .nav-container {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-top: 15px;
+        }
+        .nav-btn {
+            background-color: #334155;
+            color: #f1f5f9;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 6px;
+            font-size: 11px;
+            font-weight: bold;
+            cursor: pointer;
+        }
+        .nav-btn:disabled {
+            opacity: 0.3;
+            cursor: not-allowed;
+        }
+        .submit-btn {
+            background-color: #10b981;
+            color: white;
+            border: none;
+            padding: 12px;
+            border-radius: 8px;
+            width: 100%;
+            font-size: 13px;
+            font-weight: bold;
+            cursor: pointer;
+            margin-top: 15px;
+        }
+        .explanation {
+            background-color: rgba(99, 102, 241, 0.1);
+            border: 1px solid rgba(99, 102, 241, 0.2);
+            padding: 10px;
+            border-radius: 6px;
+            font-size: 11px;
+            color: #a5b4fc;
+            margin-top: 10px;
+            line-height: 1.4;
+        }
+        .progress-dots {
+            display: flex;
+            gap: 4px;
+        }
+        .dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background-color: #334155;
+        }
+        .dot-active {
+            background-color: #6366f1;
+            box-shadow: 0 0 8px #6366f1;
+        }
+        .dot-answered {
+            background-color: #1e1b4b;
+        }
+        .dot-correct {
+            background-color: #10b981;
+        }
+        .translate-btn {
+            background: none;
+            border: none;
+            color: #3b82f6;
+            font-size: 11px;
+            cursor: pointer;
+            padding: 0;
+            margin-top: 8px;
+            font-weight: bold;
+        }
+        .translation-text {
+            font-size: 11px;
+            color: #94a3b8;
+            font-style: italic;
+            margin-top: 8px;
+            border-top: 1px dashed #334155;
+            padding-top: 8px;
+        }
+        .hidden {
+            display: none !important;
+        }
+        .debug-box {
+            background-color: rgba(239, 68, 68, 0.1);
+            border: 1px solid rgba(239, 68, 68, 0.2);
+            color: #f87171;
+            padding: 10px;
+            border-radius: 8px;
+            font-size: 10px;
+            margin-bottom: 15px;
+            font-family: monospace;
+            word-break: break-all;
+        }
+        .analytics-title {
+            font-size: 12px;
+            font-weight: bold;
+            margin: 0 0 10px 0;
+            color: #ffffff;
+        }
+        .skill-row {
+            margin-bottom: 10px;
+        }
+        .skill-info {
+            display: flex;
+            justify-content: space-between;
+            font-size: 10px;
+            color: #cbd5e1;
+            margin-bottom: 4px;
+        }
+        .progress-bg {
+            background-color: #0b1329;
+            height: 6px;
+            border-radius: 3px;
+            overflow: hidden;
+            width: 100%;
+        }
+        .progress-bar {
+            height: 100%;
+            border-radius: 3px;
+            transition: width 0.3s;
+        }
+        footer {
+            background-color: #0b1329;
+            text-align: center;
+            padding: 15px;
+            font-size: 9px;
+            color: #475569;
+            border-top: 1px solid #1e293b;
+        }
+    </style>
+</head>
+<body>
+
+    <header>
+        <h1 id="header-title">Khảo Thí Đọc Hiểu AI</h1>
+        <p class="subtitle">Đề thi 10 câu chuẩn kỹ năng</p>
+    </header>
+
+    <main>
+        <!-- Khung Debug ẩn hiển thị log nhận lệnh -->
+        <div id="debug-area" class="debug-box hidden"></div>
+
+        <!-- 1. MÀN HÌNH CHỜ NHẬN LỆNH -->
+        <div id="waiting-state" class="card" style="text-align: center; padding: 25px 15px;">
+            <div style="font-size: 30px; margin-bottom: 15px;">📝</div>
+            <h3 style="margin: 0 0 10px 0; font-size: 14px;">Sẵn sàng kết nối</h3>
+            <p style="font-size: 11px; color: #94a3b8; line-height: 1.5; margin: 0 0 15px 0;">
+                Hãy chọn Trình độ và Chủ đề trên ứng dụng, sau đó nhấn nút "Bắt đầu" để khởi động.
+            </p>
+            
+            <div style="background-color: #0b1329; padding: 12px; border-radius: 8px; text-align: left; border: 1px solid #1e293b;">
+                <p style="margin: 0 0 5px 0; font-size: 10px; font-weight: bold; color: #fbbf24;">🆘 Ứng dụng chưa kết nối khối lệnh?</p>
+                <p style="margin: 0 0 10px 0; font-size: 9px; color: #94a3b8; line-height: 1.4;">Bạn có thể chạm vào nút bên dưới để tự chạy đề thi mẫu 10 câu ngay lập tức để làm thử.</p>
+                <button onclick="simulateLaunch()" style="width: 100%; background-color: #4f46e5; border: none; color: white; padding: 10px; border-radius: 6px; font-size: 11px; font-weight: bold; cursor: pointer;">
+                    Chạy Đề Luyện Tập Mẫu
+                </button>
+            </div>
+        </div>
+
+        <!-- MÀN HÌNH CHỜ LOAD ĐỀ -->
+        <div id="loading-state" class="card hidden" style="text-align: center; padding: 30px 15px;">
+            <div style="font-size: 30px; margin-bottom: 15px; animation: spin-slow 2s linear infinite;">🧠</div>
+            <h3 style="margin: 0 0 10px 0; font-size: 13px;">AI đang soạn thảo đề thi...</h3>
+            <p id="loading-step" style="font-size: 10px; color: #94a3b8;">Đang kết nối cổng dữ liệu...</p>
+        </div>
+
+        <!-- 2. KHU VỰC LÀM BÀI (Hiện khi có đề) -->
+        <div id="reading-container" class="hidden">
+            <!-- Thẻ bài đọc -->
+            <div class="card">
+                <div>
+                    <span id="badge-level" class="badge">Level</span>
+                    <span id="badge-topic" class="badge" style="background-color: #334155; color: #cbd5e1;">Topic</span>
+                </div>
+                <h3 id="reading-title" style="margin: 5px 0 10px 0; font-size: 14px;">Tiêu đề bài đọc</h3>
+                <div id="reading-passage" class="passage">Nội dung bài viết...</div>
+                
+                <button onclick="toggleTranslation()" id="btn-translate" class="translate-btn">👁️ Hiện bản dịch tiếng Việt</button>
+                <div id="translation-section" class="translation-text hidden">Bản dịch...</div>
+            </div>
+
+            <!-- Thẻ câu hỏi -->
+            <div class="card">
+                <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #334155; padding-bottom: 8px; margin-bottom: 12px;">
+                    <span id="current-question-num" style="font-size: 11px; font-weight: bold; color: #94a3b8;">Câu hỏi 1/10</span>
+                    <span id="question-skill" style="font-size: 10px; color: #f59e0b; font-weight: bold;">KỸ NĂNG</span>
+                </div>
+
+                <div id="question-text" class="question-title">Nội dung câu hỏi...</div>
+                <div id="options-grid">
+                    <!-- Các lựa chọn -->
+                </div>
+                <div id="question-explanation" class="explanation hidden">Giải thích...</div>
+
+                <!-- Điều hướng câu hỏi -->
+                <div class="nav-container">
+                    <button onclick="prevQuestion()" id="btn-prev" class="nav-btn">Quay lại</button>
+                    <div class="progress-dots">
+                        <span id="bubble-0" class="dot"></span>
+                        <span id="bubble-1" class="dot"></span>
+                        <span id="bubble-2" class="dot"></span>
+                        <span id="bubble-3" class="dot"></span>
+                        <span id="bubble-4" class="dot"></span>
+                        <span id="bubble-5" class="dot"></span>
+                        <span id="bubble-6" class="dot"></span>
+                        <span id="bubble-7" class="dot"></span>
+                        <span id="bubble-8" class="dot"></span>
+                        <span id="bubble-9" class="dot"></span>
+                    </div>
+                    <button onclick="nextQuestion()" id="btn-next" class="nav-btn">Tiếp theo</button>
+                </div>
+
+                <button onclick="gradeQuiz()" id="btn-submit" class="submit-btn hidden">Nộp Bài Chấm Điểm</button>
+            </div>
+
+            <!-- Thẻ Biểu Đồ Thống Kê Năng Lực (Chỉ hiện sau khi chấm điểm) -->
+            <div id="analytics-card" class="card hidden">
+                <h4 class="analytics-title">📊 Biểu đồ phân tích kỹ năng đọc</h4>
+                
+                <div class="skill-row">
+                    <div class="skill-info">
+                        <span>Skimming (Đọc ý chính)</span>
+                        <span id="score-skimming">0/2</span>
+                    </div>
+                    <div class="progress-bg"><div id="bar-skimming" class="progress-bar" style="width: 0%; background-color: #6366f1;"></div></div>
+                </div>
+
+                <div class="skill-row">
+                    <div class="skill-info">
+                        <span>Scanning (Tìm chi tiết)</span>
+                        <span id="score-scanning">0/2</span>
+                    </div>
+                    <div class="progress-bg"><div id="bar-scanning" class="progress-bar" style="width: 0%; background-color: #38bdf8;"></div></div>
+                </div>
+
+                <div class="skill-row">
+                    <div class="skill-info">
+                        <span>Synonyms (Từ đồng nghĩa)</span>
+                        <span id="score-synonyms">0/2</span>
+                    </div>
+                    <div class="progress-bg"><div id="bar-synonyms" class="progress-bar" style="width: 0%; background-color: #10b981;"></div></div>
+                </div>
+
+                <div class="skill-row">
+                    <div class="skill-info">
+                        <span>Antonyms (Từ trái nghĩa)</span>
+                        <span id="score-antonyms">0/2</span>
+                    </div>
+                    <div class="progress-bg"><div id="bar-antonyms" class="progress-bar" style="width: 0%; background-color: #f43f5e;"></div></div>
+                </div>
+
+                <div class="skill-row">
+                    <div class="skill-info">
+                        <span>Inference (Suy luận logic)</span>
+                        <span id="score-inference">0/2</span>
+                    </div>
+                    <div class="progress-bg"><div id="bar-inference" class="progress-bar" style="width: 0%; background-color: #a855f7;"></div></div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <footer>
+        AI Reading Engine Connected
+    </footer>
+
+    <script>
+        // ========================================================
+        // 🔑 CHÈN API KEY CỦA BẠN VÀO GIỮA HAI DẤU NGOẶC KÉP DƯỚI ĐÂY:
+        // ========================================================
+        const apiKey = "AIzaSyAJPtlIAIxPv-zyfhqUwxiOikRmDKcdpKo"; 
+        // ========================================================
+
+        let currentQuizData = null;
+        let selectedAnswers = {};
+        let isSubmitted = false;
+        let activeQuestionIdx = 0;
+        let lastReceivedConfig = "";
+
+        const backupQuizData = {
+            title: "The Legacy of Ancient Libraries",
+            passage: "Ancient libraries were not just storage rooms for books; they were the <b>intellectual</b> centers of civilization. The Great Library of Alexandria, founded in Egypt around 300 BCE, was the most <b>renowned</b> library of the ancient world. It housed hundreds of thousands of papyrus scrolls containing knowledge of philosophy, mathematics, and science. Scholars from all over the Mediterranean traveled there to study and <b>collaborate</b>. Unfortunately, a series of fires over centuries <b>demolished</b> this grand temple of knowledge. Although the physical library was lost, its legacy <b>established</b> the foundation for modern universities and research centers worldwide. Today, we continue to <b>venerate</b> the pursuit of learning, just as the ancient scholars did.",
+            translation: "Các thư viện cổ đại không chỉ đơn thuần là những phòng lưu trữ sách; chúng là những trung tâm trí tuệ của nền văn minh. Thư viện Lớn Alexandria, được thành lập ở Ai Cập khoảng năm 300 trước Công nguyên, là thư viện nổi tiếng nhất của thế giới cổ đại. Nó chứa hàng trăm nghìn cuộn giấy cói chứa đựng kiến thức về triết học, toán học và khoa học. Các học giả từ khắp Địa Trung Hải đã đến đó để nghiên cứu và hợp tác. Thật không may, một loạt trận hỏa hoạn qua nhiều thế kỷ đã tàn phá ngôi đền tri thức vĩ đại này. Mặc dù thư viện vật lý đã mất đi, di sản của nó đã thiết lập nền tảng cho các trường đại học và trung tâm nghiên cứu hiện đại ngày nay trên toàn thế giới. Ngày nay, chúng ta tiếp tục tôn kính sự theo đuổi học tập, giống như các học giả cổ đại đã từng làm.",
+            questions: [
+                {
+                    questionText: "What is the primary topic of the passage?",
+                    skill: "Skimming",
+                    options: [
+                        "The materials used to make ancient books",
+                        "The history and global impact of ancient libraries",
+                        "How modern universities design their curricula",
+                        "The science of fire prevention in museums"
+                    ],
+                    correctAnswerIndex: 1,
+                    explanation: "Bài đọc thảo luận tổng quát về tầm quan trọng mang tính lịch sử và di sản của thư viện cổ đại đến giáo dục ngày nay."
+                },
+                {
+                    questionText: "What was the author's main purpose in writing this article?",
+                    skill: "Skimming",
+                    options: [
+                        "To warn about the danger of historical fires",
+                        "To encourage tourism in modern Egypt",
+                        "To highlight how ancient libraries shaped modern education",
+                        "To prove that ancient papyrus is stronger than paper"
+                    ],
+                    correctAnswerIndex: 2,
+                    explanation: "Tác giả viết bài này nhằm khẳng định giá trị cốt lõi của thư viện cổ chính là tiền thân của hệ thống giáo dục nghiên cứu hiện đại."
+                },
+                {
+                    questionText: "When was the Great Library of Alexandria founded?",
+                    skill: "Scanning",
+                    options: [
+                        "Around 300 CE",
+                        "Around 300 BCE",
+                        "In the modern era",
+                        "Over a thousand years ago"
+                    ],
+                    correctAnswerIndex: 1,
+                    explanation: "Dòng thứ 2 ghi rõ: 'founded in Egypt around 300 BCE'."
+                },
+                {
+                    questionText: "What material were ancient books in the Library of Alexandria made of?",
+                    skill: "Scanning",
+                    options: [
+                        "Animal skins",
+                        "Clay tablets",
+                        "Papyrus scrolls",
+                        "Digital files"
+                    ],
+                    correctAnswerIndex: 2,
+                    explanation: "Văn bản đề cập: 'housed hundreds of thousands of papyrus scrolls'."
+                },
+                {
+                    questionText: "Which word is closest in meaning to the bolded word 'intellectual'?",
+                    skill: "Synonyms",
+                    options: [
+                        "Scientific / mental",
+                        "Physical",
+                        "Crowded",
+                        "Industrial"
+                    ],
+                    correctAnswerIndex: 0,
+                    explanation: "Từ 'intellectual' nghĩa là thuộc về trí thức, trí tuệ, đồng nghĩa với 'mental/scientific'."
+                },
+                {
+                    questionText: "Which word is closest in meaning to the bolded word 'demolished'?",
+                    skill: "Synonyms",
+                    options: [
+                        "Constructed",
+                        "Destroyed / ruined",
+                        "Protected",
+                        "Discovered"
+                    ],
+                    correctAnswerIndex: 1,
+                    explanation: "Hỏa hoạn 'demolished' thư viện nghĩa là đã tàn phá, hủy hoại nó, đồng nghĩa 'destroyed/ruined'."
+                },
+                {
+                    questionText: "Which word is OPPOSITE in meaning to the bolded word 'collaborate'?",
+                    skill: "Antonyms",
+                    options: [
+                        "Work together",
+                        "Work alone / isolate",
+                        "Share ideas",
+                        "Compete fiercely"
+                    ],
+                    correctAnswerIndex: 1,
+                    explanation: "'Collaborate' nghĩa là hợp tác, cùng làm việc. Trái nghĩa của nó là làm việc đơn độc, cô lập ('work alone / isolate')."
+                },
+                {
+                    questionText: "Which word is OPPOSITE in meaning to the bolded word 'venerate'?",
+                    skill: "Antonyms",
+                    options: [
+                        "Respect deeply",
+                        "Despise / disrespect",
+                        "Follow closely",
+                        "Ignore completely"
+                    ],
+                    correctAnswerIndex: 1,
+                    explanation: "'Venerate' nghĩa là tôn kính, tôn trọng sâu sắc. Trái nghĩa của nó là khinh ghét, thiếu tôn trọng ('despise/disrespect')."
+                },
+                {
+                    questionText: "What can be inferred about modern research centers from the text?",
+                    skill: "Inference",
+                    options: [
+                        "They are also made of papyrus scrolls.",
+                        "They are built on the same physical locations as ancient libraries.",
+                        "Their core purpose of pursuing knowledge dates back to ancient times.",
+                        "They do not face any risks of fire damage today."
+                    ],
+                    correctAnswerIndex: 2,
+                    explanation: "Bài viết cho thấy khao khát học hỏi và thu thập tri thức của con người đã được hình thành và truyền nối liên tục từ hàng nghìn năm trước."
+                },
+                {
+                    questionText: "Why does the author state that the library's legacy survived?",
+                    skill: "Inference",
+                    options: [
+                        "Because the scrolls were made of fireproof materials.",
+                        "Because the ideas and system of learning influenced future generations.",
+                        "Because modern Egypt rebuilt the exact same library.",
+                        "Because historical records were stored on the cloud."
+                    ],
+                    correctAnswerIndex: 1,
+                    explanation: "Dù tòa nhà bị cháy, mô hình hoạt động và tri thức của thư viện cổ vẫn lan tỏa, định hình nên các đại học nghiên cứu sau này."
+                }
+            ]
+        };
+
+        function simulateLaunch() {
+            displayQuiz(backupQuizData, "B1", "Ancient History");
+        }
+
+        async function fetchFromGemini(prompt) {
+            if (!apiKey || apiKey === "" || apiKey.includes("Dien_API_Key_Thuc_Te")) {
+                throw new Error("KEY_MISSING");
+            }
+            const url = "https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-preview-09-2025:generateContent?key=" + apiKey;
+            const systemPrompt = "You are an IELTS exam maker. Output strictly JSON with keys: title, passage (around 200 words, bolding 6 vocabularies using <b>), translation (Vietnamese), and questions (exactly 10 objects, each having: questionText, skill (strictly 'Skimming','Scanning','Synonyms','Antonyms','Inference'), options (4 strings), correctAnswerIndex (0-3), explanation (Vietnamese)). Ensure exactly 2 questions for each of the 5 skills.";
+            
+            const payload = {
+                contents: [{ parts: [{ text: prompt }] }],
+                systemInstruction: { parts: [{ text: systemPrompt }] },
+                generationConfig: {
+                    responseMimeType: "application/json"
+                }
+            };
+
+            const response = await fetch(url, {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify(payload)
+            });
+
+            if (!response.ok) throw new Error("API_ERROR");
+            const data = await response.json();
+            const text = data.candidates?.[0]?.content?.parts?.[0]?.text;
+            return JSON.parse(text);
+        }
+
+        async function processNewConfig(level, topic) {
+            document.getElementById("waiting-state").classList.add("hidden");
+            document.getElementById("reading-container").classList.add("hidden");
+            document.getElementById("loading-state").classList.remove("hidden");
+            document.getElementById("loading-step").innerText = "Đang kết nối API Google Gemini...";
+
+            const prompt = `Generate a reading passage for level ${level} about topic ${topic} with exactly 10 multiple-choice questions split equally among: Skimming, Scanning, Synonyms, Antonyms, Inference.`;
+
+            try {
+                const quizData = await fetchFromGemini(prompt);
+                if (quizData && quizData.questions && quizData.questions.length >= 10) {
+                    displayQuiz(quizData, level, topic);
+                } else {
+                    throw new Error("Lọc số lượng câu hỏi không đủ");
+                }
+            } catch (err) {
+                // Tự động kích hoạt bộ đề dự phòng nếu gặp lỗi kết nối API
+                document.getElementById("debug-area").classList.remove("hidden");
+                document.getElementById("debug-area").innerText = "Chú ý: Hệ thống đang sử dụng Đề mẫu chất lượng cao vì không kết nối được API (" + err.message + ")";
+                displayQuiz(backupQuizData, level, topic);
+            } finally {
+                document.getElementById("loading-state").classList.add("hidden");
+            }
+        }
+
+        function displayQuiz(data, level, topic) {
+            document.getElementById("waiting-state").classList.add("hidden");
+            document.getElementById("reading-container").classList.remove("hidden");
+
+            document.getElementById("reading-title").innerText = data.title;
+            document.getElementById("reading-passage").innerHTML = data.passage;
+            document.getElementById("translation-section").innerText = data.translation;
+            document.getElementById("translation-section").classList.add("hidden");
+            document.getElementById("btn-translate").innerText = "👁️ Hiện bản dịch tiếng Việt";
+            
+            document.getElementById("badge-level").innerText = "TRÌNH ĐỘ: " + level;
+            document.getElementById("badge-topic").innerText = "CHỦ ĐỀ: " + topic;
+
+            currentQuizData = data;
+            selectedAnswers = {};
+            isSubmitted = false;
+            activeQuestionIdx = 0;
+
+            showQuestion(0);
+            updateProgressBubbles();
+        }
+
+        function showQuestion(idx) {
+            if (!currentQuizData || idx < 0 || idx >= currentQuizData.questions.length) return;
+            activeQuestionIdx = idx;
+
+            const q = currentQuizData.questions[idx];
+
+            document.getElementById("current-question-num").innerText = "Câu hỏi " + (idx + 1) + "/10";
+            document.getElementById("question-skill").innerText = "KỸ NĂNG: " + q.skill;
+            document.getElementById("question-text").innerText = q.questionText;
+
+            const optionsGrid = document.getElementById("options-grid");
+            optionsGrid.innerHTML = "";
+
+            q.options.forEach((opt, optIdx) => {
+                const btn = document.createElement("button");
+                btn.onclick = () => selectOption(optIdx);
+                
+                let btnClass = "option-btn";
+                const isChosen = selectedAnswers[idx] === optIdx;
+
+                if (isSubmitted) {
+                    const correctIdx = q.correctAnswerIndex;
+                    if (optIdx === correctIdx) {
+                        btnClass += " option-correct";
+                    } else if (isChosen && optIdx !== correctIdx) {
+                        btnClass += " option-wrong";
+                    }
+                } else if (isChosen) {
+                    btnClass += " option-selected";
+                }
+
+                btn.className = btnClass;
+                btn.innerText = opt;
+                optionsGrid.appendChild(btn);
+            });
+
+            const expBox = document.getElementById("question-explanation");
+            if (isSubmitted) {
+                expBox.classList.remove("hidden");
+                expBox.innerHTML = "<strong>Giải thích:</strong> " + q.explanation;
+            } else {
+                expBox.classList.add("hidden");
+            }
+
+            document.getElementById("btn-prev").disabled = (idx === 0);
+            document.getElementById("btn-next").disabled = (idx === currentQuizData.questions.length - 1);
+
+            updateProgressBubbles();
+            updateSubmitButton();
+        }
+
+        function selectOption(optIdx) {
+            if (isSubmitted) return;
+            selectedAnswers[activeQuestionIdx] = optIdx;
+            showQuestion(activeQuestionIdx);
+        }
+
+        function nextQuestion() {
+            if (activeQuestionIdx < currentQuizData.questions.length - 1) {
+                showQuestion(activeQuestionIdx + 1);
+            }
+        }
+
+        function prevQuestion() {
+            if (activeQuestionIdx > 0) {
+                showQuestion(activeQuestionIdx - 1);
+            }
+        }
+
+        function updateProgressBubbles() {
+            for (let i = 0; i < 10; i++) {
+                const bubble = document.getElementById("bubble-" + i);
+                if (!bubble) continue;
+
+                let bubbleClass = "dot";
+                const isAnswered = selectedAnswers[i] !== undefined;
+                const isActive = activeQuestionIdx === i;
+
+                if (isActive) {
+                    bubbleClass += " dot-active";
+                } else if (isAnswered) {
+                    bubbleClass += " dot-answered";
+                }
+
+                if (isSubmitted) {
+                    const q = currentQuizData.questions[i];
+                    if (selectedAnswers[i] === q.correctAnswerIndex) {
+                        bubbleClass += " dot-correct";
+                    }
+                }
+
+                bubble.className = bubbleClass;
+            }
+        }
+
+        function updateSubmitButton() {
+            const btnSubmit = document.getElementById("btn-submit");
+            const answeredCount = Object.keys(selectedAnswers).length;
+
+            if (isSubmitted) {
+                btnSubmit.classList.add("hidden");
+                return;
+            }
+
+            if (answeredCount >= 7 || activeQuestionIdx >= 8) {
+                btnSubmit.classList.remove("hidden");
+                btnSubmit.innerText = "Nộp Bài Chấm Điểm (Đã làm " + answeredCount + "/10)";
+            } else {
+                btnSubmit.classList.add("hidden");
+            }
+        }
+
+        function gradeQuiz() {
+            if (!currentQuizData) return;
+
+            const answeredCount = Object.keys(selectedAnswers).length;
+            if (answeredCount < 10) {
+                alert("Bạn mới hoàn thành " + answeredCount + "/10 câu hỏi. Vui lòng làm hết bài trước khi nộp!");
+                return;
+            }
+
+            isSubmitted = true;
+            let score = 0;
+
+            currentQuizData.questions.forEach((q, idx) => {
+                if (selectedAnswers[idx] === q.correctAnswerIndex) {
+                    score++;
+                }
+            });
+
+            // Gửi điểm số về MIT App Inventor chuẩn xác
+            sendResultToMIT(score, 10);
+            showQuestion(activeQuestionIdx);
+
+            const analyticsCard = document.getElementById("analytics-card");
+            analyticsCard.classList.remove("hidden");
+            
+            // Tính toán chi tiết 5 kỹ năng đọc
+            let skillsStats = { Skimming: 0, Scanning: 0, Synonyms: 0, Antonyms: 0, Inference: 0 };
+            currentQuizData.questions.forEach((q, idx) => {
+                if (selectedAnswers[idx] === q.correctAnswerIndex) {
+                    skillsStats[q.skill] = (skillsStats[q.skill] || 0) + 1;
+                }
+            });
+
+            document.getElementById("score-skimming").innerText = (skillsStats.Skimming || 0) + "/2";
+            document.getElementById("bar-skimming").style.width = ((skillsStats.Skimming || 0) * 50) + "%";
+
+            document.getElementById("score-scanning").innerText = (skillsStats.Scanning || 0) + "/2";
+            document.getElementById("bar-scanning").style.width = ((skillsStats.Scanning || 0) * 50) + "%";
+
+            document.getElementById("score-synonyms").innerText = (skillsStats.Synonyms || 0) + "/2";
+            document.getElementById("bar-synonyms").style.width = ((skillsStats.Synonyms || 0) * 50) + "%";
+
+            document.getElementById("score-antonyms").innerText = (skillsStats.Antonyms || 0) + "/2";
+            document.getElementById("bar-antonyms").style.width = ((skillsStats.Antonyms || 0) * 50) + "%";
+
+            document.getElementById("score-inference").innerText = (skillsStats.Inference || 0) + "/2";
+            document.getElementById("bar-inference").style.width = ((skillsStats.Inference || 0) * 50) + "%";
+
+            analyticsCard.scrollIntoView({ behavior: 'smooth' });
+        }
+
+        function toggleTranslation() {
+            const section = document.getElementById("translation-section");
+            const btn = document.getElementById("btn-translate");
+
+            if (section.classList.contains("hidden")) {
+                section.classList.remove("hidden");
+                btn.innerText = "👁️ Ẩn bản dịch tiếng Việt";
+            } else {
+                section.classList.add("hidden");
+                btn.innerText = "👁️ Hiện bản dịch tiếng Việt";
+            }
+        }
+
+        function sendResultToMIT(score, total) {
+            const dataString = "DIEM:" + score + "/" + total;
+            if (window.AppInventor && window.AppInventor.setWebViewString) {
+                window.AppInventor.setWebViewString(dataString);
+            }
+        }
+
+        function checkIncomingConfig() {
+            if (window.AppInventor && window.AppInventor.getWebViewString) {
+                const incomingString = window.AppInventor.getWebViewString();
+                
+                if (incomingString && incomingString !== "" && incomingString !== lastReceivedConfig && !incomingString.startsWith("DIEM:")) {
+                    lastReceivedConfig = incomingString;
+                    
+                    const cleanString = incomingString.replace(/\s+/g, ''); 
+                    const parts = cleanString.split("|");
+                    
+                    if (parts.length === 2) {
+                        processNewConfig(parts[0], parts[1]);
+                    }
+                }
+            }
+        }
+
+        setInterval(checkIncomingConfig, 500);
+    </script>
+</body>
+</html>
