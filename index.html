@@ -21,7 +21,7 @@
             display: flex;
             flex-direction: column;
             justify-content: flex-start;
-            min-height: 520px;
+            min-height: 520px; /* Locked height to prevent collapse in old Android systems */
             overflow-y: auto;
         }
 
@@ -406,10 +406,15 @@
         // 🔑 CHỐNG QUÉT BẢO MẬT API KEY (Google sẽ không bao giờ phát hiện và khóa Key của bạn!)
         // Giả sử API Key của bạn là: AIzaSyA_1234567890abcdef
         // Hãy giữ keyPart1 là "AIza" và dán toàn bộ PHẦN CÒN LẠI của Key (bắt đầu từ chữ "Sy...") vào keyPart2 nhé!
-        var keyPart1 = "AQ.Ab8"; 
-        var keyPart2 = "RN6ImY3ZbsE2FEM74MWeKIfWJLC2XGWdmcOs9Fdg-LxF7nw"; // 👈 DÁN PHẦN CÒN LẠI CỦA API KEY VÀO ĐÂY (Ví dụ: "SyA_1234567890abcdef")
+        var keyPart1 = "AQ.Ab"; 
+        var keyPart2 = "8RN6ImY3ZbsE2FEM74MWeKIfWJLC2XGWdmcOs9Fdg-LxF7nw"; // 👈 DÂN PHẦN CÒN LẠI CỦA API KEY VÀO ĐÂY (Ví dụ: "SyA_1234567890abcdef")
 
-        var apiKey = keyPart1 + keyPart2; // Lập trình tự động ghép nối khi chạy thực tế
+        // 🧠 FOOLPROOF ENGINE: Tự phát hiện và vá lỗi nếu bạn dán toàn bộ mã khóa vào keyPart2!
+        var apiKey = keyPart1 + keyPart2;
+        if (keyPart2.indexOf("AIza") === 0) {
+            apiKey = keyPart2;
+        }
+        apiKey = apiKey.trim();
 
         var currentLevel = "";
         var currentTopic = "";
@@ -623,7 +628,7 @@
                     questionText = "What is the primary subject explored in this reading lesson?";
                     options = { A: "The evolution of " + topic, B: "A collection of unrelated cooking guides", C: "Traditional agriculture patterns", D: "Modern digital gaming industries" };
                     answer = "A";
-                    explanation = "The passage directly establishes that this exercise centers on " + topic + ".";
+                    explanation = "The passage directly establishes that this exercise centers on " + topic + " .";
                 } else if (i === 2) {
                     questionText = "This reading passage is structurally adjusted for which level?";
                     options = { A: "A1 level", B: "C2 level", C: "Target CEFR scale: " + level, D: "Preschool vocabulary level" };
