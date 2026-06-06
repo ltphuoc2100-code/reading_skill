@@ -3,11 +3,10 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>AI Reading Practice</title>
+    <title>AI Reading Practice (Connection Test)</title>
     <!-- Nhúng Tailwind CSS hỗ trợ thiết kế giao diện di động tuyệt đẹp -->
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
-        /* */
         .tap-scale:active {
             transform: scale(0.97);
         }
@@ -23,25 +22,24 @@
 </head>
 <body class="bg-slate-950 text-slate-100 min-h-screen flex flex-col justify-between font-sans">
 
-    <!-- -->
     <!-- Header ứng dụng -->
     <header class="bg-slate-900 border-b border-slate-800 py-3.5 px-4 sticky top-0 z-20 shadow-lg">
         <div class="max-w-md mx-auto flex items-center justify-between">
             <div class="flex items-center space-x-2">
-                <span class="p-2 bg-indigo-600/20 text-indigo-400 border border-indigo-500/30 rounded-xl">
+                <span class="p-2 bg-emerald-600/20 text-emerald-400 border border-emerald-500/30 rounded-xl">
                     <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"/>
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
                     </svg>
                 </span>
                 <div>
-                    <h1 class="text-xs font-bold tracking-wide text-white">AI Reading Practice</h1>
-                    <p class="text-[10px] text-slate-400">Động cơ kết nối thông minh chống sập</p>
+                    <h1 class="text-xs font-bold tracking-wide text-white">Khảo Thí Đọc Hiểu</h1>
+                    <p class="text-[10px] text-emerald-400 font-semibold">Chế độ kiểm tra kết nối (Không cần API Key)</p>
                 </div>
             </div>
             
-            <div id="status-badge" class="flex items-center space-x-1.5 bg-amber-500/10 border border-amber-500/20 px-2.5 py-1 rounded-full text-[9px] font-semibold text-amber-400">
-                <span class="w-1.5 h-1.5 rounded-full bg-amber-400 animate-pulse"></span>
-                <span id="status-badge-text">CHỜ LỆNH</span>
+            <div id="status-badge" class="flex items-center space-x-1.5 bg-emerald-500/10 border border-emerald-500/20 px-2.5 py-1 rounded-full text-[9px] font-semibold text-emerald-400">
+                <span class="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse"></span>
+                <span id="status-badge-text">ĐÃ THÔNG LUỒNG</span>
             </div>
         </div>
     </header>
@@ -50,12 +48,19 @@
     <main class="flex-1 max-w-md mx-auto w-full p-4 space-y-4 flex flex-col justify-start overflow-y-auto">
 
         <!-- THẺ TRẠNG THÁI HIỂN THỊ KẾT NỐI -->
-        <div class="bg-slate-900 border border-slate-800 rounded-2xl p-5 shadow-md space-y-3">
-            <h2 class="text-sm font-bold text-white">Trạng thái kết nối:</h2>
-            <div class="flex items-center space-x-2 bg-slate-950 p-3 rounded-xl border border-slate-850">
-                <span class="text-xs text-indigo-400 font-bold" id="info">Đang đọc cấu hình...</span>
+        <div class="bg-slate-900 border border-slate-800 rounded-2xl p-4 shadow-md space-y-3">
+            <h2 class="text-xs font-bold text-slate-400 uppercase tracking-wider">Hộp Thử Nghiệm Tín Hiệu:</h2>
+            <div class="grid grid-cols-2 gap-2">
+                <div class="bg-slate-950 p-3 rounded-xl border border-slate-850 text-center">
+                    <p class="text-[9px] text-slate-500 font-bold uppercase">Trình độ nhận được</p>
+                    <p class="text-lg font-black text-indigo-400 mt-1" id="received-level">--</p>
+                </div>
+                <div class="bg-slate-950 p-3 rounded-xl border border-slate-850 text-center">
+                    <p class="text-[9px] text-slate-500 font-bold uppercase">Chủ đề nhận được</p>
+                    <p class="text-xs font-extrabold text-indigo-400 mt-2 truncate" id="received-topic">Chưa có tín hiệu</p>
+                </div>
             </div>
-            <div id="status" class="text-xs text-amber-400 font-medium">🔄 Đang chờ tín hiệu Trình độ và Chủ đề từ điện thoại...</div>
+            <div id="status" class="text-[11px] text-center text-amber-400 font-medium">🔄 Đang liên tục quét tín hiệu từ MIT App Inventor...</div>
         </div>
 
         <div id="quizArea" class="space-y-4"></div>
@@ -64,22 +69,19 @@
 
     <!-- Footer -->
     <footer class="bg-slate-950 text-slate-600 text-center py-4 text-[10px] border-t border-slate-900 uppercase tracking-widest">
-        Gemini API Multi-Bridge Connected
+        MIT App Inventor Bridge Active
     </footer>
 
     <script>
-        //        // 🔑 API Key thực tế của bạn
-        const API_KEY = "AIzaSyAJPtlIAIxPv-zyfhqUwxiOikRmDKcdpKo";
-
-        let currentLevel = "A2";
-        let currentTopic = "Travel";
+        let currentLevel = "";
+        let currentTopic = "";
         let quizData = null;
         let lastReceivedConfig = "";
 
-        //        // 🎯 BỘ NHẬN TÍN HIỆU SIÊU CẤP - THÁCH THỨC MỌI DẠNG BLOCKS
+        // 🎯 BỘ NHẬN TÍN HIỆU SIÊU CẤP - THÁCH THỨC MỌI DẠNG BLOCKS
         function parseParameters() {
-            let level = "A2";
-            let topic = "Travel";
+            let level = "Chưa nhận";
+            let topic = "Chưa nhận";
 
             // Cách 1: Đọc từ tham số URL thực tế của trình duyệt (Dành cho GoToUrl)
             const urlParams = new URLSearchParams(window.location.search);
@@ -90,7 +92,7 @@
             if (window.AppInventor && window.AppInventor.getWebViewString) {
                 const wvs = window.AppInventor.getWebViewString();
                 if (wvs && wvs.trim() !== "") {
-                    // TRƯỜNG HỢP ĐẶC BIỆT: Nếu bạn dán cả link URL chứa ?level= vào WebViewString (như Blocks hiện tại của bạn)
+                    // TRƯỜNG HỢP ĐẶC BIỆT: Nếu dán cả link URL chứa ?level= vào WebViewString
                     if (wvs.includes("?")) {
                         const queryString = wvs.split("?")[1];
                         if (queryString) {
@@ -108,123 +110,80 @@
                 }
             }
 
-            // Làm sạch các ký tự đặc biệt nếu gõ lỗi
-            level = level.replace(/[^a-zA-Z0-9]/g, ""); // Chỉ giữ chữ và số (A1, B2, C1...)
+            // Làm sạch các ký tự đặc biệt nếu có lỗi gõ phím
+            level = level.replace(/[^a-zA-Z0-9]/g, ""); 
             topic = topic.trim();
 
             return { level, topic };
         }
 
-        //        // Hàm gọi API của Google Gemini hỗ trợ tự chuyển đổi model linh hoạt
-        async function callGeminiAPI(modelName, prompt) {
-            const response = await fetch(
-                `https://generativelanguage.googleapis.com/v1beta/models/${modelName}:generateContent?key=${API_KEY}`,
-                {
-                    method: "POST",
-                    headers: {
-                        "Content-Type": "application/json"
-                    },
-                    body: JSON.stringify({
-                        contents: [{ parts: [{ text: prompt }] }]
-                    })
-                }
-            );
+        // ĐỘNG CƠ SINH ĐỀ THI MÔ PHỎNG DYNAMIC OFFLINE (Chứng minh kết nối thành công)
+        function generateLocalMockQuiz(level, topic) {
+            const simulatedTitle = `Exam Study: ${topic} (Level ${level})`;
+            const simulatedPassage = `This special test passage is dynamically compiled for English proficiency <b>${level}</b> focusing on the core subject of <b>${topic}</b>. In this study, we explore how <b>${topic}</b> interacts with modern learners at the <b>${level}</b> scale. Historically, research in <b>${topic}</b> was limited. However, modern educational technologies have greatly enhanced our understanding of <b>${topic}</b>. Students aiming for <b>${level}</b> are expected to master key terminology related to <b>${topic}</b>. By practicing this specific material, you demonstrate that your MIT App Inventor and WebViewer communication channel is functioning with 100% precision.`;
 
-            if (!response.ok) {
-                const errJson = await response.json().catch(() => ({}));
-                throw new Error(errJson.error?.message || `HTTP ${response.status}`);
-            }
-
-            const result = await response.json();
-            if (!result.candidates || result.candidates.length === 0) {
-                throw new Error("Không nhận được phản hồi từ AI.");
-            }
-            return result.candidates[0].content.parts[0].text;
-        }
-
-        // Hàm lọc chuỗi JSON sạch để chống sập ứng dụng
-        function cleanAndParseJSON(rawText) {
-            let cleanText = rawText.trim();
-            cleanText = cleanText.replace(/```json/g, "");
-            cleanText = cleanText.replace(/```/g, "");
+            const questions = [];
             
-            const startIdx = cleanText.indexOf('{');
-            const endIdx = cleanText.lastIndexOf('}');
-            if (startIdx !== -1 && endIdx !== -1) {
-                cleanText = cleanText.substring(startIdx, endIdx + 1);
+            // Tự động tạo 10 câu hỏi chứa đúng giá trị Trình độ và Chủ đề đã chọn
+            for (let i = 1; i <= 10; i++) {
+                let questionText = "";
+                let answer = "A";
+                let options = {};
+                let explanation = "";
+
+                if (i === 1) {
+                    questionText = `What is the main subject discussed in this reading exercise?`;
+                    options = { A: topic, B: "An unrelated general subject", C: "Traditional cooking methods", D: "Extreme outdoor sports" };
+                    answer = "A";
+                    explanation = `Đoạn văn nêu rõ chủ đề chính của bài luyện tập đọc hiểu này là về "${topic}".`;
+                } else if (i === 2) {
+                    questionText = `This custom mock reading passage is calibrated for which level?`;
+                    options = { A: "Beginner Level (A1)", B: "Expert Level (C2)", C: `Calibrated Level: ${level}`, D: "Primary school level" };
+                    answer = "C";
+                    explanation = `Văn bản ghi nhận rõ ràng bài kiểm tra này được hiệu chuẩn ở trình độ "${level}".`;
+                } else {
+                    questionText = `Question ${i} (${topic}): Is mastering ${topic} helpful for students?`;
+                    options = { A: "Yes, it is highly recommended for progress.", B: "No, it should be ignored.", C: "It is only a temporary distraction.", D: "No opinion." };
+                    answer = "A";
+                    explanation = `Theo nội dung văn bản: "mastering ${topic} is key to unlocking new global opportunities".`;
+                }
+
+                questions.push({
+                    question: questionText,
+                    A: options.A,
+                    B: options.B,
+                    C: options.C,
+                    D: options.D,
+                    answer: answer,
+                    explanation: explanation
+                });
             }
-            return JSON.parse(cleanText);
+
+            return {
+                title: simulatedTitle,
+                passage: simulatedPassage,
+                questions: questions
+            };
         }
 
-        // Động cơ soạn đề thi AI chính
-        async function createQuiz(level, topic) {
+        // Hàm xử lý khi phát hiện tín hiệu cấu hình thay đổi từ điện thoại
+        function handleConfigChange(level, topic) {
             const statusDiv = document.getElementById("status");
-            statusDiv.innerHTML = `⚡ AI đang kết nối bằng Gemini 2.5 Flash để soạn đề trình độ <b>${level}</b> chủ đề <b>${topic}</b>...`;
+            statusDiv.innerHTML = `⚡ Đã bắt được tín hiệu! Đang khởi tạo đề thi mô phỏng cho <b>${level}</b> - <b>${topic}</b>...`;
 
-            const prompt = `
-Create an English reading comprehension test.
-Level: ${level}
-Topic: ${topic}
-Generate:
-- one reading passage (around 150 words)
-- exactly 10 multiple choice questions
+            // Cập nhật giao diện khối nhận tín hiệu
+            document.getElementById("received-level").innerText = level;
+            document.getElementById("received-topic").innerText = topic;
 
-Return ONLY valid JSON.
-{
-"title":"",
-"passage":"",
-"questions":[
-{
-"question":"",
-"A":"",
-"B":"",
-"C":"",
-"D":"",
-"answer":"",
-"explanation":""
-}
-]
-}
-`;
-
-            try {
-                let textResponse = "";
-                try {
-                    textResponse = await callGeminiAPI("gemini-2.5-flash", prompt);
-                } catch (err25) {
-                    console.warn("Gemini 2.5 Flash gặp lỗi, chuyển sang model dự phòng 2.0...", err25);
-                    statusDiv.innerHTML = "🔄 Đang chuyển đổi dự phòng sang Gemini 2.0 Flash...";
-                    textResponse = await callGeminiAPI("gemini-2.0-flash", prompt);
-                }
-
-                quizData = cleanAndParseJSON(textResponse);
-                renderQuiz();
-
-            } catch (err) {
-                // Hiển thị thông báo lỗi rõ ràng trực quan bằng tiếng Việt
-                statusDiv.innerHTML = `
-                    <div class="p-4 bg-rose-500/10 border border-rose-500/30 rounded-xl text-xs text-rose-400 space-y-2">
-                        <strong class="text-sm block">❌ Lỗi kết nối Google AI:</strong>
-                        <p class="font-mono">${err.message}</p>
-                        <div class="border-t border-rose-500/20 pt-2 mt-2">
-                            <p class="font-bold text-amber-400">💡 Gợi ý giải pháp cực kỳ quan trọng:</p>
-                            <p class="leading-relaxed mt-1">Lỗi <b>"invalid authentication credentials"</b> (như trong ảnh trước của bạn) nghĩa là API Key này đã bị Google khóa vĩnh viễn vì bạn tải file lên kho lưu trữ GitHub ở chế độ Công khai (Public). Google quét bảo mật tự động và khóa ngay lập tức để bảo vệ bạn.</p>
-                            <p class="font-bold text-white mt-2">👉 Cách xử lý cực dễ:</p>
-                            <ul class="list-disc list-inside space-y-1 mt-1">
-                                <li>Vào trang <a href="https://aistudio.google.com/" target="_blank" class="underline text-indigo-400">Google AI Studio</a> tạo lại một <b>API Key mới tinh</b>.</li>
-                                <li>Mở file <b>index.html</b> bằng Notepad trên máy tính, dán mã khóa mới vào dòng 98.</li>
-                                <li>Chuyển dự án GitHub của bạn về chế độ <b>Private (Riêng tư)</b> trước khi tải file mới lên để tránh bị Google quét khóa tiếp nhé!</li>
-                            </ul>
-                        </div>
-                    </div>
-                `;
-            }
+            // Tự sinh đề thi mẫu offline ngay lập tức (Không tốn 1 mili-giây gọi API!)
+            quizData = generateLocalMockQuiz(level, topic);
+            renderQuiz();
+            
+            statusDiv.innerHTML = `✅ Kết nối thành công! Đã đồng bộ đề thi trình độ <b>${level}</b>.`;
         }
 
-        //        // Hàm hiển thị giao diện đề thi
+        // Hiển thị giao diện đề thi
         function renderQuiz() {
-            document.getElementById("status").innerHTML = "✅ Đã tải đề thi thành công!";
-            
             let html = "";
             html += `
                 <div class="bg-slate-900 border border-slate-850 rounded-2xl p-4 shadow-md space-y-3">
@@ -263,7 +222,7 @@ Return ONLY valid JSON.
             html += `
                 <div class="bg-slate-900 border border-slate-850 rounded-2xl p-4 shadow-md text-center space-y-3">
                     <button onclick="gradeQuiz()" class="tap-scale w-full bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-2.5 rounded-xl text-xs transition shadow-md">
-                        Nộp Bài & Chấm Điểm
+                        Nộp Bài Chấm Điểm Thử
                     </button>
                     <div id="result" class="text-sm font-bold text-indigo-400"></div>
                 </div>
@@ -272,7 +231,7 @@ Return ONLY valid JSON.
             document.getElementById("quizArea").innerHTML = html;
         }
 
-        //        // Hàm chấm điểm trắc nghiệm
+        // Chấm điểm và truyền kết quả ngược về điện thoại qua WebViewString
         function gradeQuiz() {
             let score = 0;
 
@@ -288,20 +247,20 @@ Return ONLY valid JSON.
                     } else {
                         fb.className = "p-3 bg-rose-500/10 border border-rose-500/20 rounded-xl text-[11px] text-rose-400 mt-2 space-y-1";
                         fb.innerHTML = `
-                            <p class='font-bold'>✗ Sai rồi</p>
+                            <p class='font-bold'>✗ Chưa chính xác</p>
                             <p><b>Đáp án đúng:</b> <span class="text-emerald-400 font-bold">${q.answer}</span></p>
                             <p class="text-slate-400"><b>Giải thích:</b> ${q.explanation}</p>
                         `;
                     }
                 } else {
                     fb.className = "p-3 bg-amber-500/10 border border-amber-500/20 rounded-xl text-[11px] text-amber-400 mt-2";
-                    fb.innerHTML = "<p>⚠️ Bạn chưa chọn đáp án cho câu hỏi này!</p>";
+                    fb.innerHTML = "<p>⚠️ Bạn chưa chọn câu trả lời này!</p>";
                 }
             });
 
             document.getElementById("result").innerHTML = `
-                <h2 class="text-lg font-extrabold text-white">Điểm số của bạn: ${score}/10</h2>
-                <p class="text-[10px] text-slate-400 mt-1">Kết quả đã được đồng bộ trực tiếp về điện thoại.</p>
+                <h2 class="text-lg font-extrabold text-white">Điểm số: ${score}/10</h2>
+                <p class="text-[10px] text-slate-400 mt-1">Chuỗi tin nhắn gửi về điện thoại: "DIEM:${score}/10"</p>
             `;
 
             sendResultToMIT(score, 10);
@@ -319,29 +278,24 @@ Return ONLY valid JSON.
             }
         }
 
-        // Hàm kiểm tra và cập nhật cấu hình liên tục
-        async function checkConnection() {
+        // Vòng lặp kiểm tra tín hiệu từ điện thoại liên tục 500ms
+        function checkConnection() {
             const params = parseParameters();
             
-            // Cập nhật giao diện Trình độ và Chủ đề lên màn hình ngay lập tức
-            document.getElementById("info").innerHTML = `Level: ${params.level} | Topic: ${params.topic}`;
-
-            // Kiểm tra xem dữ liệu truyền xuống có thay đổi so với lần trước không
-            const currentConfigStr = `${params.level}|${params.topic}`;
-            if (currentConfigStr !== lastReceivedConfig) {
-                lastReceivedConfig = currentConfigStr;
-                currentLevel = params.level;
-                currentTopic = params.topic;
-                
-                // Khởi chạy tạo đề mới tương ứng với tham số nhận được!
-                await createQuiz(currentLevel, currentTopic);
+            if (params.level !== "Chưanhận" && params.topic !== "Chưanhận") {
+                const currentConfigStr = `${params.level}|${params.topic}`;
+                if (currentConfigStr !== lastReceivedConfig) {
+                    lastReceivedConfig = currentConfigStr;
+                    currentLevel = params.level;
+                    currentTopic = params.topic;
+                    
+                    // Kích hoạt sinh đề thi mẫu theo cấu hình thực tế nhận được!
+                    handleConfigChange(currentLevel, currentTopic);
+                }
             }
         }
 
-        // Chạy vòng lặp quét tín hiệu liên tục mỗi 500ms
         setInterval(checkConnection, 500);
-        
-        // Khởi chạy quét lần đầu tiên khi tải trang
         checkConnection();
     </script>
 
