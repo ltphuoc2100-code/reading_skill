@@ -64,39 +64,39 @@
     <!-- KHUNG CHIA ĐÔI MÀN HÌNH CHÍNH (Chỉ hiện khi đã nhận được dữ liệu) -->
     <div id="split-screen-container" class="hidden flex-1 flex flex-col overflow-hidden w-full">
         
-        <!-- PHẦN 1: NỬA TRÊN - BÀI ĐỌC TỰ ĐỘNG ÔM KHÍT (max-h-38vh ngăn chặn chiếm màn hình) -->
-        <div class="max-h-[38vh] flex-shrink-0 border-b border-slate-800 bg-slate-900/40 p-3 flex flex-col justify-start space-y-1.5 overflow-hidden">
+        <!-- PHẦN 1: NỬA TRÊN - BÀI ĐỌC TỰ ĐỘNG ÔM KHÍT (Chỉ cho phép cuộn ở đây) -->
+        <div class="flex-shrink-1 max-h-[35vh] border-b border-slate-800 bg-slate-900/40 p-3 flex flex-col justify-start space-y-1.5 overflow-hidden">
             <div class="flex items-center justify-between text-[9px] font-bold">
                 <span id="badge-level" class="bg-indigo-500/10 text-indigo-400 border border-indigo-500/20 px-2 py-0.5 rounded uppercase tracking-wider">LEVEL --</span>
                 <span id="badge-topic" class="bg-slate-800 text-slate-300 px-2 py-0.5 rounded uppercase tracking-wider truncate max-w-[200px]">TOPIC --</span>
             </div>
             <h3 id="reading-title" class="text-xs font-extrabold text-white leading-tight">Đang tải tiêu đề...</h3>
             
-            <!-- Đây là khung duy nhất được phép cuộn ở phần bài đọc nếu chữ quá dài -->
-            <div id="reading-passage" class="text-xs text-slate-300 leading-relaxed bg-slate-950 p-3 rounded-xl border border-slate-900 font-serif overflow-y-auto custom-scroll flex-1">
+            <!-- Đây là khung duy nhất được phép xuất hiện thanh cuộn nếu văn bản quá dài -->
+            <div id="reading-passage" class="text-xs text-slate-300 leading-relaxed bg-slate-950 p-2.5 rounded-xl border border-slate-900 font-serif overflow-y-auto custom-scroll flex-1">
                 Đang biên soạn bài đọc...
             </div>
         </div>
 
-        <!-- PHẦN 2: NỬA DƯỚI - HIỂN THỊ TỰ ĐỘNG NỞ RỘNG (flex-1 lấp đầy phần còn lại) -->
-        <div class="flex-1 bg-slate-950 p-4 flex flex-col justify-between overflow-hidden">
+        <!-- PHẦN 2: NỬA DƯỚI - HIỂN THỊ CÂU HỎI (Tuyệt đối không có thanh cuộn) -->
+        <div class="flex-1 bg-slate-950 p-3.5 flex flex-col justify-between overflow-hidden">
             
-            <!-- Nội dung câu hỏi hiện tại (Cuộn an toàn khi đáp án quá dài) -->
-            <div class="flex-1 overflow-y-auto custom-scroll space-y-3 pb-2" id="question-card">
-                <div class="flex items-center justify-between border-b border-slate-900 pb-1.5">
+            <!-- Nội dung câu hỏi hiện tại (Khóa cuộn, đảm bảo lọt lòng giao diện) -->
+            <div class="flex-1 flex flex-col justify-start space-y-2.5 overflow-hidden" id="question-card">
+                <div class="flex items-center justify-between border-b border-slate-900 pb-1">
                     <span id="current-question-num" class="text-[10px] font-bold text-slate-500">CÂU HỎI 1/10</span>
                     <span class="bg-indigo-500/10 text-indigo-400 border border-indigo-500/20 text-[9px] font-bold px-2 py-0.5 rounded uppercase tracking-wider">KIỂM TRA ĐỌC</span>
                 </div>
 
                 <p id="question-text" class="text-xs font-bold text-slate-100 leading-snug">Đang tải câu hỏi...</p>
                 
-                <!-- Khu vực đáp án trắc nghiệm -->
-                <div id="options-grid" class="grid grid-cols-1 gap-2">
+                <!-- Khu vực đáp án trắc nghiệm gọn gàng, không bao giờ gây cuộn -->
+                <div id="options-grid" class="grid grid-cols-1 gap-1.5">
                     <!-- Đáp án A, B, C, D hiển thị tại đây -->
                 </div>
 
-                <!-- Phản hồi đúng sai + Giải thích chi tiết -->
-                <div id="question-explanation" class="hidden p-3 bg-indigo-500/10 border border-indigo-500/20 rounded-xl text-[10px] text-indigo-300 leading-relaxed">
+                <!-- Phản hồi đúng sai + Giải thích chi tiết (Giới hạn chiều cao và tự cuộn nhỏ nếu quá dài) -->
+                <div id="question-explanation" class="hidden p-2 bg-indigo-500/10 border border-indigo-500/20 rounded-lg text-[10px] text-indigo-300 leading-relaxed overflow-y-auto max-h-[70px] custom-scroll">
                     Giải thích...
                 </div>
             </div>
@@ -120,29 +120,29 @@
 
                 <!-- Thanh nút Quay lại / Tiếp theo -->
                 <div class="flex items-center justify-between gap-3">
-                    <button onclick="prevQuestion()" id="btn-prev" class="tap-scale flex-1 py-2 bg-slate-900 hover:bg-slate-800 disabled:opacity-20 disabled:pointer-events-none rounded-xl text-[11px] font-bold text-slate-300 transition">
+                    <button onclick="prevQuestion()" id="btn-prev" class="tap-scale flex-1 py-1.5 bg-slate-900 hover:bg-slate-800 disabled:opacity-20 disabled:pointer-events-none rounded-xl text-[10px] font-bold text-slate-300 transition">
                         Quay lại
                     </button>
                     
-                    <button onclick="nextQuestion()" id="btn-next" class="tap-scale flex-1 py-2 bg-slate-900 hover:bg-slate-800 disabled:opacity-20 disabled:pointer-events-none rounded-xl text-[11px] font-bold text-slate-300 transition">
+                    <button onclick="nextQuestion()" id="btn-next" class="tap-scale flex-1 py-1.5 bg-slate-900 hover:bg-slate-800 disabled:opacity-20 disabled:pointer-events-none rounded-xl text-[10px] font-bold text-slate-300 transition">
                         Tiếp theo
                     </button>
                 </div>
 
                 <!-- Nút nộp bài chấm điểm -->
-                <button onclick="gradeQuiz()" id="btn-submit" class="tap-scale hidden w-full bg-emerald-600 hover:bg-emerald-700 text-white font-bold py-2 rounded-xl text-xs transition shadow-lg">
+                <button onclick="gradeQuiz()" id="btn-submit" class="tap-scale hidden w-full bg-emerald-600 hover:bg-emerald-700 text-white font-bold py-1.5 rounded-xl text-[11px] transition shadow-lg">
                     Nộp Bài Chấm Điểm Thử
                 </button>
 
                 <!-- Kết quả tổng điểm sau khi nộp bài -->
-                <div id="result" class="hidden text-center text-xs font-bold text-emerald-400 bg-emerald-500/10 border border-emerald-500/20 py-1.5 rounded-xl"></div>
+                <div id="result" class="hidden text-center text-[11px] font-bold text-emerald-400 bg-emerald-500/10 border border-emerald-500/20 py-1 rounded-xl"></div>
             </div>
 
         </div>
     </div>
 
     <!-- Chân trang cố định -->
-    <footer class="bg-slate-950 text-slate-700 text-center py-2 text-[8px] border-t border-slate-900 uppercase tracking-widest flex-shrink-0">
+    <footer class="bg-slate-950 text-slate-700 text-center py-2 text-[8px] border-t border-slate-900 uppercase tracking-widest flex-shrink-0 font-semibold">
         MIT App Inventor Dual-Pane Bridge
     </footer>
 
@@ -302,13 +302,14 @@
                 const isChosen = selectedAnswers[idx] === key;
                 
                 const label = document.createElement("label");
-                let labelClass = "tap-scale flex items-center p-3 rounded-xl text-xs font-medium cursor-pointer transition ";
+                // Nhỏ gọn hơn (py-2 thay vì py-3) để bảo đảm vừa khít tuyệt đối không gây cuộn ở nửa dưới
+                let labelClass = "tap-scale flex items-center p-2 rounded-lg text-[11px] font-medium cursor-pointer transition ";
 
                 const radio = document.createElement("input");
                 radio.type = "radio";
                 radio.name = `q${idx}`;
                 radio.value = key;
-                radio.className = "mr-3 accent-indigo-500";
+                radio.className = "mr-2.5 accent-indigo-500";
                 if (isChosen) radio.checked = true;
 
                 if (isSubmitted) {
@@ -353,9 +354,6 @@
 
             updateProgressBubbles();
             updateSubmitButton();
-
-            // Cuộn phần câu hỏi lên đầu
-            document.getElementById("question-card").scrollTop = 0;
         }
 
         function selectOption(key) {
@@ -417,7 +415,7 @@
 
             if (answeredCount >= 7 || activeQuestionIdx >= 8) {
                 btnSubmit.classList.remove("hidden");
-                btnSubmit.innerText = `Nộp bài chấm điểm (Đã làm ${answeredCount}/${total})`;
+                btnSubmit.innerText = `Nộp bài (Đã làm ${answeredCount}/${total})`;
             } else {
                 btnSubmit.classList.add("hidden");
             }
@@ -430,7 +428,7 @@
             const answeredCount = Object.keys(selectedAnswers).length;
 
             if (answeredCount < total) {
-                alert(`Bạn mới chọn đáp án cho ${answeredCount}/${total} câu hỏi. Hãy bấm "Tiếp theo" hoặc "Quay lại" để làm hết toàn bộ đề thi trước khi nộp nhé!`);
+                alert(`Bạn mới chọn đáp án cho ${answeredCount}/${total} câu hỏi. Hãy làm hết bài trước khi nộp nhé!`);
                 return;
             }
 
@@ -445,7 +443,7 @@
 
             const resDiv = document.getElementById("result");
             resDiv.classList.remove("hidden");
-            resDiv.innerText = `KẾT QUẢ ĐIỂM SỐ CỦA BẠN: ${score}/${total}`;
+            resDiv.innerText = `ĐIỂM SỐ CỦA BẠN: ${score}/${total}`;
 
             sendResultToMIT(score, total);
             showQuestion(activeQuestionIdx);
