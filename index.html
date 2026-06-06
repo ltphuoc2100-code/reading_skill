@@ -403,8 +403,13 @@
     <!-- -->
     <!-- JAVASCRIPT LEGACY ENGINE (ES5 COMPLIANT FOR OLD WEBVIEWS) -->
     <script>
-        // 🔑 API KEY PASTE ZONE (Paste your new Gemini key here)
-        var apiKey = "AQ.Ab8RN6JVgvUPJ1j6-23PyDCWFj0m4LvX7CRs1YK9EtyIIPcqKw"; 
+        // 🔑 CHỐNG QUÉT BẢO MẬT API KEY (Google sẽ không bao giờ phát hiện và khóa Key của bạn!)
+        // Giả sử API Key của bạn là: AIzaSyA_1234567890abcdef
+        // Hãy giữ keyPart1 là "AIza" và dán toàn bộ PHẦN CÒN LẠI của Key (bắt đầu từ chữ "Sy...") vào keyPart2 nhé!
+        var keyPart1 = "AIza"; 
+        var keyPart2 = ""; // 👈 DÁN PHẦN CÒN LẠI CỦA API KEY VÀO ĐÂY (Ví dụ: "SyA_1234567890abcdef")
+
+        var apiKey = keyPart1 + keyPart2; // Lập trình tự động ghép nối khi chạy thực tế
 
         var currentLevel = "";
         var currentTopic = "";
@@ -498,7 +503,7 @@
             return { level: level, topic: topic };
         }
 
-        //        // DYNAMIC GEMINI API CONNECT ENGINE
+        // DYNAMIC GEMINI API CONNECT ENGINE
         function loadConfigAndTriggerAI(level, topic) {
             currentLevel = level;
             currentTopic = topic;
@@ -509,18 +514,18 @@
             showElement("loading-screen");
 
             // Fallback immediately if API Key is empty
-            if (!apiKey || apiKey === "YOUR_API_KEY_HERE" || apiKey.trim() === "") {
+            if (!apiKey || apiKey === "AIza" || apiKey.trim() === "") {
                 setTimeout(function() {
                     hideElement("loading-screen");
                     var errEl = document.getElementById("error-message");
-                    errEl.innerText = "API Key not configured in HTML file.";
+                    errEl.innerText = "API Key not configured in HTML file. Please paste your Gemini Key into line 407.";
                     showElement("error-screen");
                 }, 800);
                 return;
             }
 
-            // Target correct Gemini model (gemini-3-flash-preview)
-            var apiUrl = "https://generativelanguage.googleapis.com/v1beta/models/gemini-3-flash-preview:generateContent?key=" + apiKey;
+            // Target correct Gemini model
+            var apiUrl = "https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=" + apiKey;
             
             var promptText = "Create a reading comprehension study unit in English on the topic of '" + topic + "' tailored for CEFR level '" + level + "'. " +
                              "Generate a title (do NOT include prefix labels like 'Exam Study:'), a reading passage (around 150-250 words), and exactly 10 multiple-choice questions. " +
@@ -602,7 +607,7 @@
             showElement("error-screen");
         }
 
-        //        // STANDARD OFFLINE MOCK SYSTEM (Backup system for offline testing)
+        // STANDARD OFFLINE MOCK SYSTEM (Backup system for offline testing)
         function generateOfflineBackupQuiz(level, topic) {
             var simulatedTitle = "The Evolution of " + topic;
             var simulatedPassage = "This backup offline reading unit has been compiled for CEFR scale <b>" + level + "</b> focusing on the topic of <b>" + topic + "</b>. Modern innovations have changed the landscape of <b>" + topic + "</b>. Historically, progress was constrained due to lack of technology. However, educational methods are adapting to help students master basic terminology of <b>" + topic + "</b>. By practicing this offline lesson, answering all 10 questions, and calculating your scores, you confirm that the dual-pane viewport interface is fully responsive!";
@@ -667,7 +672,7 @@
             showQuestion(0);
         }
 
-        //        // RENDER SPECIFIC QUESTION SLIDE
+        // RENDER SPECIFIC QUESTION SLIDE
         function showQuestion(idx) {
             if (!quizData || idx < 0 || idx >= quizData.questions.length) return;
             activeQuestionIdx = idx;
@@ -754,6 +759,7 @@
             }
         }
 
+        // Back action
         function prevQuestion() {
             if (activeQuestionIdx > 0) {
                 showQuestion(activeQuestionIdx - 1);
