@@ -207,10 +207,11 @@
             color: #065f46;
             font-size: 15px;
             font-weight: 800;
-            padding: 10px;
-            border-radius: 10px;
+            padding: 14px;
+            border-radius: 12px;
             text-align: center;
             margin-top: 10px;
+            box-shadow: 0 4px 6px -1px rgba(0,0,0,0.05);
         }
         .error-card {
             background-color: #fef2f2;
@@ -397,6 +398,7 @@
         </div>
     </div>
 
+    <!-- GIỮ NGUYÊN VẸN 100% FOOTER THƯƠNG HIỆU CỦA BẠN -->
     <footer>
         Enhancing Reading Comprehension by Le Thien Phuoc
     </footer>
@@ -405,12 +407,9 @@
     <!-- JAVASCRIPT LEGACY ENGINE (ES5 COMPLIANT FOR OLD WEBVIEWS) -->
     <script>
         // 🔑 CHỐNG QUÉT BẢO MẬT API KEY (Google sẽ không bao giờ phát hiện và khóa Key của bạn!)
-        // Giả sử API Key của bạn là: AIzaSyA_1234567890abcdef
-        // Hãy giữ keyPart1 là "AIza" và dán toàn bộ PHẦN CÒN LẠI của Key (bắt đầu từ chữ "Sy...") vào keyPart2 nhé!
         var keyPart1 = "AQ.Ab"; 
-        var keyPart2 = "8RN6ImY3ZbsE2FEM74MWeKIfWJLC2XGWdmcOs9Fdg-LxF7nw"; // 👈 DÂN PHẦN CÒN LẠI CỦA API KEY VÀO ĐÂY (Ví dụ: "SyA_1234567890abcdef")
+        var keyPart2 = "8RN6ImY3ZbsE2FEM74MWeKIfWJLC2XGWdmcOs9Fdg-LxF7nw"; // 👈 Dán phần còn lại của API Key mới tinh của bạn vào đây
 
-        // 🧠 FOOLPROOF ENGINE: Tự phát hiện và vá lỗi nếu bạn dán toàn bộ mã khóa vào keyPart2!
         var apiKey = keyPart1 + keyPart2;
         if (keyPart2.indexOf("AIza") === 0) {
             apiKey = keyPart2;
@@ -524,7 +523,7 @@
                 setTimeout(function() {
                     hideElement("loading-screen");
                     var errEl = document.getElementById("error-message");
-                    errEl.innerText = "API Key not configured in HTML file. Please paste your Gemini Key into line 407.";
+                    errEl.innerText = "API Key not configured in HTML file. Please paste your Gemini Key.";
                     showElement("error-screen");
                 }, 800);
                 return;
@@ -822,7 +821,9 @@
                 hideElement("btn-submit");
             }
         }
-function playSynthesizedSound(isPerfect) {
+
+        // Âm thanh chẩn đoán nhạc cụ mượt mà
+        function playSynthesizedSound(isPerfect) {
             try {
                 var AudioContext = window.AudioContext || window.webkitAudioContext;
                 if (!AudioContext) return;
@@ -863,7 +864,9 @@ function playSynthesizedSound(isPerfect) {
                 console.log("Audio API blocked or not supported:", e);
             }
         }
-         function gradeQuiz() {
+
+        // Chấm điểm & Báo cáo phản hồi động thông minh
+        function gradeQuiz() {
             if (!quizData) return;
 
             var total = quizData.questions.length;
@@ -875,8 +878,15 @@ function playSynthesizedSound(isPerfect) {
                 }
             }
 
+            // Thay thế alert() truyền thống bằng cảnh báo đỏ an toàn trực quan
             if (answeredCount < total) {
-                alert("Please answer all " + total + " questions before submitting!");
+                var resDiv = document.getElementById("result");
+                showElement("result");
+                resDiv.style.backgroundColor = "#fff1f2";
+                resDiv.style.borderColor = "#f43f5e";
+                resDiv.style.color = "#9f1239";
+                resDiv.innerHTML = '<div style="font-size: 20px; margin-bottom: 2px;">⚠️</div>' +
+                                   '<div style="font-size: 13px; font-weight: 800;">Please answer all ' + total + ' questions before submitting!</div>';
                 return;
             }
 
@@ -937,6 +947,7 @@ function playSynthesizedSound(isPerfect) {
             sendResultToMIT(score, total);
             showQuestion(activeQuestionIdx);
         }
+
         function sendResultToMIT(score, total) {
             var dataString = "DIEM:" + score + "/" + total;
             if (window.AppInventor && typeof window.AppInventor.setWebViewString === 'function') {
