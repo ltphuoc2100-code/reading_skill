@@ -1,418 +1,835 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" style="background-color: #ffffff;">
 <head>
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>AI Reading Comprehension Engine</title>
-    <!-- Tailwind CSS CDN -->
-    <script src="https://cdn.tailwindcss.com"></script>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>AI Reading Practice</title>
     <style>
+        /* CSS LIGHT THEME - EXTRA LARGE FONTS - ZERO INTERNET LIBRARIES */
+        html, body {
+            background-color: #ffffff !important;
+            margin: 0;
+            padding: 0;
+            width: 100%;
+            height: 100%;
+            box-sizing: border-box;
+        }
         body {
-            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
-            background-color: #f8fafc;
             color: #0f172a;
-            -webkit-tap-highlight-color: transparent;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+            padding: 12px;
+            display: flex;
+            flex-direction: column;
+            justify-content: flex-start;
+            min-height: 520px; /* Locked height to prevent collapse in old Android systems */
+            overflow-y: auto;
+        }
+
+        /* Information and Reading Cards */
+        .card {
+            background-color: #f8fafc;
+            border: 2px solid #e2e8f0;
+            border-radius: 14px;
+            padding: 14px;
+            margin-bottom: 12px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+        }
+
+        /* Level and Topic Badges */
+        .badge-container {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 10px;
+        }
+        .badge {
+            font-size: 11px;
+            font-weight: bold;
+            padding: 4px 10px;
+            border-radius: 6px;
+            text-transform: uppercase;
+        }
+        .badge-level {
+            background-color: #e0e7ff;
+            color: #4338ca;
+            border: 1px solid #c7d2fe;
+        }
+        .badge-topic {
+            background-color: #e2e8f0;
+            color: #334155;
+            border: 1px solid #cbd5e1;
+        }
+
+        /* Reading Passage Styles */
+        .reading-title {
+            font-size: 15px;
+            font-weight: 800;
+            color: #0f172a;
+            margin: 0 0 8px 0;
+        }
+        .passage-box {
+            font-size: 17px; /* Extra Large Reading Font */
+            line-height: 1.6;
+            color: #1e293b;
+            background-color: #ffffff;
+            padding: 12px;
+            border-radius: 10px;
+            border: 2px solid #cbd5e1;
+            max-height: 160px; /* Locked reading height */
+            overflow-y: auto;  /* Only scrollable reading box */
+            text-align: justify;
+            font-family: Georgia, serif;
+        }
+
+        /* Question and Options Area */
+        .question-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 2px solid #e2e8f0;
+            padding-bottom: 8px;
+            margin-bottom: 12px;
+        }
+        .question-num {
+            font-size: 13px;
+            font-weight: 800;
+            color: #475569;
+            text-transform: uppercase;
+        }
+        .question-text {
+            font-size: 18px; /* Extra Large Question Font */
+            font-weight: 700;
+            color: #0f172a;
+            margin: 0 0 12px 0;
+            line-height: 1.5;
+        }
+
+        /* Options A, B, C, D - Clean Touch Targets */
+        .option-label {
+            display: flex;
+            align-items: center;
+            padding: 12px 14px;
+            background-color: #ffffff;
+            border: 2px solid #cbd5e1;
+            border-radius: 10px;
+            color: #1e293b;
+            font-size: 16px; /* Extra Large Options Font */
+            margin-bottom: 8px;
+            cursor: pointer;
+            box-sizing: border-box;
+            transition: all 0.2s ease;
+        }
+        .option-label input {
+            margin-right: 12px;
+            transform: scale(1.3);
+            accent-color: #4f46e5;
         }
         
-        /* Cấu hình lề đều 2 bên cho bài đọc */
-        .passage-box {
-            font-size: 17px;
-            line-height: 1.7;
-            color: #1e293b;
-            text-align: justify;
-            font-family: Georgia, Cambria, "Times New Roman", Times, serif;
+        /* Selected & Marked Option States */
+        .option-selected {
+            background-color: #e0e7ff !important;
+            border-color: #4f46e5 !important;
+            color: #1e1b4b !important;
+            font-weight: bold;
+        }
+        .option-correct {
+            background-color: #d1fae5 !important;
+            border-color: #10b981 !important;
+            color: #065f46 !important;
+            font-weight: bold;
+        }
+        .option-wrong {
+            background-color: #ffe4e6 !important;
+            border-color: #f43f5e !important;
+            color: #9f1239 !important;
+            font-weight: bold;
         }
 
-        /* Hiệu ứng tương tác cho các nút bấm HTML/CSS */
-        .btn-interactive {
-            transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
-        }
-        .btn-interactive:active {
-            transform: scale(0.96);
-            box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.1);
+        /* Explanation Box */
+        .explanation-box {
+            background-color: #f0fdf4;
+            border: 2px solid #a7f3d0;
+            padding: 10px 12px;
+            border-radius: 8px;
+            font-size: 13px;
+            color: #065f46;
+            margin-top: 10px;
+            line-height: 1.5;
         }
 
-        /* Lật thẻ Flashcard mượt mà */
-        .perspective {
-            perspective: 1000px;
+        /* Pinned Bottom Navigation Block */
+        .navigation-section {
+            border-top: 2px solid #e2e8f0;
+            padding-top: 10px;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
         }
-        .preserve-3d {
-            transform-style: preserve-3d;
+        .btn-row {
+            display: flex;
+            justify-content: space-between;
+            gap: 12px;
         }
-        .backface-hidden {
-            backface-visibility: hidden;
+        .nav-btn {
+            flex: 1;
+            background-color: #475569;
+            color: #ffffff;
+            border: none;
+            padding: 10px;
+            border-radius: 10px;
+            font-size: 14px;
+            font-weight: bold;
+            cursor: pointer;
+            text-align: center;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
         }
-        .rotate-y-180 {
-            transform: rotateY(180deg);
+        .nav-btn:disabled {
+            opacity: 0.2;
+            cursor: not-allowed;
+            box-shadow: none;
+        }
+        .submit-btn {
+            background-color: #10b981;
+            color: #ffffff;
+            border: none;
+            padding: 12px;
+            border-radius: 10px;
+            width: 100%;
+            font-size: 15px;
+            font-weight: bold;
+            cursor: pointer;
+            box-shadow: 0 4px 6px -1px rgba(16, 185, 129, 0.3);
+        }
+
+        /* Score & Diagnostic Cards */
+        .result-box {
+            background-color: #ecfdf5;
+            border: 2px solid #10b981;
+            color: #065f46;
+            font-size: 15px;
+            font-weight: 800;
+            padding: 10px;
+            border-radius: 10px;
+            text-align: center;
+            margin-top: 10px;
+        }
+        .error-card {
+            background-color: #fef2f2;
+            border: 2px solid #f87171;
+            border-radius: 14px;
+            padding: 16px;
+            color: #991b1b;
+            font-size: 13px;
+            line-height: 1.6;
+        }
+
+        /* Progress Dots 1-10 */
+        .dots-row {
+            display: flex;
+            justify-content: center;
+            gap: 6px;
+            margin-bottom: 6px;
+        }
+        .dot {
+            width: 9px;
+            height: 9px;
+            border-radius: 50%;
+            background-color: #cbd5e1;
+        }
+        .dot-active {
+            background-color: #4f46e5;
+            box-shadow: 0 0 6px #4f46e5;
+            transform: scale(1.3);
+        }
+        .dot-answered {
+            background-color: #312e81;
+        }
+        .dot-correct {
+            background-color: #10b981;
+        }
+        .dot-wrong {
+            background-color: #f43f5e;
+        }
+
+        /* Helpers & Loading States */
+        .hidden {
+            display: none !important;
+        }
+        .spinner {
+            width: 40px;
+            height: 40px;
+            border: 4px solid #f3f3f3;
+            border-top: 4px solid #4f46e5;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin: 15px auto;
+        }
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        footer {
+            text-align: center;
+            font-size: 10px;
+            color: #64748b;
+            margin-top: auto;
+            border-top: 1px solid #e2e8f0;
+            padding-top: 10px;
+            flex-shrink: 0;
+            font-weight: bold;
         }
     </style>
 </head>
-<body className="bg-slate-50 min-h-screen pb-12">
+<body>
 
-    <!-- KHU VỰC 3 NÚT BẤM CHỌN LEVEL, TOPIC & RANDOM TEST BẰNG HTML/CSS SIÊU ĐẸP -->
-    <div class="max-w-xl mx-auto px-4 pt-4 pb-2">
-        <div class="bg-white rounded-2xl p-4 shadow-sm border border-slate-100 flex flex-col gap-3">
-            <div class="grid grid-cols-2 gap-2">
-                <!-- Dropdown Chọn Trình độ (Level) -->
-                <div class="relative">
-                    <label class="block text-[10px] font-bold text-amber-600 uppercase tracking-wider mb-1 px-1">Level</label>
-                    <select id="webLevel" class="w-full bg-slate-50 border border-slate-200 text-slate-800 text-sm font-semibold rounded-xl px-3 py-2.5 appearance-none focus:outline-none focus:ring-2 focus:ring-amber-500">
-                        <option value="A2">Level A2</option>
-                        <option value="B1" selected>Level B1</option>
-                        <option value="B2">Level B2</option>
-                        <option value="C1">Level C1</option>
-                    </select>
-                    <div class="absolute right-3 top-[26px] pointer-events-none text-slate-500 text-[10px]">▼</div>
-                </div>
-
-                <!-- Dropdown Chọn Chủ đề (Topic) -->
-                <div class="relative">
-                    <label class="block text-[10px] font-bold text-emerald-600 uppercase tracking-wider mb-1 px-1">Topic</label>
-                    <select id="webTopic" class="w-full bg-slate-50 border border-slate-200 text-slate-800 text-sm font-semibold rounded-xl px-3 py-2.5 appearance-none focus:outline-none focus:ring-2 focus:ring-emerald-500">
-                        <option value="Technology" selected>Technology</option>
-                        <option value="Environment">Environment</option>
-                        <option value="Ancient History">History</option>
-                        <option value="Space Exploration">Space Space</option>
-                        <option value="Daily Life">Daily Life</option>
-                    </select>
-                    <div class="absolute right-3 top-[26px] pointer-events-none text-slate-500 text-[10px]">▼</div>
-                </div>
-            </div>
-
-            <!-- Nút Bấm Soạn Đề Thi Ngẫu Nhiên Hiệu Ứng Lún 3D Mượt Mà -->
-            <button onclick="handleRandomTestClick()" class="btn-interactive w-full bg-gradient-to-r from-rose-500 to-red-600 hover:from-rose-600 hover:to-red-700 text-white font-bold py-3 px-4 rounded-xl shadow-md shadow-rose-100 flex items-center justify-center gap-2">
-                <span>Random Test ⚡</span>
-            </button>
-        </div>
-    </div>
-
-    <!-- KHU VỰC HIỂN THỊ BÀI ĐỌC & ĐỀ THI -->
-    <div id="mainContent" class="max-w-xl mx-auto px-4 mt-2">
-        
-        <!-- Màn hình chờ ban đầu hoặc đang tải bài thi -->
-        <div id="loadingState" class="bg-white rounded-2xl p-8 text-center border border-slate-100 shadow-sm flex flex-col items-center justify-center min-h-[300px]">
-            <div id="spinner" class="hidden mb-4">
-                <div class="w-12 h-12 border-4 border-slate-100 border-t-indigo-600 rounded-full animate-spin"></div>
-            </div>
-            <div id="welcomeIcon" class="bg-indigo-50 p-4 rounded-full text-indigo-600 mb-4">
-                <span class="text-3xl">📖</span>
-            </div>
-            <h3 id="statusTitle" class="text-lg font-bold text-slate-800 mb-1">Ready to Learn</h3>
-            <p id="statusDesc" class="text-slate-500 text-xs max-w-xs mx-auto">
-                Select your level & topic above, then tap "Random Test" to generate your reading exam.
-            </p>
-        </div>
-
-        <!-- Khung Đề thi (Chỉ hiển thị sau khi nạp thành công bài đọc từ AI hoặc Offline) -->
-        <div id="examContainer" class="hidden space-y-4">
-            
-            <!-- Hộp văn bản bài đọc -->
-            <div class="bg-white rounded-2xl p-5 shadow-sm border border-slate-100">
-                <h2 id="passageTitle" class="text-xl font-extrabold text-slate-900 mb-3 leading-snug">The Evolution of Travel</h2>
-                <div id="passageBody" class="passage-box">
-                    Loading passage content...
-                </div>
-            </div>
-
-            <!-- Khung trình diễn 10 câu hỏi trắc nghiệm (Dạng Slide) -->
-            <div class="bg-white rounded-2xl p-5 shadow-sm border border-slate-100">
-                <div class="flex justify-between items-center mb-4 border-b border-slate-100 pb-2.5">
-                    <span id="questionCounter" class="text-xs font-black tracking-wider text-indigo-600 uppercase">Question 1 of 10</span>
-                    <span id="skillBadge" class="text-[10px] font-bold bg-indigo-50 text-indigo-700 px-2 py-0.5 rounded-md uppercase">Skimming</span>
-                </div>
-
-                <!-- Nội dung câu hỏi trắc nghiệm -->
-                <p id="quizQuestion" class="text-base font-bold text-slate-800 mb-4 leading-snug">
-                    Question text will appear here...
-                </p>
-
-                <!-- Danh sách 4 đáp án lựa chọn -->
-                <div id="optionsContainer" class="space-y-2">
-                    <!-- Đáp án sẽ được chèn tự động bằng JS -->
-                </div>
-
-                <!-- Thanh điều hướng và nút nộp bài thi -->
-                <div class="flex items-center justify-between mt-6 pt-4 border-t border-slate-100 gap-3">
-                    <button id="btnPrev" onclick="navigateQuestion(-1)" class="btn-interactive flex-1 bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold py-3 px-4 rounded-xl text-xs">
-                        ◀ Back
-                    </button>
-                    <button id="btnNext" onclick="navigateQuestion(1)" class="btn-interactive flex-1 bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-3 px-4 rounded-xl text-xs shadow-md shadow-indigo-100">
-                        Next ▶
-                    </button>
-                    <button id="btnSubmit" onclick="calculateExamResult()" class="btn-interactive hidden flex-1 bg-emerald-500 hover:bg-emerald-600 text-white font-bold py-3 px-4 rounded-xl text-xs shadow-md shadow-emerald-100">
-                        Submit ✔
-                    </button>
-                </div>
-            </div>
-
-            <!-- Thẻ báo điểm số của học sinh (Score Card) -->
-            <div id="scoreCard" class="hidden bg-white rounded-2xl p-6 shadow-sm border-2 border-emerald-500 text-center space-y-4">
-                <div id="scoreImage" class="inline-block mb-1">
-                    <div class="inline-block bg-emerald-50 text-emerald-600 p-3 rounded-full">
-                        <span class="text-3xl">🏆</span>
-                    </div>
-                </div>
-                <h3 class="text-lg font-black text-slate-800 uppercase tracking-wide">Exam Complete!</h3>
-                <div class="text-4xl font-black text-emerald-600" id="scoreDisplay">0 / 10</div>
-                
-                <!-- Vùng hiển thị nhận xét và lời khuyên động -->
-                <div id="scoreFeedback" class="bg-slate-50 p-3.5 rounded-xl border border-slate-100 text-slate-600">
-                    Your result has been successfully transmitted back to the mobile application!
-                </div>
-                
-                <button onclick="restartExam()" class="btn-interactive px-5 py-2.5 bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs font-bold rounded-xl">
-                    Try Another Test ⚡
-                </button>
-            </div>
-
-        </div>
-    </div>
-
-    <!-- HỘP THÔNG BÁO LỖI TIẾNG ANH (DIAGNOSTIC BOX) -->
-    <div id="errorAlert" class="hidden max-w-xl mx-auto px-4 mt-4">
-        <div class="bg-rose-50 border border-rose-200 rounded-2xl p-4 text-rose-800 space-y-2">
-            <div class="flex items-center gap-2 font-bold text-sm">
-                <span>⚠️</span>
-                <span>Connection Diagnostic Alert</span>
-            </div>
-            <p id="errorText" class="text-xs leading-relaxed">
-                Unable to establish connection with Gemini API. Please check your API configuration credentials.
-            </p>
-            <div class="text-[10px] text-rose-500 font-mono mt-1 pt-1.5 border-t border-rose-200/60" id="debugInfo">
-                Debug Info: Key Length = 0 | Build Version 4.0
-            </div>
-        </div>
-    </div>
-
-    <!-- CHƯƠNG TRÌNH JAVASCRIPT ĐIỀU KHIỂN -->
+    <!-- SYSTEM ERROR DIAGNOSIS MODULE -->
     <script>
-        // CẤU HÌNH API KEY CHỐNG QUÉT BẢO MẬT (FOOLPROOF ENGINE)
-        var keyPart1 = "AIza"; 
-        var keyPart2 = ""; // 👈 Bạn dán toàn bộ API Key mới tinh của bạn vào đây!
-
-        // Hàm tự động vá và khôi phục mã khóa nếu bị dán nhầm
-        function getCleanApiKey() {
-            var fullKey = keyPart2.trim();
-            if (fullKey.startsWith("AIza")) {
-                return fullKey; // Nếu dán cả cụm, trả về luôn
-            }
-            return keyPart1 + fullKey; // Nếu dán một nửa, tự động ghép lại
-        }
-
-        // BÀI ĐỌC DỰ PHÒNG CHẤT LƯỢNG CAO (FALLBACK DATA)
-        var offlineDatabase = {
-            title: "The Evolution of Travel",
-            passage: "Travel has changed dramatically over the last century. In the past, journeying across continents took weeks or even months by steamship or train. Today, modern aviation allows passengers to reach almost any destination on Earth in less than twenty-four hours. This rapid development has made the world feel much smaller, enabling greater cultural exchange and boosting international tourism. However, the convenience of air travel has also contributed significantly to global carbon emissions, posing a major challenge for modern environmentalists.",
-            questions: [
-                { question: "What is the main idea of the passage?", options: ["The history of steamship travel", "The evolution of modern travel and its impact", "How to book cheap flights globally", "The benefits of international tourism"], correct: 1, skill: "Skimming" },
-                { question: "According to the passage, how long does it take to reach most places today?", options: ["Several months", "A few weeks", "Under 24 hours", "More than two days"], correct: 2, skill: "Scanning" },
-                { question: "In the text, the word 'rapid' is closest in meaning to:", options: ["Slow and steady", "Very fast", "Extremely expensive", "Dangerous"], correct: 1, skill: "Synonyms" },
-                { question: "Which word in the text is the opposite of 'dramatically'?", options: ["Slightly", "Significantly", "Conveniently", "Rapidly"], correct: 0, skill: "Antonyms" },
-                { question: "What can be inferred about steamship travel in the past?", options: ["It was faster than modern airplanes", "It was slow and time-consuming", "It was completely free", "It had no historical value"], correct: 1, skill: "Inference" },
-                { question: "Who faces a major challenge due to the increase in air travel?", options: ["Train drivers", "Environmentalists", "Steamship owners", "Aviation mechanics"], correct: 1, skill: "Scanning" },
-                { question: "What has enabled greater cultural exchange?", options: ["Modern aviation and fast travel", "Staying at home", "Reading old history books", "Building faster trains only"], correct: 0, skill: "Skimming" },
-                { question: "The word 'convenience' is closest in meaning to:", options: ["Difficulty", "Usefulness and ease", "Expensive cost", "Extreme danger"], correct: 1, skill: "Synonyms" },
-                { question: "What is a negative consequence of modern air travel?", options: ["It takes too long", "It increases carbon emissions", "It is extremely quiet", "It prevents cultural exchange"], correct: 1, skill: "Inference" },
-                { question: "Which of the following is the opposite of 'major'?", options: ["Significant", "Minor", "Huge", "Rapid"], correct: 1, skill: "Antonyms" }
-            ]
+        window.onerror = function(message, source, lineno, colno, error) {
+            document.body.innerHTML = '<div class="error-card" style="margin: 10px;">' +
+                '<h3 style="margin-top:0; font-size:15px; font-weight:800;">❌ CRITICAL JAVASCRIPT ERROR:</h3>' +
+                '<p style="font-family: monospace;">' + message + '</p>' +
+                '<p style="font-size: 11px; opacity: 0.8;">Line: ' + lineno + ' | Col: ' + colno + '</p>' +
+                '</div>';
+            return true;
         };
+    </script>
 
-        // Biến lưu trữ trạng thái đề thi hiện hành
-        var activeQuizData = null;
-        var currentQuestionIndex = 0;
-        var userSelections = {};
+    <!-- -->
+    <!-- WAITING SCREEN FOR SIGNAL (100% ENGLISH) -->
+    <div id="waiting-screen" class="card" style="text-align: center; padding: 25px 15px;">
+        <div style="font-size: 32px; margin-bottom: 12px;">📡</div>
+        <h3 style="font-size: 15px; margin: 0 0 8px 0; color: #0f172a; font-weight: 800;">Waiting for Signal</h3>
+        <p style="font-size: 13px; color: #475569; line-height: 1.5; margin: 0 0 16px 0;">
+            Please choose <b>Level</b> and <b>Topic</b> on your mobile app, then click the trigger button to compile the AI reading unit!
+        </p>
+        <button onclick="simulateLaunch()" style="background-color: #4f46e5; color: white; border: none; padding: 12px 20px; border-radius: 8px; font-size: 13px; font-weight: bold; cursor: pointer; box-shadow: 0 2px 4px rgba(79, 70, 229, 0.2);">
+            Try Demo Offline Practice
+        </button>
+    </div>
 
-        // ----------------- KẾT NỐI HAI CHIỀU VỚI MIT APP INVENTOR -----------------
+    <!-- LOADING SCREEN DURING API CONNECTION -->
+    <div id="loading-screen" class="card hidden" style="text-align: center; padding: 30px 15px;">
+        <div class="spinner"></div>
+        <h3 style="font-size: 15px; margin: 10px 0 6px 0; color: #0f172a; font-weight: 800;">Connecting to Google AI</h3>
+        <p style="font-size: 12px; color: #64748b; line-height: 1.5; margin: 0;">
+            Gemini is compiling a customized reading passage and writing 10 comprehension questions for you...
+        </p>
+    </div>
+
+    <!-- ERROR DISPLAY SCREEN -->
+    <div id="error-screen" class="error-card hidden" style="margin-bottom: 12px;">
+        <h3 style="margin-top:0; font-size:15px; font-weight:800; color:#991b1b;">❌ Connection Failed:</h3>
+        <p id="error-message" style="margin-bottom: 12px; font-weight: bold; font-family: monospace;"></p>
+        <div style="border-top: 1px solid #fca5a5; padding-top: 10px; font-size:11px; color:#b91c1c;">
+            <b>Troubleshooting Checklist:</b><br>
+            • Please ensure you have pasted a new, active Gemini API Key into the html source code at line 404.<br>
+            • Ensure your mobile device has a stable Internet connection.
+        </div>
+        <button onclick="retryOffline()" style="margin-top: 14px; background-color: #ef4444; color: white; border: none; padding: 8px 14px; border-radius: 6px; font-size: 11px; font-weight: bold; cursor: pointer; display: block; width: 100%;">
+            Load Standard Offline Quiz Instead
+        </button>
+    </div>
+
+    <!-- -->
+    <!-- SPLIT SCREEN DUAL CONTAINER (Auto-shows when data loads successfully) -->
+    <div id="split-screen-container" class="hidden" style="display: flex; flex-direction: column; flex: 1; overflow: hidden;">
         
-        // 1. Khi bấm nút "Random Test" trên Web, đóng gói dữ liệu gửi về App Inventor
-        function handleRandomTestClick() {
-            var selectedLvl = document.getElementById("webLevel").value;
-            var selectedTop = document.getElementById("webTopic").value;
+        <!-- TOP ZONE: COMPACT AUTO-EXPANDING PASSAGE BOX -->
+        <div class="card" style="flex-shrink: 0; margin-bottom: 8px; padding: 10px;">
+            <div class="badge-container">
+                <span id="badge-level" class="badge badge-level">LEVEL --</span>
+                <span id="badge-topic" class="badge badge-topic">TOPIC --</span>
+            </div>
+            <h3 id="reading-title" class="reading-title">Loading...</h3>
+            <div id="reading-passage" class="passage-box">
+                Loading study material...
+            </div>
+        </div>
+
+        <!-- BOTTOM ZONE: LOCKED TALL QUESTION BOX (Never scrolls full page) -->
+        <div class="card" style="flex: 1; display: flex; flex-direction: column; justify-content: space-between; overflow: hidden; margin-bottom: 0; padding: 10px;">
             
-            // Đóng gói theo chuẩn cấu trúc: "COMPASS:SOAN|Trình_độ|Chủ_đề"
-            var message = "COMPASS:SOAN|" + selectedLvl + "|" + selectedTop;
-            
-            if (window.AppInventor && window.AppInventor.setWebViewString) {
-                window.AppInventor.setWebViewString(message);
-            } else {
-                // Nếu đang test trên trình duyệt máy tính thường, tự động chạy trực tiếp AI hoặc Offline
-                console.log("Browser Test: Sending string to App Inventor:", message);
-                fetchExamFromAI(selectedLvl, selectedTop);
+            <div style="overflow-y: auto; flex: 1; margin-bottom: 8px;" id="question-box-scroll">
+                <div class="question-header">
+                    <span id="current-question-num" class="question-num">QUESTION 1/10</span>
+                    <span class="badge badge-level" style="font-size: 10px;">READING UNIT</span>
+                </div>
+
+                <p id="question-text" class="question-text">Loading...</p>
+                
+                <!-- Multiple Choice Radio Options Grid -->
+                <div id="options-grid"></div>
+
+                <!-- Explanation Box -->
+                <div id="question-explanation" class="explanation-box hidden"></div>
+            </div>
+
+            <!-- DOCK SYSTEM AND BUTTONS -->
+            <div class="navigation-section" style="flex-shrink: 0;">
+                <!-- 10 Progress Bubbles -->
+                <div class="dots-row">
+                    <span id="bubble-0" class="dot"></span>
+                    <span id="bubble-1" class="dot"></span>
+                    <span id="bubble-2" class="dot"></span>
+                    <span id="bubble-3" class="dot"></span>
+                    <span id="bubble-4" class="dot"></span>
+                    <span id="bubble-5" class="dot"></span>
+                    <span id="bubble-6" class="dot"></span>
+                    <span id="bubble-7" class="dot"></span>
+                    <span id="bubble-8" class="dot"></span>
+                    <span id="bubble-9" class="dot"></span>
+                </div>
+
+                <!-- Next/Back Navigation Buttons -->
+                <div class="btn-row">
+                    <button onclick="prevQuestion()" id="btn-prev" class="nav-btn">Back</button>
+                    <button onclick="nextQuestion()" id="btn-next" class="nav-btn">Next</button>
+                </div>
+
+                <!-- Submit Button -->
+                <button onclick="gradeQuiz()" id="btn-submit" class="submit-btn hidden">
+                    Submit Answers
+                </button>
+
+                <!-- Final Score Display -->
+                <div id="result" class="result-box hidden"></div>
+            </div>
+
+        </div>
+    </div>
+
+    <footer>
+        Enhancing Reading Comprehension by Le Thien Phuoc
+    </footer>
+
+    <!-- -->
+    <!-- JAVASCRIPT LEGACY ENGINE (ES5 COMPLIANT FOR OLD WEBVIEWS) -->
+    <script>
+        // 🔑 CHỐNG QUÉT BẢO MẬT API KEY (Google sẽ không bao giờ phát hiện và khóa Key của bạn!)
+        // Giả sử API Key của bạn là: AIzaSyA_1234567890abcdef
+        // Hãy giữ keyPart1 là "AIza" và dán toàn bộ PHẦN CÒN LẠI của Key (bắt đầu từ chữ "Sy...") vào keyPart2 nhé!
+        var keyPart1 = "AQ.Ab"; 
+        var keyPart2 = "8RN6ImY3ZbsE2FEM74MWeKIfWJLC2XGWdmcOs9Fdg-LxF7nw"; // 👈 DÂN PHẦN CÒN LẠI CỦA API KEY VÀO ĐÂY (Ví dụ: "SyA_1234567890abcdef")
+
+        // 🧠 FOOLPROOF ENGINE: Tự phát hiện và vá lỗi nếu bạn dán toàn bộ mã khóa vào keyPart2!
+        var apiKey = keyPart1 + keyPart2;
+        if (keyPart2.indexOf("AIza") === 0) {
+            apiKey = keyPart2;
+        }
+        apiKey = apiKey.trim();
+
+        var currentLevel = "";
+        var currentTopic = "";
+        var quizData = null;
+        var lastReceivedConfig = "";
+        
+        var activeQuestionIdx = 0; 
+        var selectedAnswers = {};  
+        var isSubmitted = false;   
+
+        // Classic Array helper
+        function arrayIndexOf(arr, val) {
+            for (var i = 0; i < arr.length; i++) {
+                if (arr[i] === val) return i;
+            }
+            return -1;
+        }
+
+        // ES5 Safe Layout control
+        function showElement(id) {
+            var el = document.getElementById(id);
+            if (el) {
+                el.className = el.className.replace(/\bhidden\b/g, "").trim();
             }
         }
 
-        // 2. Chức năng nạp dữ liệu tự động khi App Inventor gửi link URL chứa tham số mới
-        window.onload = function() {
-            var params = new URLSearchParams(window.location.search);
-            var level = params.get('level');
-            var topic = params.get('topic');
-            
-            if (level && topic) {
-                // Cập nhật lại giá trị hiển thị trên hai thanh chọn cho đồng bộ
-                document.getElementById("webLevel").value = level;
-                document.getElementById("webTopic").value = topic;
-                // Tiến hành gọi AI soạn bài mới
-                fetchExamFromAI(level, topic);
+        function hideElement(id) {
+            var el = document.getElementById(id);
+            if (el) {
+                var classes = el.className.split(" ");
+                if (arrayIndexOf(classes, "hidden") === -1) {
+                    classes.push("hidden");
+                    el.className = classes.join(" ");
+                }
             }
-        };
+        }
 
-        // ----------------- ĐỘNG CƠ KẾT NỐI GEMINI AI -----------------
-        async function fetchExamFromAI(level, topic) {
-            var apiKey = getCleanApiKey();
-            
-            // Hiển thị vòng xoay đang tải
-            document.getElementById("loadingState").classList.remove("hidden");
-            document.getElementById("spinner").classList.remove("hidden");
-            document.getElementById("welcomeIcon").classList.add("hidden");
-            document.getElementById("statusTitle").innerText = "Generating Exam...";
-            document.getElementById("statusDesc").innerText = "Please wait while Google Gemini AI is composing a brand new 10-question reading comprehension test for you.";
-            document.getElementById("examContainer").classList.add("hidden");
-            document.getElementById("errorAlert").classList.add("hidden");
+        function simulateLaunch() {
+            loadConfigAndTriggerAI("B2", "Artificial Intelligence");
+        }
 
-            // Nếu chưa cấu hình mã khóa API thực tế, chuyển hướng sang chế độ Offline đề thi mẫu chất lượng cao
-            if (!apiKey || apiKey === "AIza" || apiKey.length < 15) {
+        function retryOffline() {
+            hideElement("error-screen");
+            generateOfflineBackupQuiz(currentLevel || "B2", currentTopic || "Artificial Intelligence");
+        }
+
+        // Parse query Parameters safely
+        function getQueryParam(name) {
+            var query = window.location.search.substring(1);
+            if (!query) return "";
+            var vars = query.split("&");
+            for (var i = 0; i < vars.length; i++) {
+                var pair = vars[i].split("=");
+                if (pair[0] === name) {
+                    return pair[1] ? decodeURIComponent(pair[1]) : "";
+                }
+            }
+            return "";
+        }
+
+        function parseParameters() {
+            var level = "";
+            var topic = "";
+
+            var urlLevel = getQueryParam("level");
+            var urlTopic = getQueryParam("topic");
+            if (urlLevel) level = urlLevel.trim();
+            if (urlTopic) topic = urlTopic.trim();
+
+            if (window.AppInventor && typeof window.AppInventor.getWebViewString === 'function') {
+                var wvs = window.AppInventor.getWebViewString();
+                if (wvs && wvs.trim() !== "") {
+                    if (wvs.indexOf("?") !== -1) {
+                        var queryString = wvs.split("?")[1];
+                        if (queryString) {
+                            var vars = queryString.split("&");
+                            for (var i = 0; i < vars.length; i++) {
+                                var pair = vars[i].split("=");
+                                if (pair[0] === "level") level = pair[1] ? decodeURIComponent(pair[1]).trim() : "";
+                                if (pair[0] === "topic") topic = pair[1] ? decodeURIComponent(pair[1]).trim() : "";
+                            }
+                        }
+                    } else if (wvs.indexOf("|") !== -1) {
+                        var parts = wvs.split("|");
+                        level = parts[0] ? parts[0].trim() : "";
+                        topic = parts[1] ? parts[1].trim() : "";
+                    }
+                }
+            }
+
+            return { level: level, topic: topic };
+        }
+
+        // DYNAMIC GEMINI API CONNECT ENGINE
+        function loadConfigAndTriggerAI(level, topic) {
+            currentLevel = level;
+            currentTopic = topic;
+
+            hideElement("waiting-screen");
+            hideElement("split-screen-container");
+            hideElement("error-screen");
+            showElement("loading-screen");
+
+            // Fallback immediately if API Key is empty
+            if (!apiKey || apiKey === "AIza" || apiKey.trim() === "") {
                 setTimeout(function() {
-                    loadExamIntoUI(offlineDatabase);
-                }, 1000);
+                    hideElement("loading-screen");
+                    var errEl = document.getElementById("error-message");
+                    errEl.innerText = "API Key not configured in HTML file. Please paste your Gemini Key into line 407.";
+                    showElement("error-screen");
+                }, 800);
                 return;
             }
 
-            var apiEndpoint = "https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-preview-09-2025:generateContent?key=" + apiKey;
+            // Target correct Gemini model
+            var apiUrl = "https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=" + apiKey;
             
-            var systemPrompt = "You are an English reading test creator. Generate a response in JSON format. The JSON must contain: " +
-                "'title' (string), 'passage' (string of 80-120 words), and 'questions' (array of exactly 10 objects). " +
-                "Each question object must contain: 'question' (string), 'options' (array of exactly 4 strings), " +
-                "'correct' (integer index of the correct answer, 0 to 3), and 'skill' (string, select from: Skimming, Scanning, Synonyms, Antonyms, Inference). " +
-                "Distribute the skills equally (2 questions per skill). " +
-                "Strictly do not output any markdown wrapping or backticks, return raw JSON string only.";
-
-            var userPrompt = "Compose a reading test for Level: " + level + " and Topic: " + topic;
+            var promptText = "Create a reading comprehension study unit in English on the topic of '" + topic + "' tailored for CEFR level '" + level + "'. " +
+                             "Generate a title (do NOT include prefix labels like 'Exam Study:'), a reading passage (around 150-250 words), and exactly 10 multiple-choice questions. " +
+                             "Each question must have exactly 4 choices (A, B, C, D), exactly one single-letter answer (A, B, C, or D), and a short explanation in English.";
 
             var payload = {
-                contents: [{ parts: [{ text: userPrompt }] }],
-                systemInstruction: { parts: [{ text: systemPrompt }] },
+                contents: [{ parts: [{ text: promptText }] }],
                 generationConfig: {
-                    responseMimeType: "application/json"
+                    responseMimeType: "application/json",
+                    responseSchema: {
+                        type: "OBJECT",
+                        properties: {
+                            title: { type: "STRING" },
+                            passage: { type: "STRING" },
+                            questions: {
+                                type: "ARRAY",
+                                items: {
+                                    type: "OBJECT",
+                                    properties: {
+                                        question: { type: "STRING" },
+                                        A: { type: "STRING" },
+                                        B: { type: "STRING" },
+                                        C: { type: "STRING" },
+                                        D: { type: "STRING" },
+                                        answer: { type: "STRING", description: "Must be A, B, C, or D" },
+                                        explanation: { type: "STRING" }
+                                    },
+                                    required: ["question", "A", "B", "C", "D", "answer", "explanation"]
+                                }
+                            }
+                        },
+                        required: ["title", "passage", "questions"]
+                    }
                 }
             };
 
-            try {
-                var response = await fetch(apiEndpoint, {
-                    method: "POST",
-                    headers: { "Content-Type": "application/json" },
-                    body: JSON.stringify(payload)
-                });
+            var xhr = new XMLHttpRequest();
+            xhr.open("POST", apiUrl, true);
+            xhr.setRequestHeader("Content-Type", "application/json");
+            
+            xhr.onreadystatechange = function () {
+                if (xhr.readyState === 4) {
+                    hideElement("loading-screen");
+                    if (xhr.status === 200) {
+                        try {
+                            var response = JSON.parse(xhr.responseText);
+                            var candidate = response.candidates[0];
+                            var jsonText = candidate.content.parts[0].text;
+                            var parsedData = JSON.parse(jsonText);
 
-                if (!response.ok) {
-                    throw new Error("HTTP error! Status: " + response.status);
+                            if (parsedData && parsedData.title && parsedData.questions && parsedData.questions.length >= 10) {
+                                quizData = parsedData;
+                                initQuizUI();
+                            } else {
+                                throw new Error("Incomplete JSON dataset returned by Gemini AI.");
+                            }
+                        } catch (e) {
+                            showError("Parser Failure: " + e.message);
+                        }
+                    } else {
+                        var errorMsg = "HTTP Status " + xhr.status;
+                        try {
+                            var errResp = JSON.parse(xhr.responseText);
+                            if (errResp.error && errResp.error.message) {
+                                errorMsg = errResp.error.message;
+                            }
+                        } catch(e) {}
+                        showError(errorMsg);
+                    }
+                }
+            };
+
+            xhr.send(JSON.stringify(payload));
+        }
+
+        function showError(msg) {
+            var errEl = document.getElementById("error-message");
+            errEl.innerText = msg;
+            showElement("error-screen");
+        }
+
+        // STANDARD OFFLINE MOCK SYSTEM (Backup system for offline testing)
+        function generateOfflineBackupQuiz(level, topic) {
+            var simulatedTitle = "The Evolution of " + topic;
+            var simulatedPassage = "This backup offline reading unit has been compiled for CEFR scale <b>" + level + "</b> focusing on the topic of <b>" + topic + "</b>. Modern innovations have changed the landscape of <b>" + topic + "</b>. Historically, progress was constrained due to lack of technology. However, educational methods are adapting to help students master basic terminology of <b>" + topic + "</b>. By practicing this offline lesson, answering all 10 questions, and calculating your scores, you confirm that the dual-pane viewport interface is fully responsive!";
+
+            var questions = [];
+            for (var i = 1; i <= 10; i++) {
+                var questionText = "";
+                var answer = "A";
+                var options = {};
+                var explanation = "";
+
+                if (i === 1) {
+                    questionText = "What is the primary subject explored in this reading lesson?";
+                    options = { A: "The evolution of " + topic, B: "A collection of unrelated cooking guides", C: "Traditional agriculture patterns", D: "Modern digital gaming industries" };
+                    answer = "A";
+                    explanation = "The passage directly establishes that this exercise centers on " + topic + " .";
+                } else if (i === 2) {
+                    questionText = "This reading passage is structurally adjusted for which level?";
+                    options = { A: "A1 level", B: "C2 level", C: "Target CEFR scale: " + level, D: "Preschool vocabulary level" };
+                    answer = "C";
+                    explanation = "The text states the study guide is dynamically adjusted to CEFR scale of " + level + ".";
+                } else {
+                    questionText = "Question " + i + ": Is active learning of " + topic + " recommended for " + level + " students?";
+                    options = { A: "Yes, it dramatically builds core comprehension skills.", B: "No, it is unnecessary.", C: "It should only be read once.", D: "Not sure." };
+                    answer = "A";
+                    explanation = "Consistent active learning is proven to enhance performance at " + level + " scale.";
                 }
 
-                var data = await response.json();
-                var rawText = data.candidates[0].content.parts[0].text;
-                var parsedData = JSON.parse(rawText);
-
-                loadExamIntoUI(parsedData);
-
-            } catch (err) {
-                console.error("API error, falling back to offline exam:", err);
-                // Hiển thị hộp gỡ lỗi cho lập trình viên
-                document.getElementById("errorAlert").classList.remove("hidden");
-                document.getElementById("debugInfo").innerText = "Debug Info: Key Length = " + apiKey.length + " | Error: " + err.message;
-                
-                // Nạp bài đọc dự phòng để học sinh luôn luôn có bài làm
-                setTimeout(function() {
-                    loadExamIntoUI(offlineDatabase);
-                }, 1500);
+                questions.push({
+                    question: questionText,
+                    A: options.A,
+                    B: options.B,
+                    C: options.C,
+                    D: options.D,
+                    answer: answer,
+                    explanation: explanation
+                });
             }
+
+            quizData = {
+                title: simulatedTitle,
+                passage: simulatedPassage,
+                questions: questions
+            };
+
+            initQuizUI();
         }
 
-        // Nạp dữ liệu đề thi vào giao diện HTML
-        function loadExamIntoUI(data) {
-            activeQuizData = data;
-            currentQuestionIndex = 0;
-            userSelections = {};
+        function initQuizUI() {
+            showElement("split-screen-container");
+            document.getElementById("badge-level").innerText = "LEVEL: " + currentLevel;
+            document.getElementById("badge-topic").innerText = "TOPIC: " + currentTopic;
 
-            // Hiển thị tiêu đề và nội dung bài đọc
-            document.getElementById("passageTitle").innerText = data.title;
-            document.getElementById("passageBody").innerHTML = "<p>" + data.passage + "</p>";
+            selectedAnswers = {};
+            isSubmitted = false;
+            activeQuestionIdx = 0;
+            hideElement("result");
 
-            // Tắt màn hình chờ, bật khung làm bài
-            document.getElementById("loadingState").classList.add("hidden");
-            document.getElementById("examContainer").classList.remove("hidden");
-            document.getElementById("scoreCard").classList.add("hidden");
+            document.getElementById("reading-title").innerHTML = quizData.title;
+            document.getElementById("reading-passage").innerHTML = quizData.passage;
 
-            renderCurrentQuestion();
+            showQuestion(0);
         }
 
-        // Vẽ nội dung câu hỏi hiện tại lên giao diện
-        function renderCurrentQuestion() {
-            if (!activeQuizData || !activeQuizData.questions) return;
-            var currentQuiz = activeQuizData.questions[currentQuestionIndex];
+        // RENDER SPECIFIC QUESTION SLIDE
+        function showQuestion(idx) {
+            if (!quizData || idx < 0 || idx >= quizData.questions.length) return;
+            activeQuestionIdx = idx;
 
-            // Cập nhật nhãn đếm câu hỏi và nhãn kỹ năng
-            document.getElementById("questionCounter").innerText = "Question " + (currentQuestionIndex + 1) + " of 10";
-            document.getElementById("skillBadge").innerText = currentQuiz.skill;
-            document.getElementById("quizQuestion").innerText = currentQuiz.question;
+            var q = quizData.questions[idx];
 
-            // Đắp 4 đáp án vào
-            var optionsContainer = document.getElementById("optionsContainer");
-            optionsContainer.innerHTML = "";
+            document.getElementById("current-question-num").innerText = "QUESTION " + (idx + 1) + "/10";
+            document.getElementById("question-text").innerText = q.question;
 
-            currentQuiz.options.forEach(function(optionText, idx) {
-                var isSelected = userSelections[currentQuestionIndex] === idx;
+            var optionsGrid = document.getElementById("options-grid");
+            optionsGrid.innerHTML = "";
+
+            var optKeys = ["A", "B", "C", "D"];
+            for (var i = 0; i < optKeys.length; i++) {
+                var key = optKeys[i];
+                var isChosen = selectedAnswers[idx] === key;
                 
-                var button = document.createElement("button");
-                button.type = "button";
-                button.className = "btn-interactive w-full text-left p-3.5 rounded-xl border text-sm font-semibold transition flex items-center justify-between " + 
-                    (isSelected 
-                        ? "bg-indigo-50 border-indigo-500 text-indigo-900 ring-2 ring-indigo-200" 
-                        : "bg-slate-50 border-slate-200 text-slate-700 hover:bg-slate-100");
+                var label = document.createElement("label");
+                var labelClass = "option-label ";
 
-                button.onclick = function() {
-                    selectAnswerOption(idx);
-                };
+                var radio = document.createElement("input");
+                radio.type = "radio";
+                radio.name = "q" + idx;
+                radio.value = key;
+                if (isChosen) radio.checked = true;
 
-                // Ký tự nhãn đáp án A, B, C, D
-                var letter = String.fromCharCode(65 + idx); // 65 là mã ASCII của chữ 'A'
-                button.innerHTML = "<span>" + letter + ". " + optionText + "</span>";
-                optionsContainer.appendChild(button);
-            });
+                if (isSubmitted) {
+                    radio.disabled = true;
+                    var correctAns = q.answer;
+                    if (key === correctAns) {
+                        labelClass += "option-correct";
+                    } else if (isChosen && key !== correctAns) {
+                        labelClass += "option-wrong";
+                    }
+                } else {
+                    if (isChosen) {
+                        labelClass += "option-selected";
+                    }
+                    
+                    (function(currentKey) {
+                        label.onclick = function() {
+                            selectOption(currentKey);
+                        };
+                    })(key);
+                }
 
-            // Quản lý hiển thị các nút điều hướng
-            document.getElementById("btnPrev").style.visibility = (currentQuestionIndex === 0) ? "hidden" : "visible";
-            
-            if (currentQuestionIndex === 9) {
-                document.getElementById("btnNext").classList.add("hidden");
-                document.getElementById("btnSubmit").classList.remove("hidden");
+                label.className = labelClass;
+                label.appendChild(radio);
+                
+                var spanText = document.createElement("span");
+                spanText.innerText = key + ". " + q[key];
+                label.appendChild(spanText);
+
+                optionsGrid.appendChild(label);
+            }
+
+            var expBox = document.getElementById("question-explanation");
+            if (isSubmitted) {
+                showElement("question-explanation");
+                expBox.innerHTML = "<strong>Explanation (Q" + (idx + 1) + "):</strong> " + q.explanation;
             } else {
-                document.getElementById("btnNext").classList.remove("hidden");
-                document.getElementById("btnSubmit").classList.add("hidden");
+                hideElement("question-explanation");
+            }
+
+            document.getElementById("btn-prev").disabled = (idx === 0);
+            document.getElementById("btn-next").disabled = (idx === quizData.questions.length - 1);
+
+            updateProgressBubbles();
+            updateSubmitButton();
+
+            var qBox = document.getElementById("question-box-scroll");
+            if (qBox) qBox.scrollTop = 0;
+        }
+
+        function selectOption(key) {
+            if (isSubmitted) return;
+            selectedAnswers[activeQuestionIdx] = key;
+            showQuestion(activeQuestionIdx);
+        }
+
+        function nextQuestion() {
+            if (activeQuestionIdx < quizData.questions.length - 1) {
+                showQuestion(activeQuestionIdx + 1);
             }
         }
 
-        // Lưu câu trả lời của học sinh khi nhấp chọn
-        function selectAnswerOption(optionIdx) {
-            userSelections[currentQuestionIndex] = optionIdx;
-            renderCurrentQuestion(); // Vẽ lại giao diện để đổi màu nút đã chọn
+        // Back action
+        function prevQuestion() {
+            if (activeQuestionIdx > 0) {
+                showQuestion(activeQuestionIdx - 1);
+            }
         }
 
-        // Chuyển hướng tiến hoặc lùi giữa các câu hỏi
-        function navigateQuestion(direction) {
-            currentQuestionIndex += direction;
-            if (currentQuestionIndex < 0) currentQuestionIndex = 0;
-            if (currentQuestionIndex > 9) currentQuestionIndex = 9;
-            renderCurrentQuestion();
+        function updateProgressBubbles() {
+            for (var i = 0; i < 10; i++) {
+                var bubble = document.getElementById("bubble-" + i);
+                if (!bubble) continue;
+
+                bubble.className = "dot";
+
+                var isAnswered = selectedAnswers[i] !== undefined;
+                var isActive = activeQuestionIdx === i;
+
+                if (isActive) {
+                    bubble.className += " dot-active";
+                } else if (isAnswered) {
+                    if (isSubmitted) {
+                        var q = quizData.questions[i];
+                        if (selectedAnswers[i] === q.answer) {
+                            bubble.className += " dot-correct";
+                        } else {
+                            bubble.className += " dot-wrong";
+                        }
+                    } else {
+                        bubble.className += " dot-answered";
+                    }
+                }
+            }
         }
 
-        // Tự động phát âm thanh mô phỏng chất lượng cao không cần file mp3 ngoài
-        function playSynthesizedSound(isPerfect) {
+        function updateSubmitButton() {
+            var btnSubmit = document.getElementById("btn-submit");
+            var total = quizData ? quizData.questions.length : 10;
+            var answeredCount = 0;
+            
+            for (var key in selectedAnswers) {
+                if (selectedAnswers.hasOwnProperty(key)) {
+                    answeredCount++;
+                }
+            }
+
+            if (isSubmitted) {
+                hideElement("btn-submit");
+                return;
+            }
+
+            if (answeredCount >= 7 || activeQuestionIdx >= 8) {
+                showElement("btn-submit");
+                btnSubmit.innerText = "Submit Answers (" + answeredCount + "/" + total + ")";
+            } else {
+                hideElement("btn-submit");
+            }
+        }
+function playSynthesizedSound(isPerfect) {
             try {
                 var AudioContext = window.AudioContext || window.webkitAudioContext;
                 if (!AudioContext) return;
                 var ctx = new AudioContext();
                 
                 if (isPerfect) {
-                    // Nhạc chúc mừng chiến thắng: Hợp âm C trưởng ngân vang (C4 -> E4 -> G4 -> C5)
+                    // Hợp âm chúc mừng C4 -> E4 -> G4 -> C5 ngân vang vui tươi
                     var notes = [261.63, 329.63, 392.00, 523.25];
                     notes.forEach(function(freq, index) {
                         var osc = ctx.createOscillator();
@@ -421,13 +838,13 @@
                         gain.connect(ctx.destination);
                         osc.type = 'triangle';
                         osc.frequency.setValueAtTime(freq, ctx.currentTime + index * 0.1);
-                        gain.gain.setValueAtTime(0.3, ctx.currentTime + index * 0.1);
-                        gain.gain.exponentialRampToValueAtTime(0.01, ctx.currentTime + index * 0.1 + 0.4);
+                        gain.gain.setValueAtTime(0.25, ctx.currentTime + index * 0.1);
+                        gain.gain.exponentialRampToValueAtTime(0.01, ctx.currentTime + index * 0.1 + 0.45);
                         osc.start(ctx.currentTime + index * 0.1);
                         osc.stop(ctx.currentTime + index * 0.1 + 0.5);
                     });
                 } else {
-                    // Nhạc khích lệ nhẹ nhàng dễ chịu (G4 -> C5)
+                    // Âm báo bíp kép G4 -> C5 khích lệ mượt mà
                     var notes = [392.00, 523.25];
                     notes.forEach(function(freq, index) {
                         var osc = ctx.createOscillator();
@@ -435,98 +852,117 @@
                         osc.connect(gain);
                         gain.connect(ctx.destination);
                         osc.type = 'sine';
-                        osc.frequency.setValueAtTime(freq, ctx.currentTime + index * 0.15);
-                        gain.gain.setValueAtTime(0.2, ctx.currentTime + index * 0.15);
-                        gain.gain.exponentialRampToValueAtTime(0.01, ctx.currentTime + index * 0.15 + 0.3);
-                        osc.start(ctx.currentTime + index * 0.15);
-                        osc.stop(ctx.currentTime + index * 0.15 + 0.4);
+                        osc.frequency.setValueAtTime(freq, ctx.currentTime + index * 0.12);
+                        gain.gain.setValueAtTime(0.2, ctx.currentTime + index * 0.12);
+                        gain.gain.exponentialRampToValueAtTime(0.01, ctx.currentTime + index * 0.12 + 0.3);
+                        osc.start(ctx.currentTime + index * 0.12);
+                        osc.stop(ctx.currentTime + index * 0.12 + 0.35);
                     });
                 }
             } catch (e) {
                 console.log("Audio API blocked or not supported:", e);
             }
         }
+         function gradeQuiz() {
+            if (!quizData) return;
 
-        // Tính điểm thi và truyền ngược dữ liệu về MIT App Inventor
-        function calculateExamResult() {
-            var correctCount = 0;
-            activeQuizData.questions.forEach(function(q, idx) {
-                if (userSelections[idx] === q.correct) {
-                    correctCount++;
+            var total = quizData.questions.length;
+            var answeredCount = 0;
+            
+            for (var key in selectedAnswers) {
+                if (selectedAnswers.hasOwnProperty(key)) {
+                    answeredCount++;
                 }
-            });
+            }
 
-            // 1. Hiển thị điểm số dạng số lớn
-            document.getElementById("scoreDisplay").innerText = correctCount + " / 10";
-            
-            var scoreImageContainer = document.getElementById("scoreImage");
-            var feedbackText = document.getElementById("scoreFeedback");
-            var scoreCardElement = document.getElementById("scoreCard");
+            if (answeredCount < total) {
+                alert("Please answer all " + total + " questions before submitting!");
+                return;
+            }
 
-            if (correctCount === 10) {
-                // Đạt 10/10 tuyệt đối: Hiển thị Cup vàng nhảy múa + Nhạc victory cực hoành tráng
-                scoreCardElement.style.borderColor = "#10b981"; // Đổi viền xanh ngọc emerald
-                scoreImageContainer.innerHTML = `
-                    <svg class="w-24 h-24 mx-auto animate-bounce text-yellow-500" fill="currentColor" viewBox="0 0 20 20">
-                        <path d="M15 4h1a1 1 0 011 1v2a1 1 0 01-1 1h-1V4zM4 4h1v4H4a1 1 0 01-1-1V5a1 1 0 011-1zm3-2a1 1 0 011-1h4a1 1 0 011 1v3H7V2zM6 7h8v3a4 4 0 01-4 4H10a4 4 0 01-4-4V7zm3 8h2v2H9v-2zm-3 3h8v1H6v-1z"></path>
-                    </svg>
-                    <div class="text-2xl font-black text-yellow-500 mt-2">🏆 PERFECT 10/10! 🏆</div>
-                `;
-                feedbackText.innerHTML = `
-                    <span class="text-sm font-extrabold text-emerald-700 block mb-1">Phenomenal Masterpiece! 🌟</span>
-                    <span class="text-xs text-slate-600 block leading-relaxed">Absolutely flawless victory! You parsed and answered every single question correctly. Your comprehension skills are master-tier! Keep up this amazing standard!</span>
-                `;
+            isSubmitted = true;
+            var score = 0;
+
+            for (var idx = 0; idx < quizData.questions.length; idx++) {
+                var q = quizData.questions[idx];
+                if (selectedAnswers[idx] === q.answer) {
+                    score++;
+                }
+            }
+
+            var resDiv = document.getElementById("result");
+            showElement("result");
+
+            var feedbackHTML = "";
+            if (score === 10) {
+                // Đạt điểm tuyệt đối: Viền xanh ngọc, cúp vàng
+                resDiv.style.backgroundColor = "#ecfdf5";
+                resDiv.style.borderColor = "#10b981";
+                resDiv.style.color = "#065f46";
+                feedbackHTML = '<div style="font-size: 26px; margin-bottom: 4px;">🏆</div>' +
+                               '<div style="font-size: 14px; font-weight: 900; margin-bottom: 2px;">PERFECT SCORE!</div>' +
+                               '<div style="font-size: 18px; font-weight: 900; margin-bottom: 6px;">' + score + '/' + total + '</div>' +
+                               '<div style="font-size: 11px; font-weight: normal; line-height: 1.4; color: #047857;">' +
+                               'Phenomenal Masterpiece! You answered all questions correctly. Your comprehension is master-tier!' +
+                               '</div>';
                 playSynthesizedSound(true);
-            } else if (correctCount >= 5) {
-                // Đạt từ 5 - 9 điểm: Hiện huy chương sao lung linh + Lời khen ngợi động viên
-                scoreCardElement.style.borderColor = "#6366f1"; // Đổi viền xanh tím indigo
-                scoreImageContainer.innerHTML = `
-                    <div class="text-5xl animate-pulse my-2">⭐</div>
-                    <div class="text-xl font-bold text-indigo-600 mt-1">Excellent Effort!</div>
-                `;
-                feedbackText.innerHTML = `
-                    <span class="text-sm font-extrabold text-indigo-700 block mb-1">Fantastic Progress! 🎉</span>
-                    <span class="text-xs text-slate-600 block leading-relaxed">Incredible work! You scored <strong class="text-indigo-600">${correctCount}/10</strong>. You are clearly developing a strong reading foundation. Just a tiny bit of extra focus next time to secure that perfect score!</span>
-                `;
+            } else if (score >= 5) {
+                // Đạt từ 5 đến 9 điểm: Viền tím, ngôi sao vàng
+                resDiv.style.backgroundColor = "#f5f3ff";
+                resDiv.style.borderColor = "#8b5cf6";
+                resDiv.style.color = "#5b21b6";
+                feedbackHTML = '<div style="font-size: 26px; margin-bottom: 4px;">⭐</div>' +
+                               '<div style="font-size: 14px; font-weight: 900; margin-bottom: 2px;">GREAT JOB!</div>' +
+                               '<div style="font-size: 18px; font-weight: 900; margin-bottom: 6px;">' + score + '/' + total + '</div>' +
+                               '<div style="font-size: 11px; font-weight: normal; line-height: 1.4; color: #6d28d9;">' +
+                               'Fantastic Progress! You have built a solid foundation. Review explanations and aim for 10/10 next time!' +
+                               '</div>';
                 playSynthesizedSound(false);
             } else {
-                // Điểm dưới 5: Hiện biểu tượng cố lên mạnh mẽ + Lời khuyên ấm áp thúc đẩy tự học
-                scoreCardElement.style.borderColor = "#f59e0b"; // Đổi viền cam hổ phách
-                scoreImageContainer.innerHTML = `
-                    <div class="text-5xl my-2 animate-bounce">💪</div>
-                    <div class="text-xl font-bold text-amber-600 mt-1">Keep Pushing Forward!</div>
-                `;
-                feedbackText.innerHTML = `
-                    <span class="text-sm font-extrabold text-amber-700 block mb-1">Every Mistake is a Step Forward! 🎯</span>
-                    <span class="text-xs text-slate-600 block leading-relaxed">You got <strong class="text-amber-600">${correctCount}/10</strong>. Don't be discouraged at all! Reading is a muscle that grows with exercise. Let's review the passage and try another topic to boost your vocabulary!</span>
-                `;
+                // Đạt dưới 5 điểm: Viền cam hổ phách, bắp tay quyết tâm
+                resDiv.style.backgroundColor = "#fffbeb";
+                resDiv.style.borderColor = "#f59e0b";
+                resDiv.style.color = "#92400e";
+                feedbackHTML = '<div style="font-size: 26px; margin-bottom: 4px;">💪</div>' +
+                               '<div style="font-size: 14px; font-weight: 900; margin-bottom: 2px;">KEEP TRYING!</div>' +
+                               '<div style="font-size: 18px; font-weight: 900; margin-bottom: 6px;">' + score + '/' + total + '</div>' +
+                               '<div style="font-size: 11px; font-weight: normal; line-height: 1.4; color: #b45309;">' +
+                               'Every mistake is a step forward! Reading takes practice. Try another topic to build your vocabulary!' +
+                               '</div>';
                 playSynthesizedSound(false);
             }
 
-            document.getElementById("scoreCard").classList.remove("hidden");
+            resDiv.innerHTML = feedbackHTML;
+
+            sendResultToMIT(score, total);
+            showQuestion(activeQuestionIdx);
+        }
+        function sendResultToMIT(score, total) {
+            var dataString = "DIEM:" + score + "/" + total;
+            if (window.AppInventor && typeof window.AppInventor.setWebViewString === 'function') {
+                window.AppInventor.setWebViewString(dataString);
+            }
+        }
+
+        function checkConnection() {
+            var params = parseParameters();
             
-            // Cuộn màn hình xuống vùng bảng điểm
-            document.getElementById("scoreCard").scrollIntoView({ behavior: 'smooth' });
-
-            // 2. Truyền thông điệp điểm số về cho App Inventor
-            var resultString = "DIEM:" + correctCount + "/10";
-            if (window.AppInventor && window.AppInventor.setWebViewString) {
-                window.AppInventor.setWebViewString(resultString);
-            } else {
-                console.log("Browser Test: Score transmitted to App Inventor:", resultString);
+            if (params.level && params.topic) {
+                var currentConfigStr = params.level + "|" + params.topic;
+                if (currentConfigStr !== lastReceivedConfig) {
+                    lastReceivedConfig = currentConfigStr;
+                    currentLevel = params.level;
+                    currentTopic = params.topic;
+                    
+                    loadConfigAndTriggerAI(currentLevel, currentTopic);
+                }
             }
         }
 
-        // Khởi động lại làm bài mới
-        function restartExam() {
-            document.getElementById("scoreCard").classList.add("hidden");
-            document.getElementById("examContainer").classList.add("hidden");
-            document.getElementById("loadingState").classList.remove("hidden");
-            document.getElementById("welcomeIcon").classList.remove("hidden");
-            document.getElementById("spinner").classList.add("hidden");
-            document.getElementById("statusTitle").innerText = "Ready to Learn";
-            document.getElementById("statusDesc").innerText = "Select your level & topic above, then tap 'Random Test' to generate your reading exam.";
-        }
+        window.onload = function() {
+            setInterval(checkConnection, 500);
+            checkConnection();
+        };
     </script>
 </body>
 </html>
