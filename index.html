@@ -440,6 +440,12 @@
             var el = document.getElementById(id);
             if (el) {
                 el.className = el.className.replace(/\bhidden\b/g, "").trim();
+                // Khung chính chia đôi và màn hình chờ sử dụng Flexbox để dàn trang tràn viền, còn lại dùng Block
+                if (id === "split-screen-container" || id === "waiting-screen") {
+                    el.style.display = "flex";
+                } else {
+                    el.style.display = "block";
+                }
             }
         }
 
@@ -451,8 +457,11 @@
                     classes.push("hidden");
                     el.className = classes.join(" ");
                 }
+                // Ép ẩn tuyệt đối bằng inline style, triệt tiêu hoàn toàn khả năng bị đè ảnh lên bài đọc
+                el.style.display = "none";
             }
         }
+
 
         function simulateLaunch() {
             loadConfigAndTriggerAI("B2", "Artificial Intelligence");
