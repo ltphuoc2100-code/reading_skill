@@ -25,7 +25,6 @@
             overflow-y: auto;
         }
 
-        /* */
         /* THANH TIÊU ĐỀ CHUYỂN CÂU HỎI NGANG SIÊU MỎNG (image_a615df.png) */
         .nav-row-container {
             display: flex;
@@ -325,7 +324,7 @@
 
         <!-- Khung ảnh trường lấp đầy khoảng trống bên dưới, bo cong khít sát 4 cạnh -->
         <div style="flex: 1; min-height: 0; padding: 0 !important; overflow: hidden; border: 2px solid #e2e8f0; border-radius: 14px; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.05); display: flex; flex-direction: column;">
-            <img src="Picture1.png" alt="Chu Van An School" style="width: 100% !important; height: 100% !important; object-fit: cover; display: block; flex: 1;">
+            <img src="Picture1.png" alt="Chu Van An School" style="width: 100% !important; height: 100% !important; object-fit: cover; display: block; flex: 1;" onerror="this.src='https://placehold.co/600x400/e2e8f0/475569?text=Chu+Van+An+School'">
         </div>
     </div>
 
@@ -352,8 +351,7 @@
         </button>
     </div>
 
-    <!-- -->
-    <!-- SPLIT SCREEN DUAL CONTAINER (Auto-shows when data loads successfully) -->
+    <!-- SPLIT SCREEN DUAL CONTAINER -->
     <div id="split-screen-container" class="hidden" style="display: flex; flex-direction: column; flex: 1; overflow: hidden;">
         
         <!-- TOP ZONE: COMPACT AUTO-EXPANDING PASSAGE BOX -->
@@ -368,17 +366,17 @@
             </div>
         </div>
 
-        <!-- BOTTOM ZONE: LOCKED TALL QUESTION BOX (Never scrolls full page) -->
+        <!-- BOTTOM ZONE: LOCKED TALL QUESTION BOX -->
         <div class="card" style="flex: 1; display: flex; flex-direction: column; justify-content: space-between; overflow: hidden; margin-bottom: 0; padding: 10px;">
             
-            <!-- 1. ĐƯA THANH TIÊU ĐỀ CHUYỂN CÂU HỎI NGANG SIÊU MỎNG (BACK - QUESTION X OF 10 - NEXT) LÊN ĐẦU KHUNG -->
+            <!-- ĐƯA THANH TIÊU ĐỀ CHUYỂN CÂU HỎI NGANG SIÊU MỎNG LÊN ĐẦU KHUNG -->
             <div class="nav-row-container">
                 <button onclick="prevQuestion()" id="btn-prev" class="nav-bar-btn">Back</button>
                 <span id="current-question-num" class="nav-indicator">Question 1 of 10</span>
                 <button onclick="nextQuestion()" id="btn-next" class="nav-bar-btn">Next</button>
             </div>
 
-            <!-- 2. KHU VỰC HIỂN THỊ CÂU HỎI VÀ LỰA CHỌN CÓ THỂ CUỘN DỌC ĐỘC LẬP -->
+            <!-- KHU VỰC HIỂN THỊ CÂU HỎI VÀ LỰA CHỌN CÓ THỂ CUỘN DỌC ĐỘC LẬP -->
             <div style="overflow-y: auto; flex: 1; margin-bottom: 8px;" id="question-box-scroll">
                 <div style="display: flex; justify-content: flex-end; margin-bottom: 6px;">
                     <span class="badge badge-level" style="font-size: 9px; padding: 2px 6px;">READING UNIT</span>
@@ -421,7 +419,7 @@
         </div>
     </div>
 
-    <!-- 4. FOOTER THƯƠNG HIỆU PHÁT TRIỂN CỦA THẦY PHƯỚC (BẢO TỒN NGUYÊN VẸN 100%) -->
+    <!-- FOOTER THƯƠNG HIỆU PHÁT TRIỂN CỦA THẦY PHƯỚC -->
     <footer>
         Enhancing Reading Comprehension by Le Thien Phuoc
     </footer>
@@ -446,6 +444,7 @@
         var activeQuestionIdx = 0; 
         var selectedAnswers = {};  
         var isSubmitted = false;   
+        var waitingMusicInterval = null;
 
         // Classic Array helper
         function arrayIndexOf(arr, val) {
@@ -471,6 +470,54 @@
                     classes.push("hidden");
                     el.className = classes.join(" ");
                 }
+            }
+        }
+
+        // BỘ PHÁT NHẠC CHỜ THƯ GIÃN CHUÔNG GIÓ (Ambient Chimes Loop)
+        function startWaitingMusic() {
+            if (waitingMusicInterval) return;
+            try {
+                var AudioContext = window.AudioContext || window.webkitAudioContext;
+                if (!AudioContext) return;
+                var ctx = new AudioContext();
+
+                var notes = [659.25, 783.99, 880.00, 1046.50]; // Nốt nhạc E5, G5, A5, C6 thanh tao
+                var noteIdx = 0;
+
+                waitingMusicInterval = setInterval(function() {
+                    try {
+                        if (ctx.state === 'suspended') {
+                            ctx.resume();
+                        }
+                        var osc = ctx.createOscillator();
+                        var gain = ctx.createGain();
+                        osc.connect(gain);
+                        gain.connect(ctx.destination);
+                        
+                        osc.type = 'sine';
+                        var freq = notes[noteIdx];
+                        osc.frequency.setValueAtTime(freq, ctx.currentTime);
+                        
+                        gain.gain.setValueAtTime(0.06, ctx.currentTime); // Âm lượng siêu nhỏ thanh tịnh
+                        gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.9);
+
+                        osc.start();
+                        osc.stop(ctx.currentTime + 1.0);
+
+                        noteIdx = (noteIdx + 1) % notes.length;
+                    } catch (err) {
+                        console.log("Error in waiting music tick:", err);
+                    }
+                }, 1200);
+            } catch (e) {
+                console.log("AudioContext load blocked:", e);
+            }
+        }
+
+        function stopWaitingMusic() {
+            if (waitingMusicInterval) {
+                clearInterval(waitingMusicInterval);
+                waitingMusicInterval = null;
             }
         }
 
@@ -539,10 +586,12 @@
             hideElement("split-screen-container");
             hideElement("error-screen");
             showElement("loading-screen");
+            startWaitingMusic(); // Khởi chạy âm nhạc chờ
 
             // Fallback immediately if API Key is empty
             if (!apiKey || apiKey === "AIza" || apiKey.trim() === "") {
                 setTimeout(function() {
+                    stopWaitingMusic();
                     hideElement("loading-screen");
                     var errEl = document.getElementById("error-message");
                     errEl.innerText = "API Key not configured in HTML file. Please paste your Gemini Key into line 407.";
@@ -595,6 +644,7 @@
             
             xhr.onreadystatechange = function () {
                 if (xhr.readyState === 4) {
+                    stopWaitingMusic(); // Tắt nhạc chờ khi nhận được tín hiệu phản hồi
                     hideElement("loading-screen");
                     if (xhr.status === 200) {
                         try {
@@ -629,6 +679,7 @@
         }
 
         function showError(msg) {
+            stopWaitingMusic();
             var errEl = document.getElementById("error-message");
             errEl.innerText = msg;
             showElement("error-screen");
@@ -706,7 +757,6 @@
 
             var q = quizData.questions[idx];
 
-            // ĐỔI SANG ĐỊNH DẠNG TEXT "Question X of 10" NHƯ TRONG ẢNH THẦY GỬI
             document.getElementById("current-question-num").innerText = "Question " + (idx + 1) + " of 10";
             document.getElementById("question-text").innerText = q.question;
 
@@ -765,7 +815,6 @@
                 hideElement("question-explanation");
             }
 
-            // GIAO DIỆN BACK/NEXT NGANG MỎNG SỬ DỤNG AN TOÀN TRÊN THANH TIÊU ĐỀ MỚI
             var btnPrev = document.getElementById("btn-prev");
             var btnNext = document.getElementById("btn-next");
             if (btnPrev) btnPrev.disabled = (idx === 0);
@@ -848,20 +897,19 @@
             }
         }
 
-        //        // BỘ PHÁT SÓNG ÂM THANH OFFLINE WEB AUDIO API TỰ SINH
+        // BỘ PHÁT SÓNG ÂM THANH OFFLINE WEB AUDIO API TỰ SINH (3 PHÂN CẤP NHẠC)
         function playSynthesizedSound(isPerfect) {
             try {
                 var AudioContext = window.AudioContext || window.webkitAudioContext;
                 if (!AudioContext) return;
                 var ctx = new AudioContext();
                 
-                // Mở khóa luồng AudioContext cưỡng chế trên thiết bị di động Android/iOS
                 if (ctx.state === 'suspended') {
                     ctx.resume();
                 }
                 
                 if (isPerfect) {
-                    // Hợp âm chiến thắng rạng rỡ ngân vang: Đô -> Mi -> Sol -> Đô
+                    // Hợp âm chiến thắng rạng rỡ ngân vang rộn rã: Đô -> Mi -> Sol -> Đô (Thế bấm vui tươi)
                     var notes = [261.63, 329.63, 392.00, 523.25];
                     notes.forEach(function(freq, index) {
                         var osc = ctx.createOscillator();
@@ -876,7 +924,7 @@
                         osc.stop(ctx.currentTime + index * 0.1 + 0.5);
                     });
                 } else {
-                    // Tiếng chuông bíp kép nhẹ nhàng khích lệ tinh thần học tập
+                    // Tiếng chuông bíp kép khích lệ ấm áp, thanh tao để thúc đẩy học tập
                     var notes = [392.00, 523.25];
                     notes.forEach(function(freq, index) {
                         var osc = ctx.createOscillator();
