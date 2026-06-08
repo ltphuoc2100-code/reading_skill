@@ -383,11 +383,17 @@
                     <span id="bubble-9" class="dot"></span>
                 </div>
 
-                <!-- Next/Back Navigation Buttons -->
-                <div class="btn-row">
-                    <button onclick="prevQuestion()" id="btn-prev" class="nav-btn">Back</button>
-                    <button onclick="nextQuestion()" id="btn-next" class="nav-btn">Next</button>
-                </div>
+                <div class="flex items-center justify-between bg-white px-4 py-2.5 rounded-2xl border border-slate-100 shadow-sm mb-4">
+                <button onclick="prevQuestion()" class="px-4 py-2 bg-slate-50 hover:bg-slate-100 text-slate-700 font-bold text-xs rounded-xl border border-slate-100/60 transition active:scale-95 flex-shrink-0">
+                    Back
+                </button>
+                <span id="question-indicator" class="text-sm font-black text-slate-800 text-center mx-2 whitespace-nowrap">
+                    Question 1 of 10
+                </span>
+                <button onclick="nextQuestion()" class="px-4 py-2 bg-slate-50 hover:bg-slate-100 text-slate-700 font-bold text-xs rounded-xl border border-slate-100/60 transition active:scale-95 flex-shrink-0">
+                    Next
+                </button>
+            </div>
 
                 <!-- Submit Button -->
                 <button onclick="gradeQuiz()" id="btn-submit" class="submit-btn hidden">
