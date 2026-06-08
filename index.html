@@ -436,15 +436,15 @@
         }
 
         // ES5 Safe Layout control
-        function showElement(id) {
+         function showElement(id) {
             var el = document.getElementById(id);
             if (el) {
                 el.className = el.className.replace(/\bhidden\b/g, "").trim();
-                // Khung chính chia đôi và màn hình chờ sử dụng Flexbox để dàn trang tràn viền, còn lại dùng Block
-                if (id === "split-screen-container" || id === "waiting-screen") {
-                    el.style.display = "flex";
+                // Sử dụng setProperty !important để đè hoàn toàn các thuộc tính CSS ẩn
+                if (id === "split-screen-container" || id === "waiting-screen" || id === "loading-screen") {
+                    el.style.setProperty("display", "flex", "important");
                 } else {
-                    el.style.display = "block";
+                    el.style.setProperty("display", "block", "important");
                 }
             }
         }
@@ -452,16 +452,13 @@
         function hideElement(id) {
             var el = document.getElementById(id);
             if (el) {
-                var classes = el.className.split(" ");
-                if (arrayIndexOf(classes, "hidden") === -1) {
-                    classes.push("hidden");
-                    el.className = classes.join(" ");
+                if (el.className.indexOf("hidden") === -1) {
+                    el.className = (el.className + " hidden").trim();
                 }
-                // Ép ẩn tuyệt đối bằng inline style, triệt tiêu hoàn toàn khả năng bị đè ảnh lên bài đọc
-                el.style.display = "none";
+                // Ép ẩn tuyệt đối bằng inline style !important, triệt tiêu hoàn toàn khả năng bị đè ảnh lên bài đọc
+                el.style.setProperty("display", "none", "important");
             }
         }
-
 
         function simulateLaunch() {
             loadConfigAndTriggerAI("B2", "Artificial Intelligence");
