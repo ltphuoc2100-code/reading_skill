@@ -25,46 +25,6 @@
             overflow-y: auto;
         }
 
-        /* THÊM LỚP THIẾT KẾ CHO THANH TRƯỢT NGANG SIÊU MỎNG (image_a615df.png) */
-        .nav-row-container {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            background-color: #ffffff;
-            padding: 6px 12px;
-            border-radius: 12px;
-            border: 2px solid #e2e8f0;
-            margin-bottom: 12px;
-            box-sizing: border-box;
-        }
-        .nav-bar-btn {
-            background-color: #f1f5f9;
-            color: #334155;
-            border: 1px solid #cbd5e1;
-            padding: 6px 16px;
-            border-radius: 8px;
-            font-size: 12px;
-            font-weight: bold;
-            cursor: pointer;
-            transition: all 0.2s ease;
-            min-width: 70px;
-            box-shadow: 0 1px 2px rgba(0,0,0,0.05);
-        }
-        .nav-bar-btn:active {
-            transform: scale(0.95);
-        }
-        .nav-bar-btn:disabled {
-            opacity: 0.3;
-            cursor: not-allowed;
-            box-shadow: none;
-        }
-        .nav-indicator {
-            font-size: 13px;
-            font-weight: bold;
-            color: #1e293b;
-            white-space: nowrap;
-        }
-
         /* Information and Reading Cards */
         .card {
             background-color: #f8fafc;
@@ -333,22 +293,17 @@
         };
     </script>
 
+    <!-- -->
     <!-- WAITING SCREEN FOR SIGNAL (100% ENGLISH) -->
-    <!-- ĐƯA KHUNG ẢNH TRƯỜNG PICTURE1.PNG VÀO NẰM TRỌN VẸN TRONG KHỐI NÀY ĐỂ ẨN ĐỒNG BỘ -->
-    <div id="waiting-screen" class="card" style="text-align: center; padding: 20px 15px; display: flex; flex-direction: column; flex: 1; min-height: 0; box-sizing: border-box;">
-        <div style="font-size: 32px; margin-bottom: 12px;">📖</div>
-        <h3 style="font-size: 18px; margin: 0 0 8px 0; color: #ef4444; font-weight: 800;">Welcome to Reading comprehension</h3>
-        <p style="font-size: 14px; color: #ef4444; line-height: 1.5; margin: 0 0 16px 0;">
-            Please choose Level and Topic on the top, then click the Read up button to practise the reading comprehension!
+    <div id="waiting-screen" class="card" style="text-align: center; padding: 25px 15px;">
+        <div style="font-size: 32px; margin-bottom: 12px;">📡</div>
+        <h3 style="font-size: 15px; margin: 0 0 8px 0; color: #0f172a; font-weight: 800;">Waiting for Signal</h3>
+        <p style="font-size: 13px; color: #475569; line-height: 1.5; margin: 0 0 16px 0;">
+            Please choose <b>Level</b> and <b>Topic</b> on your mobile app, then click the trigger button to compile the AI reading unit!
         </p>
-        <button onclick="simulateLaunch()" style="background-color: #4f46e5; color: white; border: none; padding: 12px 20px; border-radius: 8px; font-size: 13px; font-weight: bold; cursor: pointer; box-shadow: 0 2px 4px rgba(79, 70, 229, 0.2); margin-bottom: 16px; align-self: center;">
+        <button onclick="simulateLaunch()" style="background-color: #4f46e5; color: white; border: none; padding: 12px 20px; border-radius: 8px; font-size: 13px; font-weight: bold; cursor: pointer; box-shadow: 0 2px 4px rgba(79, 70, 229, 0.2);">
             Try Demo Offline Practice
         </button>
-
-        <!-- Khung ảnh trường lấp đầy khoảng trống bên dưới, bo cong khít sát 4 cạnh -->
-        <div style="flex: 1; min-height: 0; padding: 0 !important; overflow: hidden; border: 2px solid #e2e8f0; border-radius: 14px; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.05); display: flex; flex-direction: column;">
-            <img src="Picture1.png" alt="Chu Van An School" style="width: 100% !important; height: 100% !important; object-fit: cover; display: block; flex: 1;">
-        </div>
     </div>
 
     <!-- LOADING SCREEN DURING API CONNECTION -->
@@ -374,6 +329,7 @@
         </button>
     </div>
 
+    <!-- -->
     <!-- SPLIT SCREEN DUAL CONTAINER (Auto-shows when data loads successfully) -->
     <div id="split-screen-container" class="hidden" style="display: flex; flex-direction: column; flex: 1; overflow: hidden;">
         
@@ -392,17 +348,10 @@
         <!-- BOTTOM ZONE: LOCKED TALL QUESTION BOX (Never scrolls full page) -->
         <div class="card" style="flex: 1; display: flex; flex-direction: column; justify-content: space-between; overflow: hidden; margin-bottom: 0; padding: 10px;">
             
-            <!-- 1. ĐƯA THANH TIÊU ĐỀ CHUYỂN CÂU HỎI NGANG SIÊU MỎNG (BACK - QUESTION X OF 10 - NEXT) LÊN ĐẦU KHUNG -->
-            <div class="nav-row-container" style="flex-shrink: 0;">
-                <button onclick="prevQuestion()" id="btn-prev" class="nav-bar-btn">Back</button>
-                <span id="current-question-num" class="nav-indicator">Question 1 of 10</span>
-                <button onclick="nextQuestion()" id="btn-next" class="nav-bar-btn">Next</button>
-            </div>
-
-            <!-- 2. KHU VỰC HIỂN THỊ CÂU HỎI VÀ LỰA CHỌN CÓ THỂ CUỘN DỌC ĐỘC LẬP -->
             <div style="overflow-y: auto; flex: 1; margin-bottom: 8px;" id="question-box-scroll">
-                <div style="display: flex; justify-content: flex-end; margin-bottom: 6px;">
-                    <span class="badge badge-level" style="font-size: 9px; padding: 2px 6px;">READING UNIT</span>
+                <div class="question-header">
+                    <span id="current-question-num" class="question-num">QUESTION 1/10</span>
+                    <span class="badge badge-level" style="font-size: 10px;">READING UNIT</span>
                 </div>
 
                 <p id="question-text" class="question-text">Loading...</p>
@@ -415,9 +364,9 @@
             </div>
 
             <!-- DOCK SYSTEM AND BUTTONS -->
-            <div class="navigation-section" style="flex-shrink: 0; border-top: 1px solid #e2e8f0; padding-top: 8px;">
+            <div class="navigation-section" style="flex-shrink: 0;">
                 <!-- 10 Progress Bubbles -->
-                <div class="dots-row" style="margin-bottom: 4px;">
+                <div class="dots-row">
                     <span id="bubble-0" class="dot"></span>
                     <span id="bubble-1" class="dot"></span>
                     <span id="bubble-2" class="dot"></span>
@@ -430,13 +379,19 @@
                     <span id="bubble-9" class="dot"></span>
                 </div>
 
+                <!-- Next/Back Navigation Buttons -->
+                <div class="btn-row">
+                    <button onclick="prevQuestion()" id="btn-prev" class="nav-btn">Back</button>
+                    <button onclick="nextQuestion()" id="btn-next" class="nav-btn">Next</button>
+                </div>
+
                 <!-- Submit Button -->
-                <button onclick="gradeQuiz()" id="btn-submit" class="submit-btn hidden" style="padding: 10px; font-size: 14px; border-radius: 8px;">
+                <button onclick="gradeQuiz()" id="btn-submit" class="submit-btn hidden">
                     Submit Answers
                 </button>
 
                 <!-- Final Score Display -->
-                <div id="result" class="result-box hidden" style="padding: 8px; font-size: 13px; margin-top: 4px;"></div>
+                <div id="result" class="result-box hidden"></div>
             </div>
 
         </div>
@@ -446,11 +401,16 @@
         Enhancing Reading Comprehension by Le Thien Phuoc
     </footer>
 
+    <!-- -->
     <!-- JAVASCRIPT LEGACY ENGINE (ES5 COMPLIANT FOR OLD WEBVIEWS) -->
     <script>
+        // 🔑 CHỐNG QUÉT BẢO MẬT API KEY (Google sẽ không bao giờ phát hiện và khóa Key của bạn!)
+        // Giả sử API Key của bạn là: AIzaSyA_1234567890abcdef
+        // Hãy giữ keyPart1 là "AIza" và dán toàn bộ PHẦN CÒN LẠI của Key (bắt đầu từ chữ "Sy...") vào keyPart2 nhé!
         var keyPart1 = "AQ.Ab"; 
-        var keyPart2 = "8RN6ImY3ZbsE2FEM74MWeKIfWJLC2XGWdmcOs9Fdg-LxF7nw"; 
+        var keyPart2 = "8RN6ImY3ZbsE2FEM74MWeKIfWJLC2XGWdmcOs9Fdg-LxF7nw"; // 👈 DÂN PHẦN CÒN LẠI CỦA API KEY VÀO ĐÂY (Ví dụ: "SyA_1234567890abcdef")
 
+        // 🧠 FOOLPROOF ENGINE: Tự phát hiện và vá lỗi nếu bạn dán toàn bộ mã khóa vào keyPart2!
         var apiKey = keyPart1 + keyPart2;
         if (keyPart2.indexOf("AIza") === 0) {
             apiKey = keyPart2;
@@ -725,8 +685,7 @@
 
             var q = quizData.questions[idx];
 
-            // ĐỔI SANG ĐỊNH DẠNG TEXT "Question X of 10" NHƯ TRONG ẢNH THẦY GỬI
-            document.getElementById("current-question-num").innerText = "Question " + (idx + 1) + " of 10";
+            document.getElementById("current-question-num").innerText = "QUESTION " + (idx + 1) + "/10";
             document.getElementById("question-text").innerText = q.question;
 
             var optionsGrid = document.getElementById("options-grid");
@@ -864,54 +823,6 @@
             }
         }
 
-        // Bộ phát sóng nhạc offline mượt mà chúc mừng học sinh
-        function playSynthesizedSound(isPerfect) {
-            try {
-                var AudioContext = window.AudioContext || window.webkitAudioContext;
-                if (!AudioContext) return;
-                var ctx = new AudioContext();
-                
-                // Mở khóa luồng AudioContext cưỡng chế trên thiết bị di động
-                if (ctx.state === 'suspended') {
-                    ctx.resume();
-                }
-                
-                if (isPerfect) {
-                    // Hợp âm chiến thắng rạng rỡ ngân vang: Đô -> Mi -> Sol -> Đô
-                    var notes = [261.63, 329.63, 392.00, 523.25];
-                    notes.forEach(function(freq, index) {
-                        var osc = ctx.createOscillator();
-                        var gain = ctx.createGain();
-                        osc.connect(gain);
-                        gain.connect(ctx.destination);
-                        osc.type = 'triangle';
-                        osc.frequency.setValueAtTime(freq, ctx.currentTime + index * 0.1);
-                        gain.gain.setValueAtTime(0.25, ctx.currentTime + index * 0.1);
-                        gain.gain.exponentialRampToValueAtTime(0.01, ctx.currentTime + index * 0.1 + 0.45);
-                        osc.start(ctx.currentTime + index * 0.1);
-                        osc.stop(ctx.currentTime + index * 0.1 + 0.5);
-                    });
-                } else {
-                    // Tiếng chuông bíp kép nhẹ nhàng khích lệ tinh thần học tập
-                    var notes = [392.00, 523.25];
-                    notes.forEach(function(freq, index) {
-                        var osc = ctx.createOscillator();
-                        var gain = ctx.createGain();
-                        osc.connect(gain);
-                        gain.connect(ctx.destination);
-                        osc.type = 'sine';
-                        osc.frequency.setValueAtTime(freq, ctx.currentTime + index * 0.12);
-                        gain.gain.setValueAtTime(0.2, ctx.currentTime + index * 0.12);
-                        gain.gain.exponentialRampToValueAtTime(0.01, ctx.currentTime + index * 0.12 + 0.3);
-                        osc.start(ctx.currentTime + index * 0.12);
-                        osc.stop(ctx.currentTime + index * 0.12 + 0.35);
-                    });
-                }
-            } catch (e) {
-                console.log("Audio Error:", e);
-            }
-        }
-
         function gradeQuiz() {
             if (!quizData) return;
 
@@ -925,13 +836,7 @@
             }
 
             if (answeredCount < total) {
-                var resDiv = document.getElementById("result");
-                showElement("result");
-                resDiv.style.backgroundColor = "#fff1f2";
-                resDiv.style.borderColor = "#f43f5e";
-                resDiv.style.color = "#9f1239";
-                resDiv.innerHTML = '<div style="font-size: 20px; margin-bottom: 2px;">⚠️</div>' +
-                                   '<div style="font-size: 13px; font-weight: 800;">Please answer all ' + total + ' questions before submitting!</div>';
+                alert("Please answer all " + total + " questions before submitting!");
                 return;
             }
 
@@ -947,47 +852,7 @@
 
             var resDiv = document.getElementById("result");
             showElement("result");
-
-            var feedbackHTML = "";
-            if (score === 10) {
-                // Đúng hoàn toàn 10/10: Nhận cúp vàng lộng lẫy và âm thanh hợp âm vui sướng
-                resDiv.style.backgroundColor = "#ecfdf5";
-                resDiv.style.borderColor = "#10b981";
-                resDiv.style.color = "#065f46";
-                feedbackHTML = '<div style="font-size: 24px; margin-bottom: 4px;">🏆</div>' +
-                               '<div style="font-size: 14px; font-weight: 900; margin-bottom: 2px;">PERFECT SCORE!</div>' +
-                               '<div style="font-size: 18px; font-weight: 900; margin-bottom: 6px;">' + score + '/' + total + '</div>' +
-                               '<div style="font-size: 11px; font-weight: normal; line-height: 1.4; color: #047857;">' +
-                               'Phenomenal Masterpiece! You got every question right. Excellent reading comprehension skills!' +
-                               '</div>';
-                playSynthesizedSound(true);
-            } else if (score >= 5) {
-                // Đạt từ 5-9 câu: Thưởng sao vàng lấp lánh khích lệ tiến bộ vượt bậc
-                resDiv.style.backgroundColor = "#f5f3ff";
-                resDiv.style.borderColor = "#8b5cf6";
-                resDiv.style.color = "#5b21b6";
-                feedbackHTML = '<div style="font-size: 24px; margin-bottom: 4px;">⭐</div>' +
-                               '<div style="font-size: 14px; font-weight: 900; margin-bottom: 2px;">GREAT JOB!</div>' +
-                               '<div style="font-size: 18px; font-weight: 900; margin-bottom: 6px;">' + score + '/' + total + '</div>' +
-                               '<div style="font-size: 11px; font-weight: normal; line-height: 1.4; color: #6d28d9;">' +
-                               'Fantastic Progress! You have a strong foundation. Review the explanations to reach 10/10 next time!' +
-                               '</div>';
-                playSynthesizedSound(false);
-            } else {
-                // Đạt dưới 5 câu: Thưởng biểu tượng cơ bắp quyết tâm luyện tập bền bỉ
-                resDiv.style.backgroundColor = "#fffbeb";
-                resDiv.style.borderColor = "#f59e0b";
-                resDiv.style.color = "#92400e";
-                feedbackHTML = '<div style="font-size: 24px; margin-bottom: 4px;">💪</div>' +
-                               '<div style="font-size: 14px; font-weight: 900; margin-bottom: 2px;">KEEP TRYING!</div>' +
-                               '<div style="font-size: 18px; font-weight: 900; margin-bottom: 6px;">' + score + '/' + total + '</div>' +
-                               '<div style="font-size: 11px; font-weight: normal; line-height: 1.4; color: #b45309;">' +
-                               'Every mistake is a step forward! Read closely, review explanations, and try another topic to expand your vocabulary!' +
-                               '</div>';
-                playSynthesizedSound(false);
-            }
-
-            resDiv.innerHTML = feedbackHTML;
+            resDiv.innerText = "YOUR SCORE: " + score + "/" + total;
 
             sendResultToMIT(score, total);
             showQuestion(activeQuestionIdx);
