@@ -768,7 +768,37 @@
                 hideElement("btn-submit");
             }
         }
-
+// --- ĐOẠN 1: CHÈN THÊM HÀM TẠO ÂM THANH OFFLINE ---
+function playQuizSound(isVictory) {
+    try {
+        var AudioContext = window.AudioContext || window.webkitAudioContext;
+        if (!AudioContext) return;
+        var ctx = new AudioContext();
+        var osc = ctx.createOscillator();
+        var gain = ctx.createGain();
+        osc.connect(gain);
+        gain.connect(ctx.destination);
+        
+        if (isVictory) {
+            // Âm thanh chiến thắng (Nhạc âm cao vui tươi)
+            osc.type = 'sine';
+            osc.frequency.setValueAtTime(523.25, ctx.currentTime); // Nốt C5
+            osc.frequency.setValueAtTime(659.25, ctx.currentTime + 0.1); // Nốt E5
+            osc.frequency.setValueAtTime(783.99, ctx.currentTime + 0.2); // Nốt G5
+            gain.gain.setValueAtTime(0.2, ctx.currentTime);
+            gain.gain.exponentialRampToValueAtTime(0.01, ctx.currentTime + 0.4);
+            osc.start(); osc.stop(ctx.currentTime + 0.4);
+        } else {
+            // Âm thanh làm bài chưa tốt (Tiếng buzz trầm buồn)
+            osc.type = 'sawtooth';
+            osc.frequency.setValueAtTime(180, ctx.currentTime);
+            osc.frequency.setValueAtTime(120, ctx.currentTime + 0.15);
+            gain.gain.setValueAtTime(0.2, ctx.currentTime);
+            gain.gain.exponentialRampToValueAtTime(0.01, ctx.currentTime + 0.35);
+            osc.start(); osc.stop(ctx.currentTime + 0.35);
+        }
+    } catch (e) { console.log("Sound error context", e); }
+}
         function gradeQuiz() {
             if (!quizData) return;
 
@@ -796,9 +826,28 @@
                 }
             }
 
+            // --- ĐOẠN 2: THAY THẾ ĐOẠN HIỂN THỊ ĐIỂM CŨ ---
             var resDiv = document.getElementById("result");
             showElement("result");
-            resDiv.innerText = "YOUR SCORE: " + score + "/" + total;
+            
+            // Tự động đưa ra nhận xét dựa trên số câu đúng
+            var comment = "";
+            if (score === 10) {
+                comment = " ⭐ Excellent! Perfect Score! 🎉";
+                playQuizSound(true); // Bật âm thanh chiến thắng
+            } else if (score >= 8) {
+                comment = " 👍 Great job! Well done!";
+                playQuizSound(true); // Bật âm thanh chiến thắng
+            } else if (score >= 5) {
+                comment = " 📚 Good effort! Keep practicing!";
+                playQuizSound(false); // Bật âm thanh buồn nhắc nhở
+            } else {
+                comment = " 💪 Don't give up! Try again!";
+                playQuizSound(false); // Bật âm thanh buồn nhắc nhở
+            }
+
+            // Hiển thị cả Điểm số và Lời nhận xét lên màn hình
+            resDiv.innerHTML = "YOUR SCORE: " + score + "/" + total + "<br><span style='font-size:13px; font-weight:normal;'>" + comment + "</span>";
 
             sendResultToMIT(score, total);
             showQuestion(activeQuestionIdx);
