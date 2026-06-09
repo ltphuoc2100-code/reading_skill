@@ -896,7 +896,7 @@
             safeSetDisabled("next-btn", idx === quizData.questions.length - 1);
 
             // Cập nhật nội dung câu hỏi
-            safeSetText("question-text", q.question);
+            safeSetHTML("question-text", q.question);
 
             // Cập nhật 4 lựa chọn đáp án
             var labels = ["A", "B", "C", "D"];
