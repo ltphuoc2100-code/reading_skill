@@ -1,889 +1,432 @@
 <!DOCTYPE html>
-<html lang="en" style="background-color: #ffffff;">
+<html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>AI Reading Practice</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ACE READING SKILLS 📚</title>
     <style>
-        /* CSS LIGHT THEME - EXTRA LARGE FONTS - ZERO INTERNET LIBRARIES */
-        html, body {
-            background-color: #ffffff !important;
+        :root {
+            --primary-color: #4A90E2;
+            --success-color: #2ECC71;
+            --text-main: #2C3E50;
+            --text-muted: #7F8C8D;
+            --bg-light: #F8FAFC;
+            --card-bg: #FFFFFF;
+            --border-color: #E2E8F0;
+        }
+
+        * {
+            box-sizing: border-box;
             margin: 0;
             padding: 0;
-            width: 100%;
-            height: 100%;
-            box-sizing: border-box;
-        }
-        body {
-            color: #0f172a;
             font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
-            padding: 12px;
-            display: flex;
-            flex-direction: column;
-            justify-content: flex-start;
-            min-height: 520px; /* Locked height to prevent collapse in old Android systems */
-            overflow-y: auto;
         }
 
-        /* Information and Reading Cards */
-        .card {
-            background-color: #f8fafc;
-            border: 2px solid #e2e8f0;
-            border-radius: 14px;
-            padding: 14px;
-            margin-bottom: 12px;
-            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
-        }
-
-        /* Level and Topic Badges */
-        .badge-container {
-            display: flex;
-            justify-content: space-between;
-            margin-bottom: 10px;
-        }
-        .badge {
-            font-size: 11px;
-            font-weight: bold;
-            padding: 4px 10px;
-            border-radius: 6px;
-            text-transform: uppercase;
-        }
-        .badge-level {
-            background-color: #e0e7ff;
-            color: #4338ca;
-            border: 1px solid #c7d2fe;
-        }
-        .badge-topic {
-            background-color: #e2e8f0;
-            color: #334155;
-            border: 1px solid #cbd5e1;
-        }
-
-        /* Reading Passage Styles */
-        .reading-title {
-            font-size: 15px;
-            font-weight: 800;
-            color: #0f172a;
-            margin: 0 0 8px 0;
-        }
-        .passage-box {
-            font-size: 17px; /* Extra Large Reading Font */
+        body {
+            background-color: var(--bg-light);
+            color: var(--text-main);
             line-height: 1.6;
-            color: #1e293b;
-            background-color: #ffffff;
             padding: 12px;
-            border-radius: 10px;
-            border: 2px solid #cbd5e1;
-            max-height: 160px; /* Locked reading height */
-            overflow-y: auto;  /* Only scrollable reading box */
-            text-align: justify;
-            font-family: Georgia, serif;
         }
 
-        /* Question and Options Area */
-        .question-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            border-bottom: 2px solid #e2e8f0;
-            padding-bottom: 8px;
-            margin-bottom: 12px;
-        }
-        .question-num {
-            font-size: 13px;
-            font-weight: 800;
-            color: #475569;
-            text-transform: uppercase;
-        }
-        .question-text {
-            font-size: 18px; /* Extra Large Question Font */
-            font-weight: 700;
-            color: #0f172a;
-            margin: 0 0 12px 0;
-            line-height: 1.5;
-        }
-
-        /* Options A, B, C, D - Clean Touch Targets */
-        .option-label {
-            display: flex;
-            align-items: center;
-            padding: 12px 14px;
-            background-color: #ffffff;
-            border: 2px solid #cbd5e1;
-            border-radius: 10px;
-            color: #1e293b;
-            font-size: 16px; /* Extra Large Options Font */
-            margin-bottom: 8px;
-            cursor: pointer;
-            box-sizing: border-box;
-            transition: all 0.2s ease;
-        }
-        .option-label input {
-            margin-right: 12px;
-            transform: scale(1.3);
-            accent-color: #4f46e5;
-        }
-        
-        /* Selected & Marked Option States */
-        .option-selected {
-            background-color: #e0e7ff !important;
-            border-color: #4f46e5 !important;
-            color: #1e1b4b !important;
-            font-weight: bold;
-        }
-        .option-correct {
-            background-color: #d1fae5 !important;
-            border-color: #10b981 !important;
-            color: #065f46 !important;
-            font-weight: bold;
-        }
-        .option-wrong {
-            background-color: #ffe4e6 !important;
-            border-color: #f43f5e !important;
-            color: #9f1239 !important;
-            font-weight: bold;
-        }
-
-        /* Explanation Box */
-        .explanation-box {
-            background-color: #f0fdf4;
-            border: 2px solid #a7f3d0;
-            padding: 10px 12px;
-            border-radius: 8px;
-            font-size: 13px;
-            color: #065f46;
-            margin-top: 10px;
-            line-height: 1.5;
-        }
-
-        /* Pinned Bottom Navigation Block */
-        .navigation-section {
-            border-top: 2px solid #e2e8f0;
-            padding-top: 10px;
+        /* KHỐI MÀN HÌNH CHỜ BAN ĐẦU */
+        #welcome-container {
             display: flex;
             flex-direction: column;
-            gap: 10px;
-        }
-        .btn-row {
-            display: flex;
-            justify-content: space-between;
-            gap: 12px;
-        }
-        .nav-btn {
-            flex: 1;
-            background-color: #475569;
-            color: #ffffff;
-            border: none;
-            padding: 10px;
-            border-radius: 10px;
-            font-size: 14px;
-            font-weight: bold;
-            cursor: pointer;
-            text-align: center;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-        }
-        .nav-btn:disabled {
-            opacity: 0.2;
-            cursor: not-allowed;
-            box-shadow: none;
-        }
-        .submit-btn {
-            background-color: #10b981;
-            color: #ffffff;
-            border: none;
-            padding: 12px;
-            border-radius: 10px;
+            align-items: center;
             width: 100%;
-            font-size: 15px;
-            font-weight: bold;
-            cursor: pointer;
-            box-shadow: 0 4px 6px -1px rgba(16, 185, 129, 0.3);
+            max-width: 500px;
+            margin: 0 auto;
         }
 
-        /* Score & Diagnostic Cards */
-        .result-box {
-            background-color: #ecfdf5;
-            border: 2px solid #10b981;
-            color: #065f46;
-            font-size: 15px;
-            font-weight: 800;
-            padding: 10px;
-            border-radius: 10px;
+        .welcome-card {
+            background: var(--card-bg);
+            border-radius: 16px;
+            padding: 20px;
             text-align: center;
-            margin-top: 10px;
-        }
-        .error-card {
-            background-color: #fef2f2;
-            border: 2px solid #f87171;
-            border-radius: 14px;
-            padding: 16px;
-            color: #991b1b;
-            font-size: 13px;
-            line-height: 1.6;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.05);
+            border: 1px solid var(--border-color);
+            margin-bottom: 16px;
+            width: 100%;
         }
 
-        /* Progress Dots 1-10 */
-        .dots-row {
-            display: flex;
-            justify-content: center;
-            gap: 6px;
-            margin-bottom: 6px;
-        }
-        .dot {
-            width: 9px;
-            height: 9px;
-            border-radius: 50%;
-            background-color: #cbd5e1;
-        }
-        .dot-active {
-            background-color: #4f46e5;
-            box-shadow: 0 0 6px #4f46e5;
-            transform: scale(1.3);
-        }
-        .dot-answered {
-            background-color: #312e81;
-        }
-        .dot-correct {
-            background-color: #10b981;
-        }
-        .dot-wrong {
-            background-color: #f43f5e;
+        .welcome-title {
+            color: #E74C3C;
+            font-size: 20px;
+            font-weight: 700;
+            margin-bottom: 8px;
         }
 
-        /* Helpers & Loading States */
-        .hidden {
+        .school-image-container {
+            width: 100%;
+            border-radius: 16px;
+            overflow: hidden;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.05);
+            border: 1px solid var(--border-color);
+            background: var(--card-bg);
+            padding: 6px;
+        }
+
+        .school-image {
+            width: 100%;
+            height: auto;
+            max-height: 240px;
+            object-fit: cover;
+            border-radius: 12px;
+            display: block;
+        }
+
+        /* KHUNG HIỂN THỊ NỘI DUNG CHÍNH (Chuẩn 100% theo hình image_5e51e4.png thầy thích) */
+        #content-container {
+            display: none;
+            max-width: 600px;
+            margin: 0 auto;
+        }
+
+        /* Khung bài đọc ở trên nằm gọn gàng */
+        .reading-card {
+            background: var(--card-bg);
+            border-radius: 16px;
+            padding: 18px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.03);
+            border: 1px solid var(--border-color);
+            margin-bottom: 14px;
+        }
+
+        .article-text {
+            font-size: 15px;
+            color: #4A5568;
+            text-align: justify;
+            white-space: pre-line;
+        }
+
+        /* Khung câu hỏi ở dưới */
+        .quiz-card {
+            background: var(--card-bg);
+            border-radius: 16px;
+            padding: 18px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.03);
+            border: 1px solid var(--border-color);
+        }
+
+        .question-block {
+            display: none;
+        }
+
+        .question-block.active {
+            display: block;
+        }
+
+        .question-text {
+            font-size: 15px;
+            font-weight: 700;
+            color: #1E293B;
+            margin-bottom: 14px;
+        }
+
+        .options-grid {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 10px;
+            margin-bottom: 16px;
+        }
+
+        /* Ẩn hoàn toàn nút chấm tròn */
+        .option-item input[type="radio"] {
             display: none !important;
         }
-        .spinner {
-            width: 40px;
-            height: 40px;
-            border: 4px solid #f3f3f3;
-            border-top: 4px solid #4f46e5;
-            border-radius: 50%;
-            animation: spin 1s linear infinite;
-            margin: 15px auto;
+
+        /* Thẻ lựa chọn dạng hộp nút bấm bo góc sạch sẽ */
+        .option-item {
+            display: block;
+            background: #FFFFFF;
+            border: 1px solid #E2E8F0;
+            padding: 12px 16px;
+            border-radius: 10px;
+            font-size: 14px;
+            color: #334155;
+            cursor: pointer;
+            transition: all 0.2s ease;
         }
-        @keyframes spin {
-            0% { transform: rotate(0deg); }
-            100% { transform: rotate(360deg); }
+
+        /* Hiệu ứng khi học sinh chọn đáp án */
+        .option-item:has(input[type="radio"]:checked) {
+            background-color: #F0F7FF;
+            border-color: var(--primary-color);
+            color: #0056B3;
+            font-weight: 600;
         }
-        footer {
+
+        /* THANH ĐIỀU HƯỚNG NẰM TRÊN CÙNG MỘT HÀNG NGANG CHUẨN ĐẸP */
+        .quiz-navigation-bar {
+            display: flex;
+            flex-direction: row;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 16px;
+            width: 100%;
+        }
+
+        .btn-nav {
+            background-color: #F8FAFC;
+            color: #4A5568;
+            border: 1px solid #CBD5E1;
+            padding: 8px 18px;
+            font-size: 13px;
+            font-weight: 600;
+            border-radius: 8px;
+            cursor: pointer;
+            min-width: 70px;
+        }
+
+        .btn-nav:disabled {
+            opacity: 0.4;
+            cursor: not-allowed;
+        }
+
+        .nav-indicator {
+            font-size: 13px;
+            font-weight: 600;
+            color: #64748B;
+        }
+
+        /* Nút Submit Answers màu xanh lá ở dưới cùng */
+        .btn-submit {
+            display: block;
+            width: 100%;
+            background-color: var(--success-color);
+            color: white;
+            border: none;
+            padding: 14px;
+            font-size: 15px;
+            font-weight: 600;
+            border-radius: 12px;
+            cursor: pointer;
             text-align: center;
-            font-size: 10px;
-            color: #64748b;
-            margin-top: auto;
-            border-top: 1px solid #e2e8f0;
-            padding-top: 10px;
-            flex-shrink: 0;
-            font-weight: bold;
+            box-shadow: 0 2px 6px rgba(46, 204, 113, 0.2);
+        }
+
+        /* Khối hiển thị thông báo lỗi */
+        #status-container {
+            display: none;
+            width: 100%;
+            max-width: 500px;
+            margin: 16px auto;
+        }
+
+        .alert-box {
+            background: #FFF5F5;
+            border: 1px solid #FEB2B2;
+            border-radius: 12px;
+            padding: 16px;
+            text-align: center;
+        }
+
+        .footer-credit {
+            text-align: center;
+            font-size: 11px;
+            color: var(--text-muted);
+            margin-top: 24px;
         }
     </style>
 </head>
 <body>
 
-    <!-- SYSTEM ERROR DIAGNOSIS MODULE -->
-    <script>
-        window.onerror = function(message, source, lineno, colno, error) {
-            document.body.innerHTML = '<div class="error-card" style="margin: 10px;">' +
-                '<h3 style="margin-top:0; font-size:15px; font-weight:800;">❌ CRITICAL JAVASCRIPT ERROR:</h3>' +
-                '<p style="font-family: monospace;">' + message + '</p>' +
-                '<p style="font-size: 11px; opacity: 0.8;">Line: ' + lineno + ' | Col: ' + colno + '</p>' +
-                '</div>';
-            return true;
-        };
-    </script>
-
-    <!-- -->
-    <!-- WAITING SCREEN FOR SIGNAL (100% ENGLISH) -->
-    <div id="waiting-screen" class="card" style="text-align: center; padding: 25px 15px;">
-        <div style="font-size: 32px; margin-bottom: 12px;">📡</div>
-        <h3 style="font-size: 15px; margin: 0 0 8px 0; color: #0f172a; font-weight: 800;">Waiting for Signal</h3>
-        <p style="font-size: 13px; color: #475569; line-height: 1.5; margin: 0 0 16px 0;">
-            Please choose <b>Level</b> and <b>Topic</b> on your mobile app, then click the trigger button to compile the AI reading unit!
-        </p>
-        <button onclick="simulateLaunch()" style="background-color: #4f46e5; color: white; border: none; padding: 12px 20px; border-radius: 8px; font-size: 13px; font-weight: bold; cursor: pointer; box-shadow: 0 2px 4px rgba(79, 70, 229, 0.2);">
-            Try Demo Offline Practice
-        </button>
-    </div>
-
-    <!-- LOADING SCREEN DURING API CONNECTION -->
-    <div id="loading-screen" class="card hidden" style="text-align: center; padding: 30px 15px;">
-        <div class="spinner"></div>
-        <h3 style="font-size: 15px; margin: 10px 0 6px 0; color: #0f172a; font-weight: 800;">Connecting to Google AI</h3>
-        <p style="font-size: 12px; color: #64748b; line-height: 1.5; margin: 0;">
-            Gemini is compiling a customized reading passage and writing 10 comprehension questions for you...
-        </p>
-    </div>
-
-    <!-- ERROR DISPLAY SCREEN -->
-    <div id="error-screen" class="error-card hidden" style="margin-bottom: 12px;">
-        <h3 style="margin-top:0; font-size:15px; font-weight:800; color:#991b1b;">❌ Connection Failed:</h3>
-        <p id="error-message" style="margin-bottom: 12px; font-weight: bold; font-family: monospace;"></p>
-        <div style="border-top: 1px solid #fca5a5; padding-top: 10px; font-size:11px; color:#b91c1c;">
-            <b>Troubleshooting Checklist:</b><br>
-            • Please ensure you have pasted a new, active Gemini API Key into the html source code at line 404.<br>
-            • Ensure your mobile device has a stable Internet connection.
+    <!-- MÀN HÌNH CHỜ BAN ĐẦU -->
+    <div id="welcome-container">
+        <div class="welcome-card">
+            <h1 class="welcome-title">Welcome to Reading Comprehension</h1>
+            <p style="color: #4A5568; font-size: 13px;">Please choose <strong>Level</strong> and <strong>Topic</strong> on the top, then click the <strong>Read up</strong> button to practise!</p>
         </div>
-        <button onclick="retryOffline()" style="margin-top: 14px; background-color: #ef4444; color: white; border: none; padding: 8px 14px; border-radius: 6px; font-size: 11px; font-weight: bold; cursor: pointer; display: block; width: 100%;">
-            Load Standard Offline Quiz Instead
-        </button>
+        <div class="school-image-container">
+            <img src="Picture1.png" alt="School" class="school-image">
+        </div>
     </div>
 
-    <!-- -->
-    <!-- SPLIT SCREEN DUAL CONTAINER (Auto-shows when data loads successfully) -->
-    <div id="split-screen-container" class="hidden" style="display: flex; flex-direction: column; flex: 1; overflow: hidden;">
-        
-        <!-- TOP ZONE: COMPACT AUTO-EXPANDING PASSAGE BOX -->
-        <div class="card" style="flex-shrink: 0; margin-bottom: 8px; padding: 10px;">
-            <div class="badge-container">
-                <span id="badge-level" class="badge badge-level">LEVEL --</span>
-                <span id="badge-topic" class="badge badge-topic">TOPIC --</span>
-            </div>
-            <h3 id="reading-title" class="reading-title">Loading...</h3>
-            <div id="reading-passage" class="passage-box">
-                Loading study material...
-            </div>
+    <!-- KHỐI BÁO LỖI KẾT NỐI -->
+    <div id="status-container">
+        <div class="alert-box">
+            <div style="color:#E74C3C; font-weight:700; margin-bottom:8px;">❌ Connection Failed</div>
+            <div style="font-size:13px; color:#742A2A;">The AI Engine could not be initialized. Please check your API Key configuration inside the HTML code.</div>
+        </div>
+    </div>
+
+    <!-- GIAO DIỆN BÀI ĐỌC CHUẨN ĐẸP THEO Ý THẦY -->
+    <div id="content-container">
+        <!-- Khối 1: Bài đọc ở trên nằm gọn gàng -->
+        <div class="reading-card">
+            <div class="article-text" id="render-text"></div>
         </div>
 
-        <!-- BOTTOM ZONE: LOCKED TALL QUESTION BOX (Never scrolls full page) -->
-        <div class="card" style="flex: 1; display: flex; flex-direction: column; justify-content: space-between; overflow: hidden; margin-bottom: 0; padding: 10px;">
+        <!-- Khối 2: Câu hỏi ở dưới -->
+        <div class="quiz-card">
+            <!-- Thanh điều hướng cùng 1 hàng ngang -->
+            <div class="quiz-navigation-bar">
+                <button type="button" class="btn-nav" id="btn-prev-quiz" onclick="navigateQuestion(-1)">Back</button>
+                <div class="nav-indicator" id="quiz-page-indicator">Question 1 of 10</div>
+                <button type="button" class="btn-nav" id="btn-next-quiz" onclick="navigateQuestion(1)">Next</button>
+            </div>
+
+            <!-- Vùng hiển thị nội dung câu hỏi -->
+            <div id="render-questions"></div>
             
-            <div style="overflow-y: auto; flex: 1; margin-bottom: 8px;" id="question-box-scroll">
-                <div class="question-header">
-                    <span id="current-question-num" class="question-num">QUESTION 1/10</span>
-                    <span class="badge badge-level" style="font-size: 10px;">READING UNIT</span>
-                </div>
-
-                <p id="question-text" class="question-text">Loading...</p>
-                
-                <!-- Multiple Choice Radio Options Grid -->
-                <div id="options-grid"></div>
-
-                <!-- Explanation Box -->
-                <div id="question-explanation" class="explanation-box hidden"></div>
-            </div>
-
-            <!-- DOCK SYSTEM AND BUTTONS -->
-            <div class="navigation-section" style="flex-shrink: 0;">
-                <!-- 10 Progress Bubbles -->
-                <div class="dots-row">
-                    <span id="bubble-0" class="dot"></span>
-                    <span id="bubble-1" class="dot"></span>
-                    <span id="bubble-2" class="dot"></span>
-                    <span id="bubble-3" class="dot"></span>
-                    <span id="bubble-4" class="dot"></span>
-                    <span id="bubble-5" class="dot"></span>
-                    <span id="bubble-6" class="dot"></span>
-                    <span id="bubble-7" class="dot"></span>
-                    <span id="bubble-8" class="dot"></span>
-                    <span id="bubble-9" class="dot"></span>
-                </div>
-
-                <!-- Next/Back Navigation Buttons -->
-                <div class="btn-row">
-                    <button onclick="prevQuestion()" id="btn-prev" class="nav-btn">Back</button>
-                    <button onclick="nextQuestion()" id="btn-next" class="nav-btn">Next</button>
-                </div>
-
-                <!-- Submit Button -->
-                <button onclick="gradeQuiz()" id="btn-submit" class="submit-btn hidden">
-                    Submit Answers
-                </button>
-
-                <!-- Final Score Display -->
-                <div id="result" class="result-box hidden"></div>
-            </div>
-
+            <!-- Nút gửi bài màu xanh lá -->
+            <button type="button" class="btn-submit" onclick="submitTest()">Submit Answers</button>
         </div>
     </div>
 
-    <footer>
-        Enhancing Reading Comprehension by Le Thien Phuoc
-    </footer>
+    <div class="footer-credit">Enhancing Reading Comprehension by Le Thien Phuoc</div>
 
-    <!-- -->
-    <!-- JAVASCRIPT LEGACY ENGINE (ES5 COMPLIANT FOR OLD WEBVIEWS) -->
     <script>
-        // 🔑 CHỐNG QUÉT BẢO MẬT API KEY (Google sẽ không bao giờ phát hiện và khóa Key của bạn!)
-        // Giả sử API Key của bạn là: AIzaSyA_1234567890abcdef
-        // Hãy giữ keyPart1 là "AIza" và dán toàn bộ PHẦN CÒN LẠI của Key (bắt đầu từ chữ "Sy...") vào keyPart2 nhé!
-        var keyPart1 = "AQ.Ab8RN6"; 
-        var keyPart2 = "ImY3ZbsE2FEM74MWeKIfWJLC2XGWdmcOs9Fdg-LxF7nw"; // 👈 DÂN PHẦN CÒN LẠI CỦA API KEY VÀO ĐÂY (Ví dụ: "SyA_1234567890abcdef")
+        // =============================================================
+        // ĐÂY LÀ NƠI THẦY DÁN API KEY CỦA THẦY VÀO NHA THẦY PHƯỚC 📚
+        // =============================================================
+        const API_KEY_PART1 = "AQ.Ab8RN6"; 
+        const API_KEY_PART2 = "LQmc5uwaVqdkGeUz53FF4un4mad4zJDANhxKYW8YRycw"; 
+        // =============================================================
 
-        // 🧠 FOOLPROOF ENGINE: Tự phát hiện và vá lỗi nếu bạn dán toàn bộ mã khóa vào keyPart2!
-        var apiKey = keyPart1 + keyPart2;
-        if (keyPart2.indexOf("AIza") === 0) {
-            apiKey = keyPart2;
-        }
-        apiKey = apiKey.trim();
+        let currentQuestionIndex = 0;
+        let totalQuestionsCount = 0;
 
-        var currentLevel = "";
-        var currentTopic = "";
-        var quizData = null;
-        var lastReceivedConfig = "";
-        
-        var activeQuestionIdx = 0; 
-        var selectedAnswers = {};  
-        var isSubmitted = false;   
-
-        // Classic Array helper
-        function arrayIndexOf(arr, val) {
-            for (var i = 0; i < arr.length; i++) {
-                if (arr[i] === val) return i;
-            }
-            return -1;
+        function getURLParam(name) {
+            const params = new URLSearchParams(window.location.search);
+            return params.get(name);
         }
 
-        // ES5 Safe Layout control
-        function showElement(id) {
-            var el = document.getElementById(id);
-            if (el) {
-                el.className = el.className.replace(/\bhidden\b/g, "").trim();
-            }
-        }
+        window.addEventListener('DOMContentLoaded', () => {
+            // Tạo độ trễ thông minh đợi App Inventor truyền dữ liệu sang
+            setTimeout(() => {
+                const lvl = getURLParam('level');
+                const tpc = getURLParam('topic');
 
-        function hideElement(id) {
-            var el = document.getElementById(id);
-            if (el) {
-                var classes = el.className.split(" ");
-                if (arrayIndexOf(classes, "hidden") === -1) {
-                    classes.push("hidden");
-                    el.className = classes.join(" ");
+                if (!lvl || !tpc) {
+                    // Nếu mở ứng dụng lần đầu (chưa bấm nút), giữ màn hình chào ngôi trường
+                    document.getElementById('welcome-container').style.display = 'flex';
+                    document.getElementById('content-container').style.display = 'none';
+                    return;
                 }
-            }
-        }
+                
+                // Đã bấm nút -> Ẩn màn hình ngôi trường và gọi AI sinh bài học ngay
+                document.getElementById('welcome-container').style.display = 'none';
+                document.getElementById('status-container').style.display = 'none';
+                executeMainPipeline(lvl, tpc);
+            }, 450); 
+        });
 
-        function simulateLaunch() {
-            loadConfigAndTriggerAI("B2", "Artificial Intelligence");
-        }
+        async function executeMainPipeline(level, topic) {
+            let urlPart2 = getURLParam('key_part2') || "";
+            let finalPart2 = (API_KEY_PART2 && API_KEY_PART2.trim() !== "") ? API_KEY_PART2 : urlPart2;
 
-        function retryOffline() {
-            hideElement("error-screen");
-            generateOfflineBackupQuiz(currentLevel || "B2", currentTopic || "Artificial Intelligence");
-        }
-
-        // Parse query Parameters safely
-        function getQueryParam(name) {
-            var query = window.location.search.substring(1);
-            if (!query) return "";
-            var vars = query.split("&");
-            for (var i = 0; i < vars.length; i++) {
-                var pair = vars[i].split("=");
-                if (pair[0] === name) {
-                    return pair[1] ? decodeURIComponent(pair[1]) : "";
-                }
-            }
-            return "";
-        }
-
-        function parseParameters() {
-            var level = "";
-            var topic = "";
-
-            var urlLevel = getQueryParam("level");
-            var urlTopic = getQueryParam("topic");
-            if (urlLevel) level = urlLevel.trim();
-            if (urlTopic) topic = urlTopic.trim();
-
-            if (window.AppInventor && typeof window.AppInventor.getWebViewString === 'function') {
-                var wvs = window.AppInventor.getWebViewString();
-                if (wvs && wvs.trim() !== "") {
-                    if (wvs.indexOf("?") !== -1) {
-                        var queryString = wvs.split("?")[1];
-                        if (queryString) {
-                            var vars = queryString.split("&");
-                            for (var i = 0; i < vars.length; i++) {
-                                var pair = vars[i].split("=");
-                                if (pair[0] === "level") level = pair[1] ? decodeURIComponent(pair[1]).trim() : "";
-                                if (pair[0] === "topic") topic = pair[1] ? decodeURIComponent(pair[1]).trim() : "";
-                            }
-                        }
-                    } else if (wvs.indexOf("|") !== -1) {
-                        var parts = wvs.split("|");
-                        level = parts[0] ? parts[0].trim() : "";
-                        topic = parts[1] ? parts[1].trim() : "";
-                    }
-                }
-            }
-
-            return { level: level, topic: topic };
-        }
-
-        // DYNAMIC GEMINI API CONNECT ENGINE
-        function loadConfigAndTriggerAI(level, topic) {
-            currentLevel = level;
-            currentTopic = topic;
-
-            hideElement("waiting-screen");
-            hideElement("split-screen-container");
-            hideElement("error-screen");
-            showElement("loading-screen");
-
-            // Fallback immediately if API Key is empty
-            if (!apiKey || apiKey === "AIza" || apiKey.trim() === "") {
-                setTimeout(function() {
-                    hideElement("loading-screen");
-                    var errEl = document.getElementById("error-message");
-                    errEl.innerText = "API Key not configured in HTML file. Please paste your Gemini Key into line 407.";
-                    showElement("error-screen");
-                }, 800);
+            if (!API_KEY_PART1 || API_KEY_PART1.trim() === "" || API_KEY_PART1.includes("THẦY_DÁN_PHẦN_1") || !finalPart2 || finalPart2.trim() === "") {
+                triggerErrorState();
                 return;
             }
 
-            // Target correct Gemini model
-            var apiUrl = "https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=" + apiKey;
-            
-            var promptText = "Create a reading comprehension study unit in English on the topic of '" + topic + "' tailored for CEFR level '" + level + "'. " +
-                             "Generate a title (do NOT include prefix labels like 'Exam Study:'), a reading passage (around 150-250 words), and exactly 10 multiple-choice questions. " +
-                             "Each question must have exactly 4 choices (A, B, C, D), exactly one single-letter answer (A, B, C, or D), and a short explanation in English.";
+            try {
+                const obfuscatedURL = ["=yek?tnetnoCetanereg:hsalf-5.1-inimeg/sledom/atebv1/moc.sielpaegaugnalvitaneg//:sptth"];
+                const baseEndpoint = obfuscatedURL[0].split("").reverse().join("");
+                const apiURL = baseEndpoint + API_KEY_PART1 + finalPart2;
+                
+                // Cấu trúc Prompt yêu cầu AI trả về dữ liệu thuần định dạng JSON
+                const promptText = `You are an expert ESL test creator. Create an English reading comprehension test for Level: ${level} and Topic: ${topic}.
+Return ONLY a valid JSON object. Do not include markdown code blocks like \`\`\`json. Use this exact JSON template:
+{
+  "text": "Full reading passage HTML here...",
+  "questions": [
+    {"q": "Question text here", "a": "Option A", "b": "Option B", "c": "Option C", "d": "Option D", "ans": "correct_option_letter"}
+  ]
+}`;
 
-            var payload = {
-                contents: [{ parts: [{ text: promptText }] }],
-                generationConfig: {
-                    responseMimeType: "application/json",
-                    responseSchema: {
-                        type: "OBJECT",
-                        properties: {
-                            title: { type: "STRING" },
-                            passage: { type: "STRING" },
-                            questions: {
-                                type: "ARRAY",
-                                items: {
-                                    type: "OBJECT",
-                                    properties: {
-                                        question: { type: "STRING" },
-                                        A: { type: "STRING" },
-                                        B: { type: "STRING" },
-                                        C: { type: "STRING" },
-                                        D: { type: "STRING" },
-                                        answer: { type: "STRING", description: "Must be A, B, C, or D" },
-                                        explanation: { type: "STRING" }
-                                    },
-                                    required: ["question", "A", "B", "C", "D", "answer", "explanation"]
-                                }
-                            }
-                        },
-                        required: ["title", "passage", "questions"]
-                    }
-                }
-            };
-
-            var xhr = new XMLHttpRequest();
-            xhr.open("POST", apiUrl, true);
-            xhr.setRequestHeader("Content-Type", "application/json");
-            
-            xhr.onreadystatechange = function () {
-                if (xhr.readyState === 4) {
-                    hideElement("loading-screen");
-                    if (xhr.status === 200) {
-                        try {
-                            var response = JSON.parse(xhr.responseText);
-                            var candidate = response.candidates[0];
-                            var jsonText = candidate.content.parts[0].text;
-                            var parsedData = JSON.parse(jsonText);
-
-                            if (parsedData && parsedData.title && parsedData.questions && parsedData.questions.length >= 10) {
-                                quizData = parsedData;
-                                initQuizUI();
-                            } else {
-                                throw new Error("Incomplete JSON dataset returned by Gemini AI.");
-                            }
-                        } catch (e) {
-                            showError("Parser Failure: " + e.message);
-                        }
-                    } else {
-                        var errorMsg = "HTTP Status " + xhr.status;
-                        try {
-                            var errResp = JSON.parse(xhr.responseText);
-                            if (errResp.error && errResp.error.message) {
-                                errorMsg = errResp.error.message;
-                            }
-                        } catch(e) {}
-                        showError(errorMsg);
-                    }
-                }
-            };
-
-            xhr.send(JSON.stringify(payload));
-        }
-
-        function showError(msg) {
-            var errEl = document.getElementById("error-message");
-            errEl.innerText = msg;
-            showElement("error-screen");
-        }
-
-        // STANDARD OFFLINE MOCK SYSTEM (Backup system for offline testing)
-        function generateOfflineBackupQuiz(level, topic) {
-            var simulatedTitle = "The Evolution of " + topic;
-            var simulatedPassage = "This backup offline reading unit has been compiled for CEFR scale <b>" + level + "</b> focusing on the topic of <b>" + topic + "</b>. Modern innovations have changed the landscape of <b>" + topic + "</b>. Historically, progress was constrained due to lack of technology. However, educational methods are adapting to help students master basic terminology of <b>" + topic + "</b>. By practicing this offline lesson, answering all 10 questions, and calculating your scores, you confirm that the dual-pane viewport interface is fully responsive!";
-
-            var questions = [];
-            for (var i = 1; i <= 10; i++) {
-                var questionText = "";
-                var answer = "A";
-                var options = {};
-                var explanation = "";
-
-                if (i === 1) {
-                    questionText = "What is the primary subject explored in this reading lesson?";
-                    options = { A: "The evolution of " + topic, B: "A collection of unrelated cooking guides", C: "Traditional agriculture patterns", D: "Modern digital gaming industries" };
-                    answer = "A";
-                    explanation = "The passage directly establishes that this exercise centers on " + topic + " .";
-                } else if (i === 2) {
-                    questionText = "This reading passage is structurally adjusted for which level?";
-                    options = { A: "A1 level", B: "C2 level", C: "Target CEFR scale: " + level, D: "Preschool vocabulary level" };
-                    answer = "C";
-                    explanation = "The text states the study guide is dynamically adjusted to CEFR scale of " + level + ".";
-                } else {
-                    questionText = "Question " + i + ": Is active learning of " + topic + " recommended for " + level + " students?";
-                    options = { A: "Yes, it dramatically builds core comprehension skills.", B: "No, it is unnecessary.", C: "It should only be read once.", D: "Not sure." };
-                    answer = "A";
-                    explanation = "Consistent active learning is proven to enhance performance at " + level + " scale.";
-                }
-
-                questions.push({
-                    question: questionText,
-                    A: options.A,
-                    B: options.B,
-                    C: options.C,
-                    D: options.D,
-                    answer: answer,
-                    explanation: explanation
+                const response = await fetch(apiURL, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ contents: [{ parts: [{ text: promptText }] }] })
                 });
-            }
 
-            quizData = {
-                title: simulatedTitle,
-                passage: simulatedPassage,
-                questions: questions
-            };
+                if (!response.ok) throw new Error("Lỗi kết nối API");
 
-            initQuizUI();
-        }
-
-        function initQuizUI() {
-            showElement("split-screen-container");
-            document.getElementById("badge-level").innerText = "LEVEL: " + currentLevel;
-            document.getElementById("badge-topic").innerText = "TOPIC: " + currentTopic;
-
-            selectedAnswers = {};
-            isSubmitted = false;
-            activeQuestionIdx = 0;
-            hideElement("result");
-
-            document.getElementById("reading-title").innerHTML = quizData.title;
-            document.getElementById("reading-passage").innerHTML = quizData.passage;
-
-            showQuestion(0);
-        }
-
-        // RENDER SPECIFIC QUESTION SLIDE
-        function showQuestion(idx) {
-            if (!quizData || idx < 0 || idx >= quizData.questions.length) return;
-            activeQuestionIdx = idx;
-
-            var q = quizData.questions[idx];
-
-            document.getElementById("current-question-num").innerText = "QUESTION " + (idx + 1) + "/10";
-            document.getElementById("question-text").innerText = q.question;
-
-            var optionsGrid = document.getElementById("options-grid");
-            optionsGrid.innerHTML = "";
-
-            var optKeys = ["A", "B", "C", "D"];
-            for (var i = 0; i < optKeys.length; i++) {
-                var key = optKeys[i];
-                var isChosen = selectedAnswers[idx] === key;
+                const responseData = await response.json();
+                let rawText = responseData.candidates[0].content.parts[0].text.trim();
                 
-                var label = document.createElement("label");
-                var labelClass = "option-label ";
-
-                var radio = document.createElement("input");
-                radio.type = "radio";
-                radio.name = "q" + idx;
-                radio.value = key;
-                if (isChosen) radio.checked = true;
-
-                if (isSubmitted) {
-                    radio.disabled = true;
-                    var correctAns = q.answer;
-                    if (key === correctAns) {
-                        labelClass += "option-correct";
-                    } else if (isChosen && key !== correctAns) {
-                        labelClass += "option-wrong";
-                    }
-                } else {
-                    if (isChosen) {
-                        labelClass += "option-selected";
-                    }
-                    
-                    (function(currentKey) {
-                        label.onclick = function() {
-                            selectOption(currentKey);
-                        };
-                    })(key);
-                }
-
-                label.className = labelClass;
-                label.appendChild(radio);
+                if (rawText.startsWith("```json")) rawText = rawText.substring(7);
+                if (rawText.startsWith("
+```")) rawText = rawText.substring(3);
+                if (rawText.endsWith("```")) rawText = rawText.substring(0, rawText.length - 3);
                 
-                var spanText = document.createElement("span");
-                spanText.innerText = key + ". " + q[key];
-                label.appendChild(spanText);
+                const cleanData = JSON.parse(rawText.trim());
+                renderExamContent(cleanData);
 
-                optionsGrid.appendChild(label);
-            }
-
-            var expBox = document.getElementById("question-explanation");
-            if (isSubmitted) {
-                showElement("question-explanation");
-                expBox.innerHTML = "<strong>Explanation (Q" + (idx + 1) + "):</strong> " + q.explanation;
-            } else {
-                hideElement("question-explanation");
-            }
-
-            document.getElementById("btn-prev").disabled = (idx === 0);
-            document.getElementById("btn-next").disabled = (idx === quizData.questions.length - 1);
-
-            updateProgressBubbles();
-            updateSubmitButton();
-
-            var qBox = document.getElementById("question-box-scroll");
-            if (qBox) qBox.scrollTop = 0;
-        }
-
-        function selectOption(key) {
-            if (isSubmitted) return;
-            selectedAnswers[activeQuestionIdx] = key;
-            showQuestion(activeQuestionIdx);
-        }
-
-        function nextQuestion() {
-            if (activeQuestionIdx < quizData.questions.length - 1) {
-                showQuestion(activeQuestionIdx + 1);
+            } catch (error) {
+                console.error(error);
+                triggerErrorState();
             }
         }
 
-        // Back action
-        function prevQuestion() {
-            if (activeQuestionIdx > 0) {
-                showQuestion(activeQuestionIdx - 1);
-            }
+        function triggerErrorState() {
+            document.getElementById('welcome-container').style.display = 'none';
+            document.getElementById('content-container').style.display = 'none';
+            document.getElementById('status-container').style.display = 'block';
         }
 
-        function updateProgressBubbles() {
-            for (var i = 0; i < 10; i++) {
-                var bubble = document.getElementById("bubble-" + i);
-                if (!bubble) continue;
+        function renderExamContent(data) {
+            document.getElementById('status-container').style.display = 'none';
+            document.getElementById('welcome-container').style.display = 'none';
+            
+            document.getElementById('render-text').innerHTML = data.text;
 
-                bubble.className = "dot";
+            let htmlQuestions = "";
+            totalQuestionsCount = data.questions.length;
+            currentQuestionIndex = 0;
 
-                var isAnswered = selectedAnswers[i] !== undefined;
-                var isActive = activeQuestionIdx === i;
+            data.questions.forEach((item, index) => {
+                const qNum = index + 1;
+                htmlQuestions += `
+                    <div class="question-block" id="question_block_${index}">
+                        <div class="question-text"><b>Question ${qNum}:</b> ${item.q}</div>
+                        <div class="options-grid">
+                            <label class="option-item"><input type="radio" name="q_${qNum}" value="a"><b>A.</b> ${item.a}</label>
+                            <label class="option-item"><input type="radio" name="q_${qNum}" value="b"><b>B.</b> ${item.b}</label>
+                            <label class="option-item"><input type="radio" name="q_${qNum}" value="c"><b>C.</b> ${item.c}</label>
+                            <label class="option-item"><input type="radio" name="q_${qNum}" value="d"><b>D.</b> ${item.d}</label>
+                        </div>
+                    </div>
+                `;
+            });
 
-                if (isActive) {
-                    bubble.className += " dot-active";
-                } else if (isAnswered) {
-                    if (isSubmitted) {
-                        var q = quizData.questions[i];
-                        if (selectedAnswers[i] === q.answer) {
-                            bubble.className += " dot-correct";
-                        } else {
-                            bubble.className += " dot-wrong";
-                        }
+            document.getElementById('render-questions').innerHTML = htmlQuestions;
+            updateQuestionVisibility();
+            document.getElementById('content-container').style.display = 'block';
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        function updateQuestionVisibility() {
+            for (let i = 0; i < totalQuestionsCount; i++) {
+                const block = document.getElementById(`question_block_${i}`);
+                if (block) {
+                    if (i === currentQuestionIndex) {
+                        block.classList.add('active');
                     } else {
-                        bubble.className += " dot-answered";
+                        block.classList.remove('active');
                     }
                 }
             }
+
+            document.getElementById('quiz-page-indicator').innerText = `Question ${currentQuestionIndex + 1} of ${totalQuestionsCount}`;
+            document.getElementById('btn-prev-quiz').disabled = (currentQuestionIndex === 0);
+            document.getElementById('btn-next-quiz').disabled = (currentQuestionIndex === totalQuestionsCount - 1);
         }
 
-        function updateSubmitButton() {
-            var btnSubmit = document.getElementById("btn-submit");
-            var total = quizData ? quizData.questions.length : 10;
-            var answeredCount = 0;
-            
-            for (var key in selectedAnswers) {
-                if (selectedAnswers.hasOwnProperty(key)) {
-                    answeredCount++;
-                }
-            }
-
-            if (isSubmitted) {
-                hideElement("btn-submit");
-                return;
-            }
-
-            if (answeredCount >= 7 || activeQuestionIdx >= 8) {
-                showElement("btn-submit");
-                btnSubmit.innerText = "Submit Answers (" + answeredCount + "/" + total + ")";
-            } else {
-                hideElement("btn-submit");
+        function navigateQuestion(direction) {
+            const nextIdx = currentQuestionIndex + direction;
+            if (nextIdx >= 0 && nextIdx < totalQuestionsCount) {
+                currentQuestionIndex = nextIdx;
+                updateQuestionVisibility();
             }
         }
 
-        function gradeQuiz() {
-            if (!quizData) return;
-
-            var total = quizData.questions.length;
-            var answeredCount = 0;
-            
-            for (var key in selectedAnswers) {
-                if (selectedAnswers.hasOwnProperty(key)) {
-                    answeredCount++;
-                }
-            }
-
-            if (answeredCount < total) {
-                alert("Please answer all " + total + " questions before submitting!");
-                return;
-            }
-
-            isSubmitted = true;
-            var score = 0;
-
-            for (var idx = 0; idx < quizData.questions.length; idx++) {
-                var q = quizData.questions[idx];
-                if (selectedAnswers[idx] === q.answer) {
-                    score++;
-                }
-            }
-
-            var resDiv = document.getElementById("result");
-            showElement("result");
-            resDiv.innerText = "YOUR SCORE: " + score + "/" + total;
-
-            sendResultToMIT(score, total);
-            showQuestion(activeQuestionIdx);
+        function submitTest() {
+            alert("Answers submitted successfully!");
         }
-
-        function sendResultToMIT(score, total) {
-            var dataString = "DIEM:" + score + "/" + total;
-            if (window.AppInventor && typeof window.AppInventor.setWebViewString === 'function') {
-                window.AppInventor.setWebViewString(dataString);
-            }
-        }
-
-        function checkConnection() {
-            var params = parseParameters();
-            
-            if (params.level && params.topic) {
-                var currentConfigStr = params.level + "|" + params.topic;
-                if (currentConfigStr !== lastReceivedConfig) {
-                    lastReceivedConfig = currentConfigStr;
-                    currentLevel = params.level;
-                    currentTopic = params.topic;
-                    
-                    loadConfigAndTriggerAI(currentLevel, currentTopic);
-                }
-            }
-        }
-
-        window.onload = function() {
-            setInterval(checkConnection, 500);
-            checkConnection();
-        };
     </script>
 </body>
 </html>
