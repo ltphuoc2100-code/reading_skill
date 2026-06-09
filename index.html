@@ -295,7 +295,7 @@
         
     <div id="welcome-image-block">
         <div class="school-image-container">
-            <img src="https://ltphuoc2100-code.github.io/reading_skill/Picture1.png" alt="School" class="school-image">
+            <img src="Picture1.png" alt="School" class="school-image">
         </div>
     </div>
 
@@ -459,10 +459,13 @@ Return ONLY a valid JSON object. Do not include markdown code blocks. Use this e
             }
         }
 
-        function hideWelcomeElements() {
-            document.getElementById('welcome-message-block').style.display = 'none';
-            document.getElementById('welcome-image-block').style.display = 'none';
-        }
+       function hideWelcomeElements() {
+    // Chỉ ẩn phần chữ chào (Welcome Card)
+    document.getElementById('welcome-message-block').style.display = 'none';
+    
+    // GIỮ NGUYÊN HÌNH ẢNH TRƯỜNG (Không cho ẩn đi nữa)
+    document.getElementById('welcome-image-block').style.display = 'flex';
+}
 
         function triggerErrorState() {
             hideWelcomeElements();
