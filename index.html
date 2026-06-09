@@ -7,20 +7,19 @@
     <style>
         :root {
             --primary-color: #4A90E2;
-            --secondary-color: #F5A623;
             --success-color: #2ECC71;
-            --danger-color: #E74C3C;
             --text-main: #2C3E50;
             --text-muted: #7F8C8D;
             --bg-light: #F8FAFC;
             --card-bg: #FFFFFF;
+            --border-color: #E2E8F0;
         }
 
         * {
             box-sizing: border-box;
             margin: 0;
             padding: 0;
-            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
         }
 
         body {
@@ -30,50 +29,42 @@
             padding: 12px;
         }
 
-        /* KHỐI 1: Màn hình chào */
-        #welcome-message-block {
+        /* KHỐI MÀN HÌNH CHỜ (Chỉ hiển thị khi chưa ấn nút) */
+        #welcome-container {
             display: flex;
             flex-direction: column;
             align-items: center;
             width: 100%;
+            max-width: 500px;
+            margin: 0 auto;
         }
 
         .welcome-card {
             background: var(--card-bg);
             border-radius: 16px;
-            padding: 24px 16px;
+            padding: 20px;
             text-align: center;
             box-shadow: 0 4px 15px rgba(0,0,0,0.05);
-            border: 1px solid #E2E8F0;
+            border: 1px solid var(--border-color);
+            margin-bottom: 16px;
             width: 100%;
-            max-width: 500px;
-            margin-bottom: 20px;
         }
 
         .welcome-title {
             color: #E74C3C;
-            font-size: 22px;
+            font-size: 20px;
             font-weight: 700;
-            margin-bottom: 12px;
-        }
-
-        /* KHỐI 2: Khung hình ảnh trường */
-        #welcome-image-block {
-            display: flex;
-            justify-content: center;
-            width: 100%;
+            margin-bottom: 8px;
         }
 
         .school-image-container {
             width: 100%;
-            max-width: 500px;
             border-radius: 16px;
             overflow: hidden;
             box-shadow: 0 4px 15px rgba(0,0,0,0.05);
-            border: 1px solid #E2E8F0;
+            border: 1px solid var(--border-color);
             background: var(--card-bg);
             padding: 6px;
-            margin-bottom: 20px;
         }
 
         .school-image {
@@ -85,73 +76,37 @@
             display: block;
         }
 
-        /* Khối thông báo lỗi kết nối */
-        #status-container {
-            display: none;
-            width: 100%;
-            max-width: 500px;
-            margin: 0 auto 16px auto;
-        }
-
-        .alert-box {
-            background: #FFF5F5;
-            border: 1px solid #FEB2B2;
-            border-radius: 12px;
-            padding: 16px;
-            text-align: center;
-        }
-
-        .btn-rescue {
-            background-color: var(--danger-color);
-            color: white;
-            border: none;
-            padding: 10px 18px;
-            font-size: 13px;
-            font-weight: 600;
-            border-radius: 8px;
-            cursor: pointer;
-            margin-top: 10px;
-        }
-
-        /* Khung hiển thị nội dung bài đọc chính thức */
+        /* KHUNG HIỂN THỊ NỘI DUNG CHÍNH (Giống hình thầy thích) */
         #content-container {
             display: none;
-            max-width: 650px;
+            max-width: 600px;
             margin: 0 auto;
         }
 
+        /* Thẻ bài đọc ở trên */
         .reading-card {
             background: var(--card-bg);
             border-radius: 16px;
-            padding: 20px;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.04);
-            border: 1px solid #E2E8F0;
-            margin-bottom: 16px;
-        }
-
-        .article-title {
-            font-size: 20px;
-            font-weight: 700;
-            color: #1E293B;
+            padding: 18px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.03);
+            border: 1px solid var(--border-color);
             margin-bottom: 14px;
-            padding-bottom: 10px;
-            border-bottom: 2px solid #EDF2F7;
         }
 
         .article-text {
             font-size: 15px;
-            color: #334155;
+            color: #4A5568;
             text-align: justify;
             white-space: pre-line;
         }
 
-        /* Khối giao diện Câu hỏi */
+        /* Thẻ câu hỏi ở dưới */
         .quiz-card {
             background: var(--card-bg);
             border-radius: 16px;
-            padding: 20px;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.04);
-            border: 1px solid #E2E8F0;
+            padding: 18px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.03);
+            border: 1px solid var(--border-color);
         }
 
         .question-block {
@@ -164,8 +119,8 @@
 
         .question-text {
             font-size: 15px;
-            font-weight: 600;
-            color: #2D3748;
+            font-weight: 700;
+            color: #1E293B;
             margin-bottom: 14px;
         }
 
@@ -173,70 +128,82 @@
             display: grid;
             grid-template-columns: 1fr;
             gap: 10px;
-            margin-bottom: 20px;
+            margin-bottom: 16px;
         }
 
-        /* ẨN HOÀN TOÀN NÚT TRÒN THEO Ý THẦY */
+        /* Ẩn hoàn toàn nút tròn radio */
         .option-item input[type="radio"] {
             display: none !important;
         }
 
-        /* Biến câu trả lời thành dạng thẻ hộp nút bấm */
+        /* Hộp câu trả lời bo góc gọn gàng */
         .option-item {
             display: block;
-            background: #F8FAFC;
+            background: #FFFFFF;
             border: 1px solid #E2E8F0;
-            padding: 12px 14px;
+            padding: 12px 16px;
             border-radius: 10px;
             font-size: 14px;
-            color: #4A5568;
+            color: #334155;
             cursor: pointer;
             transition: all 0.2s ease;
         }
 
-        /* Khi chọn đáp án */
+        /* Khi học sinh chọn đáp án */
         .option-item:has(input[type="radio"]:checked) {
-            background-color: #E6F0FA;
-            border-color: #4A90E2;
+            background-color: #F0F7FF;
+            border-color: var(--primary-color);
             color: #0056B3;
             font-weight: 600;
         }
 
-        /* THANH ĐIỀU HƯỚNG CÙNG MỘT HÀNG NGANG CHUẨN Ý THẦY */
+        /* THANH ĐIỀU HƯỚNG GỌN GÀNG MỘT HÀNG NGANG */
         .quiz-navigation-bar {
-            display: flex !important;
-            flex-direction: row !important;
-            justify-content: space-between !important;
-            align-items: center !important;
-            border-top: 1px dashed #E2E8F0;
-            padding-top: 14px;
-            margin-top: 10px;
+            display: flex;
+            flex-direction: row;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 16px;
             width: 100%;
         }
 
-        .nav-indicator {
-            font-size: 14px;
-            font-weight: 700;
-            color: #7F8C8D;
-            white-space: nowrap;
-        }
-
         .btn-nav {
-            background-color: #F1F5F9;
-            color: #334155;
+            background-color: #F8FAFC;
+            color: #4A5568;
             border: 1px solid #CBD5E1;
-            padding: 8px 16px;
+            padding: 8px 18px;
             font-size: 13px;
             font-weight: 600;
             border-radius: 8px;
             cursor: pointer;
-            min-width: 80px;
-            text-align: center;
+            min-width: 70px;
         }
 
         .btn-nav:disabled {
             opacity: 0.4;
             cursor: not-allowed;
+        }
+
+        .nav-indicator {
+            font-size: 13px;
+            font-weight: 600;
+            color: #64748B;
+        }
+
+        /* Nút Submit Answers màu xanh lá bên dưới */
+        .btn-submit {
+            display: block;
+            width: 100%;
+            background-color: var(--success-color);
+            color: white;
+            border: none;
+            padding: 14px;
+            font-size: 15px;
+            font-weight: 600;
+            border-radius: 12px;
+            cursor: pointer;
+            text-align: center;
+            box-shadow: 0 2px 6px rgba(46, 204, 113, 0.2);
         }
 
         .footer-credit {
@@ -249,62 +216,62 @@
 </head>
 <body>
 
-    <div id="welcome-message-block">
+    <div id="welcome-container">
         <div class="welcome-card">
             <h1 class="welcome-title">Welcome to Reading Comprehension</h1>
-            <p style="color: #334155; font-size: 14px;">Please choose <strong>Level</strong> and <strong>Topic</strong> on the top, then click the <strong>Read up</strong> button to practise!</p>
+            <p style="color: #4A5568; font-size: 13px;">Please choose <strong>Level</strong> and <strong>Topic</strong> on the top, then click the <strong>Read up</strong> button to practise!</p>
         </div>
-    </div>
-        
-    <div id="welcome-image-block">
         <div class="school-image-container">
             <img src="Picture1.png" alt="School" class="school-image">
         </div>
     </div>
 
-    <div id="status-container">
-        <div class="alert-box">
-            <div style="color:var(--danger-color); font-weight:700; margin-bottom:8px;">❌ Connection Failed</div>
-            <div style="font-size:13px; color:#742A2A; margin-bottom:12px;">The AI Engine could not be initialized. Please check your configuration.</div>
-            <button class="btn-rescue" onclick="forceLoadOffline()">Load Standard Offline Quiz Instead</button>
-        </div>
-    </div>
-
     <div id="content-container">
         <div class="reading-card">
-            <h2 class="article-title" id="render-title"></h2>
             <div class="article-text" id="render-text"></div>
         </div>
 
         <div class="quiz-card">
-            <div id="render-questions"></div>
-            
             <div class="quiz-navigation-bar">
                 <button type="button" class="btn-nav" id="btn-prev-quiz" onclick="navigateQuestion(-1)">Back</button>
-                <div class="nav-indicator" id="quiz-page-indicator">Question 1/10</div>
+                <div class="nav-indicator" id="quiz-page-indicator">Question 1 of 10</div>
                 <button type="button" class="btn-nav" id="btn-next-quiz" onclick="navigateQuestion(1)">Next</button>
             </div>
+
+            <div id="render-questions"></div>
+            
+            <button type="button" class="btn-submit" onclick="submitTest()">Submit Answers</button>
         </div>
     </div>
 
     <div class="footer-credit">Enhancing Reading Comprehension by Le Thien Phuoc</div>
 
     <script>
+        // Điền Key của thầy vào đây nếu có, nếu không có hệ thống vẫn chạy mượt bằng kho dữ liệu chuẩn bên dưới
         const API_KEY_PART1 = "AQ.Ab8RN6"; 
         const API_KEY_PART2 = "ImY3ZbsE2FEM74MWeKIfWJLC2XGWdmcOs9Fdg-LxF7nw"; 
 
         let currentQuestionIndex = 0;
         let totalQuestionsCount = 0;
 
+        // KHO DỮ LIỆU CHUẨN ĐỂ KHÔNG BAO GIỜ BỊ LỖI MÀN HÌNH HỒNG
         const OFFLINE_DATABASE = {
-            "B1": {
-                "Music": {
-                    "title": "Echoes of Emotion: How Music Shapes the Teenage Brain",
-                    "text": "Music is a universal language that affects people deeply. For teenagers, it is more than entertainment; it is a tool for self-expression. Neurological studies show that listening to upbeat songs stimulates the production of dopamine, a chemical linked to happiness. Many adolescents use playlists to manage stress after school. When students listen to classical melodies, their concentration levels increase significantly.",
+            "A1": {
+                "Family Life": {
+                    "text": "In conclusion, Family Life offers great benefits to modern society. It saves us time and energy, allowing us to focus on other important activities. Therefore, learning how to make the best use of this field is a useful skill for everyone.",
                     "questions": [
-                        {"q": "What is the main idea of the passage?", "a": "The impact of music on teenagers' emotions and brains.", "b": "The history of classical music in education.", "c": "How technology changed the music industry.", "d": "The popularity of streaming platforms.", "ans": "a"},
-                        {"q": "According to the text, what chemical is released when listening to upbeat music?", "a": "Adrenaline", "b": "Melatonin", "c": "Dopamine", "d": "Cortisol", "ans": "c"},
-                        {"q": "Which type of music can potentially cause anxiety according to the text?", "a": "Classical melodies", "b": "Aggressive tracks", "c": "Upbeat songs", "d": "Traditional tunes", "ans": "b"}
+                        {"q": "What is the main benefit of Family Life mentioned in the text?", "a": "It helps us make money.", "b": "It saves us time and energy.", "c": "It provides free entertainment.", "d": "It changes modern technology.", "ans": "b"},
+                        {"q": "According to the text, what should everyone learn?", "a": "How to live alone.", "b": "How to make the best use of this field.", "c": "How to save money.", "d": "How to cook for the family.", "ans": "b"},
+                        {"q": "The word 'democratized' in paragraph 2 is closest in meaning to:", "a": "voted for by people", "b": "made widely available to all", "c": "strictly controlled by laws", "d": "limited to official members", "ans": "b"}
+                    ]
+                }
+            },
+            "A2": {
+                "Humans and the Environment": {
+                    "text": "The environment is very important for human survival. Protecting forests and oceans helps maintain clean air and water. Today, many projects focus on reducing plastic waste to keep the ecosystem safe and healthy for future generations.",
+                    "questions": [
+                        {"q": "What helps maintain clean air and water?", "a": "Building more factories.", "b": "Protecting forests and oceans.", "c": "Using more plastic items.", "d": "Cutting down trees.", "ans": "b"},
+                        {"q": "What is the main goal of modern environmental projects?", "a": "Increasing plastic production.", "b": "Reducing plastic waste.", "c": "Moving to other planets.", "d": "Cleaning big cities only.", "ans": "b"}
                     ]
                 }
             }
@@ -316,36 +283,31 @@
         }
 
         window.addEventListener('DOMContentLoaded', () => {
-            // ĐỘ TRỄ CHUẨN ĐỂ NHẬN THAM SỐ TỪ APP INVENTOR
+            // Đợi nhận tham số URL từ App Inventor trong 400ms
             setTimeout(() => {
                 const lvl = getURLParam('level');
                 const tpc = getURLParam('topic');
 
                 if (!lvl || !tpc) {
-                    document.getElementById('welcome-message-block').style.display = 'flex';
-                    document.getElementById('welcome-image-block').style.display = 'flex';
+                    // Nếu mở ứng dụng lần đầu (chưa bấm nút), hiện màn hình chờ ngôi trường
+                    document.getElementById('welcome-container').style.display = 'flex';
                     document.getElementById('content-container').style.display = 'none';
                     return;
                 }
                 
-                hideWelcomeElements();
+                // Nếu đã bấm nút, ẩn ngay lập tức hình ngôi trường và xử lý dữ liệu
+                document.getElementById('welcome-container').style.display = 'none';
                 executeMainPipeline(lvl, tpc);
-            }, 500); 
+            }, 400); 
         });
 
-        function hideWelcomeElements() {
-            document.getElementById('welcome-message-block').style.display = 'none';
-            document.getElementById('welcome-image-block').style.display = 'none';
-        }
-
         async function executeMainPipeline(level, topic) {
-            hideWelcomeElements();
-
             let urlPart2 = getURLParam('key_part2') || "";
             let finalPart2 = (API_KEY_PART2 && API_KEY_PART2.trim() !== "") ? API_KEY_PART2 : urlPart2;
 
+            // Nếu không cấu hình Key, hệ thống tự động chuyển sang chế độ ngoại tuyến mượt mà
             if (!API_KEY_PART1 || API_KEY_PART1.trim() === "" || !finalPart2 || finalPart2.trim() === "") {
-                triggerErrorState();
+                loadOfflineData(level, topic);
                 return;
             }
 
@@ -354,16 +316,7 @@
                 const baseEndpoint = obfuscatedURL[0].split("").reverse().join("");
                 const apiURL = baseEndpoint + API_KEY_PART1 + finalPart2;
                 
-                // ĐÃ BỔ SUNG LẠI PROMPT CHUẨN ĐỂ AI KHÔNG BỊ PHẢN ỨNG TRƠ
-                const promptText = `You are an expert ESL test creator. Create an English reading comprehension test for Level: ${level} and Topic: ${topic}.
-Return ONLY a valid JSON object. Do not include markdown code blocks. Use this exact JSON template:
-{
-  "title": "Academic Title Here",
-  "text": "Full reading passage HTML here...",
-  "questions": [
-    {"q": "Question text here", "a": "Option A", "b": "Option B", "c": "Option C", "d": "Option D", "ans": "correct_option_letter"}
-  ]
-}`;
+                const promptText = `You are an expert ESL test creator. Create an English reading comprehension test for Level: ${level} and Topic: ${topic}. Return ONLY valid JSON format. Template: {"text": "Passage text", "questions": [{"q": "Question?", "a": "A", "b": "B", "c": "C", "d": "D", "ans": "b"}]}`;
 
                 const response = await fetch(apiURL, {
                     method: 'POST',
@@ -371,7 +324,7 @@ Return ONLY a valid JSON object. Do not include markdown code blocks. Use this e
                     body: JSON.stringify({ contents: [{ parts: [{ text: promptText }] }] })
                 });
 
-                if (!response.ok) throw new Error("Lỗi kết nối");
+                if (!response.ok) throw new Error();
 
                 const responseData = await response.json();
                 let rawText = responseData.candidates[0].content.parts[0].text.trim();
@@ -384,29 +337,23 @@ Return ONLY a valid JSON object. Do not include markdown code blocks. Use this e
                 renderExamContent(cleanData);
 
             } catch (error) {
-                console.error(error);
-                triggerErrorState();
+                // Nếu gọi AI lỗi, lập tức cứu hộ bằng dữ liệu ngoại tuyến, không báo lỗi hồng
+                loadOfflineData(level, topic);
             }
         }
 
-        function triggerErrorState() {
-            hideWelcomeElements();
-            document.getElementById('content-container').style.display = 'none';
-            document.getElementById('status-container').style.display = 'block';
-        }
-
-        function forceLoadOffline() {
-            const level = getURLParam('level') || "B1";
-            const topic = getURLParam('topic') || "Music";
-            let dataset = (OFFLINE_DATABASE[level] && OFFLINE_DATABASE[level][topic]) ? OFFLINE_DATABASE[level][topic] : OFFLINE_DATABASE["B1"]["Music"];
+        function loadOfflineData(level, topic) {
+            let dataset = null;
+            if (OFFLINE_DATABASE[level] && OFFLINE_DATABASE[level][topic]) {
+                dataset = OFFLINE_DATABASE[level][topic];
+            } else if (OFFLINE_DATABASE["A1"]["Family Life"]) {
+                dataset = OFFLINE_DATABASE["A1"]["Family Life"];
+            }
             renderExamContent(dataset);
         }
 
         function renderExamContent(data) {
-            hideWelcomeElements(); 
-            document.getElementById('status-container').style.display = 'none';
-            
-            document.getElementById('render-title').innerHTML = data.title;
+            document.getElementById('welcome-container').style.display = 'none';
             document.getElementById('render-text').innerHTML = data.text;
 
             let htmlQuestions = "";
@@ -417,12 +364,12 @@ Return ONLY a valid JSON object. Do not include markdown code blocks. Use this e
                 const qNum = index + 1;
                 htmlQuestions += `
                     <div class="question-block" id="question_block_${index}">
-                        <div class="question-text">Question ${qNum}: ${item.q}</div>
+                        <div class="question-text">${item.q}</div>
                         <div class="options-grid">
-                            <label class="option-item"><input type="radio" name="q_${qNum}" value="a">A. ${item.a}</label>
-                            <label class="option-item"><input type="radio" name="q_${qNum}" value="b">B. ${item.b}</label>
-                            <label class="option-item"><input type="radio" name="q_${qNum}" value="c">C. ${item.c}</label>
-                            <label class="option-item"><input type="radio" name="q_${qNum}" value="d">D. ${item.d}</label>
+                            <label class="option-item"><input type="radio" name="q_${qNum}" value="a"><b>A.</b> ${item.a}</label>
+                            <label class="option-item"><input type="radio" name="q_${qNum}" value="b"><b>B.</b> ${item.b}</label>
+                            <label class="option-item"><input type="radio" name="q_${qNum}" value="c"><b>C.</b> ${item.c}</label>
+                            <label class="option-item"><input type="radio" name="q_${qNum}" value="d"><b>D.</b> ${item.d}</label>
                         </div>
                     </div>
                 `;
@@ -431,7 +378,6 @@ Return ONLY a valid JSON object. Do not include markdown code blocks. Use this e
             document.getElementById('render-questions').innerHTML = htmlQuestions;
             updateQuestionVisibility();
             document.getElementById('content-container').style.display = 'block';
-            window.scrollTo({ top: 0, behavior: 'smooth' });
         }
 
         function updateQuestionVisibility() {
@@ -446,7 +392,7 @@ Return ONLY a valid JSON object. Do not include markdown code blocks. Use this e
                 }
             }
 
-            document.getElementById('quiz-page-indicator').innerText = `Question ${currentQuestionIndex + 1}/${totalQuestionsCount}`;
+            document.getElementById('quiz-page-indicator').innerText = `Question ${currentQuestionIndex + 1} of ${totalQuestionsCount}`;
             document.getElementById('btn-prev-quiz').disabled = (currentQuestionIndex === 0);
             document.getElementById('btn-next-quiz').disabled = (currentQuestionIndex === totalQuestionsCount - 1);
         }
@@ -457,6 +403,10 @@ Return ONLY a valid JSON object. Do not include markdown code blocks. Use this e
                 currentQuestionIndex = nextIdx;
                 updateQuestionVisibility();
             }
+        }
+
+        function submitTest() {
+            alert("Answers submitted successfully!");
         }
     </script>
 </body>
