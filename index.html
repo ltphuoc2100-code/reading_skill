@@ -29,7 +29,7 @@
             padding: 12px;
         }
 
-        /* KHỐI MÀN HÌNH CHỜ (Chỉ hiển thị khi chưa ấn nút) */
+        /* KHỐI MÀN HÌNH CHỜ BAN ĐẦU */
         #welcome-container {
             display: flex;
             flex-direction: column;
@@ -76,14 +76,14 @@
             display: block;
         }
 
-        /* KHUNG HIỂN THỊ NỘI DUNG CHÍNH (Giống hình thầy thích) */
+        /* KHUNG HIỂN THỊ NỘI DUNG CHÍNH (Chuẩn 100% theo hình image_5e51e4.png thầy thích) */
         #content-container {
             display: none;
             max-width: 600px;
             margin: 0 auto;
         }
 
-        /* Thẻ bài đọc ở trên */
+        /* Khung bài đọc ở trên nằm gọn gàng */
         .reading-card {
             background: var(--card-bg);
             border-radius: 16px;
@@ -100,7 +100,7 @@
             white-space: pre-line;
         }
 
-        /* Thẻ câu hỏi ở dưới */
+        /* Khung câu hỏi ở dưới */
         .quiz-card {
             background: var(--card-bg);
             border-radius: 16px;
@@ -131,12 +131,12 @@
             margin-bottom: 16px;
         }
 
-        /* Ẩn hoàn toàn nút tròn radio */
+        /* Ẩn hoàn toàn nút chấm tròn */
         .option-item input[type="radio"] {
             display: none !important;
         }
 
-        /* Hộp câu trả lời bo góc gọn gàng */
+        /* Thẻ lựa chọn dạng hộp nút bấm bo góc sạch sẽ */
         .option-item {
             display: block;
             background: #FFFFFF;
@@ -149,7 +149,7 @@
             transition: all 0.2s ease;
         }
 
-        /* Khi học sinh chọn đáp án */
+        /* Hiệu ứng khi học sinh chọn đáp án */
         .option-item:has(input[type="radio"]:checked) {
             background-color: #F0F7FF;
             border-color: var(--primary-color);
@@ -157,7 +157,7 @@
             font-weight: 600;
         }
 
-        /* THANH ĐIỀU HƯỚNG GỌN GÀNG MỘT HÀNG NGANG */
+        /* THANH ĐIỀU HƯỚNG NẰM TRÊN CÙNG MỘT HÀNG NGANG CHUẨN ĐẸP */
         .quiz-navigation-bar {
             display: flex;
             flex-direction: row;
@@ -190,7 +190,7 @@
             color: #64748B;
         }
 
-        /* Nút Submit Answers màu xanh lá bên dưới */
+        /* Nút Submit Answers màu xanh lá ở dưới cùng */
         .btn-submit {
             display: block;
             width: 100%;
@@ -204,6 +204,22 @@
             cursor: pointer;
             text-align: center;
             box-shadow: 0 2px 6px rgba(46, 204, 113, 0.2);
+        }
+
+        /* Khối hiển thị thông báo lỗi (Chỉ hiện khi lỗi kết nối thật sự) */
+        #status-container {
+            display: none;
+            width: 100%;
+            max-width: 500px;
+            margin: 16px auto;
+        }
+
+        .alert-box {
+            background: #FFF5F5;
+            border: 1px solid #FEB2B2;
+            border-radius: 12px;
+            padding: 16px;
+            text-align: center;
         }
 
         .footer-credit {
@@ -223,6 +239,13 @@
         </div>
         <div class="school-image-container">
             <img src="Picture1.png" alt="School" class="school-image">
+        </div>
+    </div>
+
+    <div id="status-container">
+        <div class="alert-box">
+            <div style="color:#E74C3C; font-weight:700; margin-bottom:8px;">❌ Connection Failed</div>
+            <div style="font-size:13px; color:#742A2A;">The AI Engine could not be initialized. Please check your API Key configuration inside the HTML code.</div>
         </div>
     </div>
 
@@ -247,35 +270,15 @@
     <div class="footer-credit">Enhancing Reading Comprehension by Le Thien Phuoc</div>
 
     <script>
-        // Điền Key của thầy vào đây nếu có, nếu không có hệ thống vẫn chạy mượt bằng kho dữ liệu chuẩn bên dưới
+        // =============================================================
+        // ĐÂY LÀ NƠI THẦY DÁN API KEY CỦA THẦY VÀO NHA THẦY PHƯỚC 📚
+        // =============================================================
         const API_KEY_PART1 = "AQ.Ab8RN6"; 
         const API_KEY_PART2 = "ImY3ZbsE2FEM74MWeKIfWJLC2XGWdmcOs9Fdg-LxF7nw"; 
+        // =============================================================
 
         let currentQuestionIndex = 0;
         let totalQuestionsCount = 0;
-
-        // KHO DỮ LIỆU CHUẨN ĐỂ KHÔNG BAO GIỜ BỊ LỖI MÀN HÌNH HỒNG
-        const OFFLINE_DATABASE = {
-            "A1": {
-                "Family Life": {
-                    "text": "In conclusion, Family Life offers great benefits to modern society. It saves us time and energy, allowing us to focus on other important activities. Therefore, learning how to make the best use of this field is a useful skill for everyone.",
-                    "questions": [
-                        {"q": "What is the main benefit of Family Life mentioned in the text?", "a": "It helps us make money.", "b": "It saves us time and energy.", "c": "It provides free entertainment.", "d": "It changes modern technology.", "ans": "b"},
-                        {"q": "According to the text, what should everyone learn?", "a": "How to live alone.", "b": "How to make the best use of this field.", "c": "How to save money.", "d": "How to cook for the family.", "ans": "b"},
-                        {"q": "The word 'democratized' in paragraph 2 is closest in meaning to:", "a": "voted for by people", "b": "made widely available to all", "c": "strictly controlled by laws", "d": "limited to official members", "ans": "b"}
-                    ]
-                }
-            },
-            "A2": {
-                "Humans and the Environment": {
-                    "text": "The environment is very important for human survival. Protecting forests and oceans helps maintain clean air and water. Today, many projects focus on reducing plastic waste to keep the ecosystem safe and healthy for future generations.",
-                    "questions": [
-                        {"q": "What helps maintain clean air and water?", "a": "Building more factories.", "b": "Protecting forests and oceans.", "c": "Using more plastic items.", "d": "Cutting down trees.", "ans": "b"},
-                        {"q": "What is the main goal of modern environmental projects?", "a": "Increasing plastic production.", "b": "Reducing plastic waste.", "c": "Moving to other planets.", "d": "Cleaning big cities only.", "ans": "b"}
-                    ]
-                }
-            }
-        };
 
         function getURLParam(name) {
             const params = new URLSearchParams(window.location.search);
@@ -283,31 +286,31 @@
         }
 
         window.addEventListener('DOMContentLoaded', () => {
-            // Đợi nhận tham số URL từ App Inventor trong 400ms
+            // Tạo độ trễ thông minh đợi App Inventor truyền dữ liệu sang
             setTimeout(() => {
                 const lvl = getURLParam('level');
                 const tpc = getURLParam('topic');
 
                 if (!lvl || !tpc) {
-                    // Nếu mở ứng dụng lần đầu (chưa bấm nút), hiện màn hình chờ ngôi trường
+                    // Nếu mở ứng dụng lần đầu (chưa bấm nút), giữ màn hình chào ngôi trường
                     document.getElementById('welcome-container').style.display = 'flex';
                     document.getElementById('content-container').style.display = 'none';
                     return;
                 }
                 
-                // Nếu đã bấm nút, ẩn ngay lập tức hình ngôi trường và xử lý dữ liệu
+                // Đã bấm nút -> Ẩn màn hình ngôi trường và gọi AI sinh bài học ngay
                 document.getElementById('welcome-container').style.display = 'none';
+                document.getElementById('status-container').style.display = 'none';
                 executeMainPipeline(lvl, tpc);
-            }, 400); 
+            }, 450); 
         });
 
         async function executeMainPipeline(level, topic) {
             let urlPart2 = getURLParam('key_part2') || "";
             let finalPart2 = (API_KEY_PART2 && API_KEY_PART2.trim() !== "") ? API_KEY_PART2 : urlPart2;
 
-            // Nếu không cấu hình Key, hệ thống tự động chuyển sang chế độ ngoại tuyến mượt mà
-            if (!API_KEY_PART1 || API_KEY_PART1.trim() === "" || !finalPart2 || finalPart2.trim() === "") {
-                loadOfflineData(level, topic);
+            if (!API_KEY_PART1 || API_KEY_PART1.trim() === "" || API_KEY_PART1.includes("THẦY_DÁN_PHẦN_1") || !finalPart2 || finalPart2.trim() === "") {
+                triggerErrorState();
                 return;
             }
 
@@ -316,7 +319,15 @@
                 const baseEndpoint = obfuscatedURL[0].split("").reverse().join("");
                 const apiURL = baseEndpoint + API_KEY_PART1 + finalPart2;
                 
-                const promptText = `You are an expert ESL test creator. Create an English reading comprehension test for Level: ${level} and Topic: ${topic}. Return ONLY valid JSON format. Template: {"text": "Passage text", "questions": [{"q": "Question?", "a": "A", "b": "B", "c": "C", "d": "D", "ans": "b"}]}`;
+                // Cấu trúc Prompt yêu cầu AI trả về dữ liệu thuần định dạng JSON
+                const promptText = `You are an expert ESL test creator. Create an English reading comprehension test for Level: ${level} and Topic: ${topic}.
+Return ONLY a valid JSON object. Do not include markdown code blocks like \`\`\`json. Use this exact JSON template:
+{
+  "text": "Full reading passage HTML here...",
+  "questions": [
+    {"q": "Question text here", "a": "Option A", "b": "Option B", "c": "Option C", "d": "Option D", "ans": "correct_option_letter"}
+  ]
+}`;
 
                 const response = await fetch(apiURL, {
                     method: 'POST',
@@ -324,7 +335,7 @@
                     body: JSON.stringify({ contents: [{ parts: [{ text: promptText }] }] })
                 });
 
-                if (!response.ok) throw new Error();
+                if (!response.ok) throw new Error("Lỗi kết nối API");
 
                 const responseData = await response.json();
                 let rawText = responseData.candidates[0].content.parts[0].text.trim();
@@ -337,23 +348,21 @@
                 renderExamContent(cleanData);
 
             } catch (error) {
-                // Nếu gọi AI lỗi, lập tức cứu hộ bằng dữ liệu ngoại tuyến, không báo lỗi hồng
-                loadOfflineData(level, topic);
+                console.error(error);
+                triggerErrorState();
             }
         }
 
-        function loadOfflineData(level, topic) {
-            let dataset = null;
-            if (OFFLINE_DATABASE[level] && OFFLINE_DATABASE[level][topic]) {
-                dataset = OFFLINE_DATABASE[level][topic];
-            } else if (OFFLINE_DATABASE["A1"]["Family Life"]) {
-                dataset = OFFLINE_DATABASE["A1"]["Family Life"];
-            }
-            renderExamContent(dataset);
+        function triggerErrorState() {
+            document.getElementById('welcome-container').style.display = 'none';
+            document.getElementById('content-container').style.display = 'none';
+            document.getElementById('status-container').style.display = 'block';
         }
 
         function renderExamContent(data) {
+            document.getElementById('status-container').style.display = 'none';
             document.getElementById('welcome-container').style.display = 'none';
+            
             document.getElementById('render-text').innerHTML = data.text;
 
             let htmlQuestions = "";
@@ -364,7 +373,7 @@
                 const qNum = index + 1;
                 htmlQuestions += `
                     <div class="question-block" id="question_block_${index}">
-                        <div class="question-text">${item.q}</div>
+                        <div class="question-text"><b>Question ${qNum}:</b> ${item.q}</div>
                         <div class="options-grid">
                             <label class="option-item"><input type="radio" name="q_${qNum}" value="a"><b>A.</b> ${item.a}</label>
                             <label class="option-item"><input type="radio" name="q_${qNum}" value="b"><b>B.</b> ${item.b}</label>
@@ -378,6 +387,7 @@
             document.getElementById('render-questions').innerHTML = htmlQuestions;
             updateQuestionVisibility();
             document.getElementById('content-container').style.display = 'block';
+            window.scrollTo({ top: 0, behavior: 'smooth' });
         }
 
         function updateQuestionVisibility() {
