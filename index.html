@@ -476,137 +476,7 @@
             return "culture"; // Mặc định là Nhóm Ngoại giao & Văn hóa
         }
 
-        // HÀM SOẠN ĐỀ OFFLINE TỰ ĐỘNG CHUẨN XÁC THEO TRÌNH ĐỘ VÀ CHỦ ĐỀ CHỌN (KHÔNG LO LẶP ĐỀ)
-        function generateOfflineBackupQuiz(level, topic) {
-            var category = getCategoryOfTopic(topic);
-            var title = "The Influence and Study of " + topic;
-            var passage = "";
-            var questions = [];
-
-            // 1. BIÊN SOẠN BÀI LUẬN THEO ĐÚNG TRÌNH ĐỘ CEFR VÀ NHÓM CHỦ ĐỀ ĐÃ CHỌN
-            if (category === "society") {
-                if (level === "A1") {
-                    passage = "Now, studying " + topic + " is very important. Many families think about it every day. It helps us understand each other. For example, young kids learn from parents, and parents also listen to children. It makes our life very happy. However, we must spend our time <b>essential</b> for other simple tasks too.";
-                } else if (level === "A2") {
-                    passage = "Modern people believe that " + topic + " is an important part of our life. It connects individuals and helps them develop good social skills. In school, students often talk about their families and dreams. It is <b>essential</b> to listen carefully to our friends. If we work together, we can easily solve small problems in our local community.";
-                } else if (level === "B1") {
-                    passage = "Redefining the parameters of " + topic + " is becoming increasingly crucial in modern society. Historically, citizens relied on traditional methods to manage their personal goals and relationships. Today, digital access has <b>democratized</b> social support, enabling people to learn new skills at their own pace. When families and communities collaborate, their <b>retention</b> of shared values grows stronger.";
-                } else if (level === "B2") {
-                    passage = "The structural development of " + topic + " is significantly altering how modern communities operate. Today, wide access to digital platforms has <b>democratized</b> essential social resources, allowing individuals of all ages to learn and adapt to rapid changes. Structured modules of " + topic + " encourage critical thinking. Research proves that when citizens actively engage in this field, their cognitive <b>retention</b> and job readiness improve.";
-                } else if (level === "C1") {
-                    passage = "The multifaceted socio-cultural implications of " + topic + " have attracted significant academic scrutiny. As contemporary communities rapidly evolve, understanding the diverse aspects of " + topic + " has become a matter of critical importance. This ongoing transition represents a widespread <b>democratization</b> of personal growth. In diverse educational settings, this found accessibility translates into highly tailored cognitive pathways that cater directly to <b>heterogeneous</b> life goals. Studies demonstrate that individuals exposed to these structures exhibit higher critical thinking and a profound capacity for societal leadership.";
-                } else { // C2
-                    passage = "The profound socio-economic and psychological implications of " + topic + " have attracted substantial academic scrutiny in the modern era. As contemporary societies rapidly transition towards highly integrated global networks, understanding the multidimensional facets of " + topic + " has become a matter of crucial importance. Historically characterized by gradual developments, this domain has recently experienced an unprecedented surge of breakthroughs, reshaping institutional frameworks and human interactions. A particularly compelling dimension is the widespread <b>democratization</b> of life planning skills. In diverse environments, this newfound accessibility translates into highly tailored cognitive pathways catering directly to <b>heterogeneous</b> learning profiles, laying a solid foundation for sustainable global progress.";
-                }
-            } else if (category === "environment") {
-                if (level === "A1") {
-                    passage = "Protecting our " + topic + " is very simple. We must keep our rivers clean and plant more beautiful green trees. Many people do not throw trash on the streets. It is very <b>essential</b> to save clean water every day. If we love our planet, we will have a clean and safe place to live.";
-                } else if (level === "A2") {
-                    passage = "Understanding the impact of " + topic + " helps us protect our beautiful nature. Today, green living is popular because people want to reduce waste and pollution. It is <b>essential</b> to recycle plastic bottles and save electricity. Simple daily habits can make a big change for the local ecosystem.";
-                } else if (level === "B1") {
-                    passage = "Addressing the critical issues of " + topic + " is a primary concern for governments worldwide. Recent studies show that industrial waste has severely damaged our local ecosystems. Fortunately, green technologies have <b>democratized</b> environmental solutions, allowing communities to monitor air quality easily. This knowledge improves our long-term <b>retention</b> of natural resources.";
-                } else if (level === "B2") {
-                    passage = "The continuous degradation of " + topic + " demands immediate global action. Modern green initiatives have successfully <b>democratized</b> eco-friendly technologies, empowering citizens to track their carbon footprints in real-time. Integrating modules of conservation into the school curriculum fosters critical thinking. Research shows that when students actively participate in green projects, their <b>retention</b> of scientific concepts and civic responsibility increases.";
-                } else if (level === "C1") {
-                    passage = "The severe environmental implications of " + topic + " have generated intense academic debate. As our global ecosystem faces unprecedented challenges, researching the complex aspects of " + topic + " is of paramount importance. This ecological shift requires a systemic <b>democratization</b> of clean energy tools. In diverse environmental regions, this technological accessibility creates tailored adaptation plans that cater directly to <b>heterogeneous</b> local habitats, proving that local action is key to global sustainability.";
-                } else { // C2
-                    passage = "The profound socio-economic and ecological implications of " + topic + " have attracted substantial academic scrutiny in the modern era. As contemporary societies rapidly transition towards highly integrated global networks, understanding the multidimensional facets of " + topic + " has become a matter of crucial importance. Historically characterized by gradual changes, this domain has recently experienced an unprecedented surge of crises, reshaping global policies and habitats. A particularly compelling dimension is the widespread <b>democratization</b> of conservation data. In diverse environments, this newfound accessibility translates into tailored cognitive pathways catering directly to <b>heterogeneous</b> ecological profiles, laying a solid foundation for sustainable global progress.";
-                }
-            } else if (category === "technology") {
-                if (level === "A1") {
-                    passage = "Using modern " + topic + " is very fun. We can use smart computers and mobile phones to study English quickly. Many teachers use cool videos in class. It is <b>essential</b> to learn how to type on a keyboard. This makes our school work much faster and easier.";
-                } else if (level === "A2") {
-                    passage = "The evolution of " + topic + " is changing the way we learn and communicate. Today, students can search for interesting information on the internet in seconds. It is <b>essential</b> to use digital tools safely and avoid spending too much time online. Computers help us connect with schools around the world.";
-                } else if (level === "B1") {
-                    passage = "The rapid expansion of " + topic + " is reshaping traditional educational methods. Widespread access to online courses and software tools has <b>democratized</b> educational opportunities, allowing students to study complex subjects anywhere. When learners interact with interactive programs, their <b>retention</b> of technical terms increases significantly.";
-                } else if (level === "B2") {
-                    passage = "The systematic integration of " + topic + " into standard educational frameworks has revolutionized learning. Access to advanced diagnostic software has successfully <b>democratized</b> specialized training. Introducing computational logic encourages abstract thinking. Studies show that when students interact directly with " + topic + ", their cognitive <b>retention</b> and logical skills improve.";
-                } else if (level === "C1") {
-                    passage = "The profound socio-economic and ethical implications of " + topic + " have prompted intensive academic evaluation. As societies transition into the digital age, understanding the cognitive impact of " + topic + " is vital. This shift represents a broad <b>democratization</b> of technical skills. In advanced learning centers, this accessibility offers highly tailored learning pathways that cater directly to <b>heterogeneous</b> user profiles, empowering individuals to solve complex algorithms with ease.";
-                } else { // C2
-                    passage = "The profound socio-economic and cognitive implications of " + topic + " have attracted substantial academic scrutiny in the modern era. As contemporary societies rapidly transition towards highly integrated global networks, understanding the multidimensional facets of " + topic + " has become a matter of crucial importance. Historically characterized by gradual developments, this domain has recently experienced an unprecedented surge of breakthroughs, reshaping institutional frameworks and cognitive paradigms. A particularly compelling dimension is the widespread <b>democratization</b> of computation tools. In diverse environments, this newfound accessibility translates into tailored pathways catering directly to <b>heterogeneous</b> technological profiles, laying a solid foundation for sustainable progress.";
-                }
-            } else { // culture (Music, Global Relations...)
-                if (level === "A1") {
-                    passage = "We love " + topic + " because it brings people together. People sing beautiful songs and visit old historical places with their families. It is <b>essential</b> to respect other cultures and languages. Doing this makes us friendly and helps us make new friends easily.";
-                } else if (level === "A2") {
-                    passage = "Exploring different parts of " + topic + " helps us understand our global community. Many tourists travel to learn about local food, music, and art. It is <b>essential</b> to protect old buildings and local traditions. Sharing our heritage makes the world a peaceful place for everyone.";
-                } else if (level === "B1") {
-                    passage = "Promoting international awareness of " + topic + " is essential for modern diplomacy. Digital sharing platforms have <b>democratized</b> cultural exchange, allowing people to enjoy music and art from far away easily. Sharing our local heritage increases the public <b>retention</b> of historical truths.";
-                } else if (level === "B2") {
-                    passage = "The preservation and promotion of " + topic + " play a critical role in regional stability. Widespread access to digital museums has successfully <b>democratized</b> cultural education, allowing global audiences to explore historical archives. This active engagement enhances the <b>retention</b> of cultural identity and mutual respect among nations.";
-                } else if (level === "C1") {
-                    passage = "The diplomatic and historical implications of " + topic + " have generated profound academic analysis. As global networks become more integrated, preserving the authentic values of " + topic + " is of high priority. This cultural shift represents a widespread <b>democratization</b> of arts and history. In multicultural cities, this found accessibility creates tailored educational programs catering directly to <b>heterogeneous</b> community identities, fostering peace.";
-                } else { // C2
-                    passage = "The profound socio-economic and diplomatic implications of " + topic + " have attracted substantial academic scrutiny in the modern era. As contemporary societies rapidly transition towards highly integrated global networks, understanding the multidimensional facets of " + topic + " has become a matter of crucial importance. Historically characterized by gradual developments, this domain has recently experienced an unprecedented surge of international exchanges, reshaping cultural policies and global identity. A particularly compelling dimension is the widespread <b>democratization</b> of historical heritage. In diverse societies, this newfound accessibility translates into tailored cognitive pathways catering directly to <b>heterogeneous</b> cultural profiles, laying a solid foundation for global progress.";
-                }
-            }
-
-            // 2. BIÊN SOẠN BỘ 10 CÂU HỎI TRẮC NGHIỆM ĐỒNG BỘ RIÊNG CHO TỪNG NHÓM CHỦ ĐỀ
-            if (category === "society") {
-                questions = [
-                    { question: "What is the primary theme of this reading passage?", options: ["The negative impact of modern industries.", "The importance and benefits of studying " + topic + ".", "The cost of building internet platforms.", "The history of classroom lectures."], answer: 1, explanation: "The passage discusses how " + topic + " connects people, helps families, and offers great benefits." },
-                    { question: "Historically, what was the state of resources for this field?", options: ["Resources were completely unlimited.", "People had limited resources to explore it.", "Resources were only managed by schools.", "People had no interest in this field."], answer: 1, explanation: "The text indicates that historically, resources to explore " + topic + " were limited." },
-                    { question: "The word '" + (level.startsWith("A") ? "essential" : level.startsWith("B") ? "democratized" : "democratization") + "' in the passage means:", options: ["highly controlled", "made widely available to all", "useless", "very expensive"], answer: 1, explanation: "In this context, it refers to making knowledge or opportunity widely accessible to everyone." },
-                    { question: "According to the passage, who benefits from " + topic + "?", options: ["Only business managers", "Only academic teachers", "Individuals, families, and modern communities", "Computer software designers"], answer: 2, explanation: "The text explains that " + topic + " redefined community functions, helping diverse individuals and families." },
-                    { question: "What is a major result of having a more informed public?", options: ["People spend more money on hobbies.", "Citizens are capable of resolving complex daily issues.", "Traditional schools are completely closed.", "People stop talking to their families."], answer: 1, explanation: "Paragraph 1 highlights that this shift results in a more informed public capable of resolving complex daily issues." },
-                    { question: "What does integrating structured modules of " + topic + " in schools encourage?", options: ["Critical thinking and practical application.", "Learning by heart without understanding.", "Taking fewer exams in the semester.", "Avoiding team activities."], answer: 0, explanation: "The text states that integrating this topic in curriculum encourages critical thinking and bridges theory with practice." },
-                    { question: "What happened to student performance when engaging with " + topic + "?", options: ["Their retention and academic performance improved.", "Their test scores decreased dramatically.", "They forgot all standard rules.", "They preferred leaving school early."], answer: 0, explanation: "Research indicates that students engaging in this topic show improved retention rates and performance." },
-                    { question: "Which of the following is identified as a potential challenge in the passage?", options: ["Lack of digital screens in cities.", "An excessive volume of information causing confusion.", "Low interest from the government.", "Too many traditional textbooks."], answer: 1, explanation: "The text notes that a massive volume of information can sometimes lead to confusion or misunderstandings." },
-                    { question: "What skill is proposed to solve the challenge of information overload?", options: ["Computer coding skills", "Critical media literacy skills", "Traditional painting methods", "Advanced physical exercise"], answer: 1, explanation: "The passage states that it is essential to cultivate critical media literacy skills to verify facts." },
-                    { question: "What is the ultimate goal mentioned in the final paragraph?", options: ["Building a brighter and sustainable future.", "Stopping the use of technology.", "Moving all schools online.", "Reducing the number of teachers."], answer: 0, explanation: "The text concludes that by learning fact-verification, students can fully harness this field to build a brighter future." }
-                ];
-            } else if (category === "environment") {
-                questions = [
-                    { question: "What is the primary objective of discussing " + topic + "?", options: ["Learning how to build big city factories.", "Understanding and protecting our natural environment.", "Calculating the cost of new cars.", "Studying traditional painting arts."], answer: 1, explanation: "The text is centered around green living, ecosystems, and protecting our " + topic + "." },
-                    { question: "According to the passage, what has caused damage to local ecosystems?", options: ["Severe industrial waste and human pollution.", "A lack of school textbooks.", "Excessive planting of green trees.", "Traditional community music festivals."], answer: 0, explanation: "The passage notes that industrial waste and human activities have severely damaged our ecosystems." },
-                    { question: "The word '" + (level.startsWith("A") ? "essential" : level.startsWith("B") ? "democratized" : "democratization") + "' in the passage is closest in meaning to:", options: ["made accessible to everyone", "strictly banned", "very complex", "useless"], answer: 0, explanation: "In this context, it refers to making green tools and knowledge widely available to communities." },
-                    { question: "What does green living encourage people to reduce?", options: ["Green trees and safe water", "Waste and pollution", "School study hours", "Digital platform speeds"], answer: 1, explanation: "The text states that green living is popular because people want to reduce waste and pollution." },
-                    { question: "What is a benefit of green technologies mentioned in the B-tier text?", options: ["They allow communities to monitor air quality easily.", "They replace all school teachers.", "They reduce public transport speed.", "They make electricity more expensive."], answer: 0, explanation: "The text notes that green technologies democratized environmental solutions, allowing easy air quality monitoring." },
-                    { question: "Integrating conservation in school curriculums fosters:",
-                        options: ["fewer green projects", "critical thinking and civic responsibility", "memorizing facts without thinking", "leaving school early"], answer: 1, explanation: "The text explicitly states that integrating these modules in school fosters critical thinking and civic responsibility." },
-                    { question: "The word 'retention' in the passage refers to:", options: ["the preservation or keeping of resources", "the speed of industrial machines", "the cost of carbon taxes", "the size of ecosystems"], answer: 0, explanation: "In this context, retention refers to keeping, preserving, or protecting natural resources." },
-                    { question: "What is identified as a potential challenge in environmental study?", options: ["An overwhelming volume of complex ecological data.", "A total lack of interest from students.", "Too many local green parks.", "Traditional farming methods."], answer: 0, explanation: "The text notes that a massive volume of data can sometimes lead to confusion, requiring critical media literacy." },
-                    { question: "What action is required in the C-tier text for global sustainability?", options: ["Complete isolation of local habitats", "A concerted collaborative effort between public and private sectors", "Stopping all green research projects", "Relying purely on historical frameworks"], answer: 1, explanation: "The C-tier conclusion emphasizes a collaborative effort to ensure equitable access and positive outcomes." },
-                    { question: "What is the ultimate result of verifying environmental facts?", options: ["Harnessing the full potential of " + topic + " for a sustainable future", "Avoiding carbon footprint monitoring", "Reducing the number of local ecosystems", "Closing down regulatory bodies"], answer: 0, explanation: "The passage concludes that objective analysis helps students fully harness the potential of this field." }
-                ];
-            } else if (category === "technology") {
-                questions = [
-                    { question: "What is the core focus of the passage regarding " + topic + "?", options: ["How technology changes learning and modern life.", "How traditional paintings are restored.", "The cost of building old stone bridges.", "The history of farming tools."], answer: 0, explanation: "The passage discusses digital tools, software, and the cognitive impact of " + topic + "." },
-                    { question: "How does the text describe the effect of " + topic + " in classrooms?", options: ["It confuses teachers and breaks equipment.", "It reshapes traditional educational methods and improves learning.", "It reduces student study interest completely.", "It makes school homework much longer."], answer: 1, explanation: "The text explains that technology integration in schools has revolutionized learning and improved logical skills." },
-                    { question: "The word '" + (level.startsWith("A") ? "essential" : level.startsWith("B") ? "democratized" : "democratization") + "' in the text is closest in meaning to:", options: ["strictly controlled", "made widely accessible to all", "rendered obsolete", "very expensive"], answer: 1, explanation: "It refers to making computational tools and specialized training widely available to everyone." },
-                    { question: "What can students achieve in seconds using digital tools?", options: ["Find interesting and valuable information online.", "Solve all life conflicts immediately.", "Build a physical city infrastructure.", "Avoid taking school exams."], answer: 0, explanation: "The text mentions that students can easily search for valuable information on the internet in seconds." },
-                    { question: "What has online courses and software tools democratized?", options: ["Tuition fees", "Educational opportunities worldwide", "The physical size of classrooms", "Traditional paper textbooks"], answer: 1, explanation: "The text notes that digital platforms have democratized educational opportunities, letting students study anywhere." },
-                    { question: "According to paragraph 2, what does direct interaction with " + topic + " improve?", options: ["Cognitive retention and logical skills", "Physical running speed", "School textbook prices", "The amount of screen glare"], answer: 0, explanation: "The passage states that direct interaction with this technology improves cognitive retention and logical skills." },
-                    { question: "What challenge of digital information is highlighted?", options: ["High hardware maintenance costs", "Information overload leading to potential confusion", "Lack of student interest in computers", "Low internet speeds in city schools"], answer: 1, explanation: "The text warns that the massive volume of data can sometimes lead to confusion or misunderstandings." },
-                    { question: "What skill is proposed to safely navigate the digital age?", options: ["Fact verification and critical media literacy", "Traditional calligraphy writing", "Manual calculation techniques", "Physical coordination training"], answer: 0, explanation: "The passage emphasizes that fact verification and critical media literacy are crucial to safely utilize technology." },
-                    { question: "In C-tier text, why is the study of " + topic + " considered a cornerstone?", options: ["It provides entertainment for students.", "It empowers individuals to solve complex algorithms with ease.", "It replaces physical books entirely.", "It reduces the teaching hours of professors."], answer: 1, explanation: "The text highlights that this rigorous structure empowers students to solve complex algorithms with ease." },
-                    { question: "What is the main conclusion regarding the future of " + topic + "?", options: ["We should stop all automated developments.", "Continuous training and collaboration are required for sustainable progress.", "All learning must move online immediately.", "Private sectors must strictly control all databases."], answer: 1, explanation: "The conclusion states that seamless integration and personnel training are vital to lay a solid foundation." }
-                ];
-            } else { // culture (Music, Geography, Nations...)
-                questions = [
-                    { question: "What is the primary value of " + topic + " in the passage?", options: ["Bringing people together and promoting cultural exchange.", "Decreasing the cost of global trading.", "Building new electronic devices.", "Analyzing modern industrial factories."], answer: 0, explanation: "The text emphasizes that " + topic + " connects people, preserves history, and encourages peace." },
-                    { question: "How has digital sharing affected cultural exchange?", options: ["It made international traveling too expensive.", "It democratized cultural exchange across the globe.", "It completely deleted local music traditions.", "It caused disputes between schools."], answer: 1, explanation: "The passage states that digital sharing platforms have democratized cultural exchange, making art accessible." },
-                    { question: "The word '" + (level.startsWith("A") ? "essential" : level.startsWith("B") ? "democratized" : "democratization") + "' in the passage means:", options: ["strictly prohibited", "made accessible to a wide audience", "very complicated", "useless"], answer: 1, explanation: "It means making cultural, historical, or academic resources widely available to the general public." },
-                    { question: "What should people respect according to the A-tier text?", options: ["Only computer screens", "Other cultures and languages", "Commercial industrial brands", "Factory production targets"], answer: 1, explanation: "The A-tier text explicitly states: 'It is essential to respect other cultures and languages.'" },
-                    { question: "What benefit does sharing our heritage bring to the world?", options: ["It makes the world a peaceful place for everyone.", "It makes global travel tickets cheaper.", "It helps students avoid history classes.", "It increases software programming speeds."], answer: 0, explanation: "The text notes: 'Sharing our heritage makes the world a peaceful place for everyone.'" },
-                    { question: "According to the B-tier text, what does digital museums allow?", options: ["Audiences to explore historical archives easily.", "Schools to cancel history exams.", "Nations to stop international trade.", "Singers to avoid vocal training."], answer: 0, explanation: "The text notes that digital museums successfully democratized cultural education, letting people explore archives." },
-                    { question: "What does active engagement with " + topic + " enhance in students?", options: ["Retention of cultural identity and mutual respect", "The speed of writing mathematics exams", "Memory of computer programming codes", "The cost of international flights"], answer: 0, explanation: "The B-tier text states that active engagement enhances the retention of cultural identity and mutual respect." },
-                    { question: "What challenge in cultural preservation is identified?", options: ["A total lack of interest from young audiences.", "Potential misunderstandings of historical facts due to excessive data.", "Too many local historical buildings.", "The high price of museum tickets."], answer: 1, explanation: "The text mentions that a massive volume of information can sometimes lead to confusion, requiring literacy skills." },
-                    { question: "What is required in the C-tier text to distribute cultural benefits fairly?", options: ["Complete privatization of all historical places", "A concerted collaborative effort between public, private, and academic sectors", "Stopping all international student exchange programs", "Focusing purely on digital music tracks"], answer: 1, explanation: "The conclusion notes that a concerted collaborative effort between researchers, innovators, and regulators is required." },
-                    { question: "Ultimately, what is the expected outcome of preserving " + topic + "?", options: ["Sustainable global progress and shared prosperity", "Decreasing public awareness of historical facts", "Complete isolation of modern nations", "Stopping all global traveling activities"], answer: 0, explanation: "The text concludes that proactive measures lay a solid foundation for sustainable global progress and shared prosperity." }
-                ];
-            }
-
-            // Trả về cấu trúc JSON đồng nhất chuẩn xác
-            return {
-                title: title,
-                passage: passage,
-                questions: questions
-            };
-        }
-
-        // TIẾN TRÌNH KẾT NỐI GEMINI AI ONLINE (NÂNG CẤP PROMPT ĐỘNG CƯỠNG CHẾ SỐ TỪ C1/C2)
+        // TIẾN TRÌNH KẾT NỐI GEMINI AI ONLINE (NÂNG CẤP PROMPT CHUẨN HÓA KỲ THI QUỐC TẾ - CEFR & VSTEP/IELTS)
         function loadConfigAndTriggerAI(level, topic) {
             currentLevel = level;
             currentTopic = topic;
@@ -627,34 +497,76 @@
 
             var apiUrl = "https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=" + apiKey;
             
-            // THIẾT LẬP PROMPT ĐỘNG CỰC KỲ KHẮT KHE ĐƯỢC CHUẨN HÓA SỐ TỪ THEO KHUNG CEFR CHÂU ÂU
-            var lengthGuideline = "250-350 words";
-            if (level === "A1" || level === "A2") {
-                lengthGuideline = "150-200 words (extremely simple vocabulary, direct and straightforward sentences)";
-            } else if (level === "C1" || level === "C2") {
-                // ĐẶT LỆNH CƯỠNG CHẾ TỐI HẬU THƯ CHO C1/C2
-                lengthGuideline = "450-550 words (highly advanced academic vocabulary, complex syntactic structures, deeply analytical). The reading passage MUST strictly be at least 450 words long. Do not summarize or write less.";
-            }
+            // THIẾT LẬP BẢN ĐỒ TIÊU CHUẨN KHẢO THÍ CHUẨN XÁC THEO KHUNG CEFR CHÂU ÂU
+            var cefrSpecs = {
+                "A1": {
+                    words: "80-120 words",
+                    structure: "exactly 1 paragraph. Use ultra-basic vocabulary (CEFR A1), simple present tense, basic sentences, and direct statements. Extremely concrete details.",
+                    qSpecs: "basic explicit retrieval questions with clear direct wording."
+                },
+                "A2": {
+                    words: "120-180 words",
+                    structure: "1 to 2 short paragraphs. Use basic vocabulary (CEFR A2), simple compound sentences, everyday expressions, present/past simple tenses, and straightforward descriptions.",
+                    qSpecs: "direct factual retrieval and basic pronoun reference questions."
+                },
+                "B1": {
+                    words: "180-250 words",
+                    structure: "exactly 2 paragraphs. Use intermediate academic vocabulary (CEFR B1), a mix of compound and complex sentences, and standard cohesive devices (e.g., however, furthermore, as a result).",
+                    qSpecs: "standard diagnostic questions including main idea, factual details, vocabulary, and direct reference."
+                },
+                "B2": {
+                    words: "250-350 words",
+                    structure: "exactly 3 paragraphs. Use upper-intermediate vocabulary (CEFR B2), complex syntactic structures, passive voice, conditional structures, and various discourse markers. Suitable for high school graduation level.",
+                    qSpecs: "authentic standardized test questions (THPT/IELTS) focusing on structural cohesion, contextual vocabulary, negative detail, and implicit meaning."
+                },
+                "C1": {
+                    words: "350-500 words",
+                    structure: "exactly 3 to 4 paragraphs. Use advanced academic vocabulary (CEFR C1), dense syntactic structures, complex subordinating clauses, and nuanced arguments. Emphasize implicit information.",
+                    qSpecs: "rigorous analytical questions targeting deep text synthesis, logical inferences, author's tone/intent, and abstract vocabulary."
+                },
+                "C2": {
+                    words: "500-700 words",
+                    structure: "exactly 4 to 5 paragraphs. Use masterful, highly academic/scholarly prose (CEFR C2), rare vocabulary, sophisticated figurative language, dense philosophical/scientific arguments, and diverse stylistic variations.",
+                    qSpecs: "postgraduate-level analytical questions requiring complete synthesis of multiple paragraphs, complex tone analysis, logical flaws, and abstract context application."
+                }
+            };
 
-            var promptText = "Create a reading comprehension study unit in English on the topic of '" + topic + "' tailored for CEFR level '" + level + "'. " +
-                             "Generate a title (do NOT include prefix labels like 'Exam Study:'), a reading passage strictly matching " + lengthGuideline + " of academic English, and exactly 10 multiple-choice questions. " +
-                             "The reading passage MUST strictly be " + lengthGuideline + " in length. Ensure C1/C2 passages are extremely long and detailed. " +
-                             "Each question must have exactly 4 choices (A, B, C, D), exactly one single-letter answer (A, B, C, or D), and a short explanation in English.";
+            var spec = cefrSpecs[level] || cefrSpecs["B2"];
 
-            var systemPrompt = "You are a master teacher and curriculum designer. Respond strictly in valid JSON matching this schema:\n" +
+            // KHỞI TẠO BẢN CHỈ THỊ PROMPT CỰC KỲ KHẮT KHE VỀ 10 THỂ LOẠI CÂU HỎI PHÒNG THI
+            var promptText = "Create an English reading comprehension exam unit on the topic of '" + topic + "' tailored precisely for CEFR Level '" + level + "'.\n\n" +
+                             "1. READING PASSAGE CONSTRAINTS:\n" +
+                             "- WORD COUNT: Must be strictly between " + spec.words + " (No exceptions).\n" +
+                             "- COMPLEXITY: " + spec.structure + "\n" +
+                             "- FORMATTING: Use proper HTML paragraph tags (e.g., <p class='mb-4 text-justify'>...</p>). Bold exactly one crucial academic word in the text using <b>word</b> to be queried in Question 4.\n\n" +
+                             "2. COMPREHENSIVE QUIZ REQUIREMENTS (EXACTLY 10 QUESTIONS matching standardized IELTS, VSTEP, or SAT formats):\n" +
+                             "The 10 questions must be distributed strictly across the following 10 cognitive exam-style types:\n" +
+                             "- Question 1: Main Idea / Primary Purpose of the passage.\n" +
+                             "- Question 2: Direct Factual Detail (Retrieving concrete facts from Paragraph 1).\n" +
+                             "- Question 3: Direct Factual Detail (Retrieving concrete facts from middle/last paragraphs).\n" +
+                             "- Question 4: Vocabulary in context (Ask about the bolded word: \"The word '...' in paragraph ... is closest in meaning to...\").\n" +
+                             "- Question 5: Pronoun/Referent (Identify what a specific pronoun refers to: \"The word '...' in paragraph ... refers to...\").\n" +
+                             "- Question 6: Negative Factual Detail (Ask: \"According to the passage, all of the following are true EXCEPT...\" or \"Which of the following is NOT mentioned...\").\n" +
+                             "- Question 7: Direct Inference (Make logical deductions: \"What can be inferred from paragraph ...?\").\n" +
+                             "- Question 8: Secondary Inference / Writer's Assumption.\n" +
+                             "- Question 9: Author's Tone, Attitude, or Primary Intent.\n" +
+                             "- Question 10: Textual Structure / Organizational Flow (How is the information in the passage organized/structured?).\n\n" +
+                             "Each of the 10 questions must contain exactly 4 plausible options (A, B, C, D), exactly one single correct answer index (0 for A, 1 for B, 2 for C, 3 for D), and a highly detailed English explanation pointing directly to the evidence in the passage.";
+
+            var systemPrompt = "You are a senior curriculum director and standardized language test writer (IELTS/VSTEP). Respond strictly in valid JSON matching this schema:\n" +
                                "{\n" +
                                "  \"title\": \"Title of the Reading Unit\",\n" +
-                               "  \"passage\": \"Full reading passage matching the requested CEFR length and word count guidelines\",\n" +
+                               "  \"passage\": \"Full reading passage binned into paragraphs with <p class='mb-4 text-justify'>... </p>\",\n" +
                                "  \"questions\": [\n" +
                                "    {\n" +
-                               "      \"question\": \"Question text\",\n" +
+                               "      \"question\": \"Question text matching standard exam format\",\n" +
                                "      \"options\": [\"Option A\", \"Option B\", \"Option C\", \"Option D\"],\n" +
                                "      \"answer\": 0,\n" +
-                               "      \"explanation\": \"Brief explanation in English\"\n" +
+                               "      \"explanation\": \"Detailed English explanation referencing specific paragraphs.\"\n" +
                                "    }\n" +
                                "  ]\n" +
                                "}\n" +
-                               "Note: 'answer' is the correct option index (0 for A, 1 for B, 2 for C, 3 for D). Do NOT include any formatting wrappers like markdown.";
+                               "Note: 'answer' is the correct option index (0 to 3). Do NOT include any markdown formatting wrappers (like ```json).";
 
             var payload = {
                 contents: [{ parts: [{ text: promptText }] }],
