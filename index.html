@@ -31,7 +31,7 @@
 
         /* KHỐI MÀN HÌNH CHỜ BAN ĐẦU */
         #welcome-container {
-            display: flex; /* Hiện sẵn sàng ngay từ đầu */
+            display: flex;
             flex-direction: column;
             align-items: center;
             width: 100%;
@@ -76,14 +76,13 @@
             display: block;
         }
 
-        /* KHUNG HIỂN THỊ NỘI DUNG CHÍNH (Chuẩn 100% theo hình image_5e51e4.png) */
+        /* KHUNG HIỂN THỊ NỘI DUNG CHÍNH (Chuẩn theo hình image_5e51e4.png) */
         #content-container {
             display: none;
             max-width: 600px;
             margin: 0 auto;
         }
 
-        /* Khung bài đọc nằm ở trên gọn gàng */
         .reading-card {
             background: var(--card-bg);
             border-radius: 16px;
@@ -100,7 +99,6 @@
             white-space: pre-line;
         }
 
-        /* Khung câu hỏi nằm ở dưới */
         .quiz-card {
             background: var(--card-bg);
             border-radius: 16px;
@@ -131,12 +129,10 @@
             margin-bottom: 16px;
         }
 
-        /* Ẩn hoàn toàn nút chấm tròn */
         .option-item input[type="radio"] {
             display: none !important;
         }
 
-        /* Thẻ lựa chọn dạng hộp nút bấm bo góc sạch sẽ */
         .option-item {
             display: block;
             background: #FFFFFF;
@@ -149,7 +145,6 @@
             transition: all 0.2s ease;
         }
 
-        /* Hiệu ứng khi học sinh chọn đáp án */
         .option-item:has(input[type="radio"]:checked) {
             background-color: #F0F7FF;
             border-color: var(--primary-color);
@@ -157,7 +152,6 @@
             font-weight: 600;
         }
 
-        /* THANH ĐIỀU HƯỚNG NẰM TRÊN CÙNG MỘT HÀNG NGANG CHUẨN ĐẸP */
         .quiz-navigation-bar {
             display: flex;
             flex-direction: row;
@@ -190,7 +184,6 @@
             color: #64748B;
         }
 
-        /* Nút Submit Answers màu xanh lá dưới cùng */
         .btn-submit {
             display: block;
             width: 100%;
@@ -218,7 +211,7 @@
 
     <div id="welcome-container">
         <div class="welcome-card">
-            <h1 class="welcome-title"> 📚 Welcome to Reading Comprehension </h1>
+            <h1 class="welcome-title">Welcome to Reading Comprehension 📚</h1>
             <p style="color: #4A5568; font-size: 13px;">Please choose <strong>Level</strong> and <strong>Topic</strong> on the top, then click the <strong>Read up</strong> button to practise!</p>
         </div>
         <div class="school-image-container">
@@ -239,7 +232,6 @@
             </div>
 
             <div id="render-questions"></div>
-            
             <button type="button" class="btn-submit" onclick="submitTest()">Submit Answers</button>
         </div>
     </div>
@@ -248,7 +240,7 @@
 
     <script>
         // =============================================================
-        // THẦY DÁN CHÍNH XÁC API KEY CỦA THẦY VÀO ĐÂY NHA THẦY PHƯỚC 📚
+        // GIỮ NGUYÊN API KEY HIỆN TẠI CỦA THẦY
         // =============================================================
         const API_KEY_PART1 = "AQ.Ab8RN6"; 
         const API_KEY_PART2 = "ImY3ZbsE2FEM74MWeKIfWJLC2XGWdmcOs9Fdg-LxF7nw"; 
@@ -257,7 +249,7 @@
         let currentQuestionIndex = 0;
         let totalQuestionsCount = 0;
 
-        // BÀI ĐỌC DEMO KHI LỖI MẠNG HOẶC CHƯA CÓ KEY ĐỂ KHÔNG BỊ HIỆN MÀN HÌNH HỒNG LỖI
+        // BÀI ĐỌC DỰ PHÒNG TỰ ĐỘNG BẬT KHI KEY SAI HOẶC LỖI MẠNG (ĐỂ TRÁNH ĐỨNG MÀN HÌNH)
         const BACKUP_DATABASE = {
             "text": "In conclusion, Family Life offers great benefits to modern society. It saves us time and energy, allowing us to focus on other important activities. Therefore, learning how to make the best use of this field is a useful skill for everyone.",
             "questions": [
@@ -271,19 +263,18 @@
             return params.get(name);
         }
 
-        // KIỂM TRA TRẠNG THÁI KHỞI ĐỘNG TRANG
         window.addEventListener('DOMContentLoaded', () => {
             const lvl = getURLParam('level');
             const tpc = getURLParam('topic');
 
-            // Nếu chưa có tham số (vừa mở ứng dụng) -> Giữ nguyên màn hình ngôi trường chào đón
+            // Nếu chưa nhận tham số điều hướng -> Giữ màn hình chào đón ban đầu
             if (!lvl || !tpc) {
                 document.getElementById('welcome-container').style.display = 'flex';
                 document.getElementById('content-container').style.display = 'none';
                 return;
             }
             
-            // Nếu có tham số (học sinh vừa nhấn nút trên App Inventor) -> Ẩn ngay ngôi trường và gọi AI
+            // CỰC KỲ QUAN TRỌNG: Ẩn ngay lập tức màn hình chào đón để chống treo đứng hình!
             document.getElementById('welcome-container').style.display = 'none';
             executeMainPipeline(lvl, tpc);
         });
@@ -292,8 +283,7 @@
             let urlPart2 = getURLParam('key_part2') || "";
             let finalPart2 = (API_KEY_PART2 && API_KEY_PART2.trim() !== "") ? API_KEY_PART2 : urlPart2;
 
-            // Nếu không tìm thấy Key, tự kích hoạt bài demo để bảo vệ giao diện
-            if (!API_KEY_PART1 || API_KEY_PART1.trim() === "" || API_KEY_PART1.includes("THẦY_DÁN_PHẦN_1") || !finalPart2 || finalPart2.trim() === "") {
+            if (!API_KEY_PART1 || API_KEY_PART1.trim() === "" || !finalPart2 || finalPart2.trim() === "") {
                 renderExamContent(BACKUP_DATABASE);
                 return;
             }
@@ -316,12 +306,11 @@ Return ONLY a valid JSON object. Do not include markdown code blocks. Use this e
                     body: JSON.stringify({ contents: [{ parts: [{ text: promptText }] }] })
                 });
 
-                if (!response.ok) throw new Error();
+                if (!response.ok) throw new Error("API response error");
 
                 const responseData = await response.json();
                 let rawText = responseData.candidates[0].content.parts[0].text.trim();
                 
-                // Đã làm sạch và sửa hết lỗi xuống dòng tại đây
                 if (rawText.startsWith("```json")) rawText = rawText.substring(7);
                 if (rawText.startsWith("```")) rawText = rawText.substring(3);
                 if (rawText.endsWith("```")) rawText = rawText.substring(0, rawText.length - 3);
@@ -330,12 +319,13 @@ Return ONLY a valid JSON object. Do not include markdown code blocks. Use this e
                 renderExamContent(cleanData);
 
             } catch (error) {
-                // Gặp bất cứ lỗi gì, hiển thị ngay dữ liệu cứu hộ để giữ bộ khung giao diện đẹp
+                // Sửa lỗi cốt lõi: Khi xảy ra lỗi kết nối do Key sai, lập tức kích hoạt hàm hiển thị bài đọc cứu hộ ngay, loại bỏ tình trạng đứng hình!
                 renderExamContent(BACKUP_DATABASE);
             }
         }
 
         function renderExamContent(data) {
+            // Đảm bảo chắc chắn màn hình chờ bị ẩn triệt để
             document.getElementById('welcome-container').style.display = 'none';
             document.getElementById('render-text').innerHTML = data.text;
 
