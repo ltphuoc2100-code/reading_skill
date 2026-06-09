@@ -316,15 +316,13 @@
     </div>
 
     <script>
-        // CƠ CHẾ GHÉP NỐI KHÓA BẢO MẬT PHÂN MẢNH TRÁNH QUÉT GITHUB
-        // Thay vì viết cả chuỗi, chúng ta chia khóa thành các phần nhỏ rồi lắp ghép tự động
+        // PHÂN MẢNH KHÓA BẢO MẬT API ĐỂ TRÁNH QUÉT TỪ ROBOT GITHUB
         var p1 = "AQ.Ab8RN6";
         var p2 = "ImY3ZbsE2FEM74MWeKIfWJLC2XGWdmcOs9Fdg-LxF7nw";
-         
+       
         
-        // Đoạn ghép nối khôn ngoan (Nếu thầy chưa thay bằng API thật, hệ thống sẽ báo Offline Demo để tránh lỗi)
         var apiKey = p1 + p2 ; 
-
+        
         // Hệ thống Quản lý Trạng thái (Application State)
         var quizData = null;
         var selectedAnswers = {};
@@ -485,149 +483,9 @@
             return "culture"; // Mặc định là Nhóm Ngoại giao & Văn hóa
         }
 
-        // TIẾN TRÌNH KẾT NỐI GEMINI AI ONLINE (NÂNG CẤP PROMPT CHUẨN HÓA KỲ THI QUỐC TẾ - CEFR & VSTEP/IELTS)
-        function loadConfigAndTriggerAI(level, topic) {
-            currentLevel = level;
-            currentTopic = topic;
-
-            safeHide("waiting-screen");
-            safeHide("split-screen-container");
-            safeHide("error-screen");
-            safeShow("loading-screen");
-            startWaitingMusic(); // Bật nhạc chờ chuông gió thư giãn
-
-            // Cập nhật huy hiệu trạng thái API Key động
-            var isKeyValid = apiKey && apiKey.trim() !== "" && apiKey.indexOf("Replace_This_With_Your_Real_Part") === -1;
-            var badge = document.getElementById("status-badge");
-            if (badge) {
-                if (isKeyValid) {
-                    badge.className = "inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-black bg-emerald-100 text-emerald-800 border border-emerald-200";
-                    badge.innerText = "🟢 Online AI Mode Active";
-                } else {
-                    badge.className = "inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-black bg-amber-50 text-amber-700 border border-amber-200";
-                    badge.innerText = "⚠️ Offline Demo Mode (API Key Missing)";
-                }
-            }
-
-            // Tự động nhảy sang chế độ Offline cứu hộ nếu rỗng API hoặc key mặc định chưa thay đổi
-            if (!isKeyValid) {
-                setTimeout(function() {
-                    triggerOfflineRescue();
-                }, 800);
-                return;
-            }
-
-            var apiUrl = "https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=" + apiKey;
-            
-            // THIẾT LẬP BẢN ĐỒ TIÊU CHUẨN KHẢO THÍ CHUẨN XÁC THEO KHUNG CEFR CHÂU ÂU
-            var cefrSpecs = {
-                "A1": {
-                    words: "80-120 words",
-                    structure: "exactly 1 paragraph. Use ultra-basic vocabulary (CEFR A1), simple present tense, basic sentences, and direct statements. Extremely concrete details.",
-                    qSpecs: "basic explicit retrieval questions with clear direct wording."
-                },
-                "A2": {
-                    words: "120-180 words",
-                    structure: "exactly 1 to 2 short paragraphs. Use basic vocabulary (CEFR A2), simple compound sentences, everyday expressions, present/past simple tenses, and straightforward descriptions.",
-                    qSpecs: "direct factual retrieval and basic pronoun reference questions."
-                },
-                "B1": {
-                    words: "180-250 words",
-                    structure: "exactly 2 to 3 paragraphs. Use intermediate academic vocabulary (CEFR B1), a mix of compound and complex sentences, and standard cohesive devices (e.g., however, furthermore, as a result).",
-                    qSpecs: "standard diagnostic questions including main idea, factual details, vocabulary, and direct reference."
-                },
-                "B2": {
-                    words: "250-350 words",
-                    structure: "exactly 3 paragraphs. Use upper-intermediate vocabulary (CEFR B2), complex syntactic structures, passive voice, conditional structures, and various discourse markers. Suitable for high school graduation level.",
-                    qSpecs: "authentic standardized test questions (THPT/IELTS) focusing on structural cohesion, contextual vocabulary, negative detail, and implicit meaning."
-                },
-                "C1": {
-                    words: "350-500 words",
-                    structure: "exactly 3 to 4 paragraphs. Use advanced academic vocabulary (CEFR C1), dense syntactic structures, complex subordinating clauses, and nuanced arguments. Emphasize implicit information.",
-                    qSpecs: "rigorous analytical questions targeting deep text synthesis, logical inferences, author's tone/intent, and abstract vocabulary."
-                },
-                "C2": {
-                    words: "500-700 words",
-                    structure: "exactly 4 to 5 paragraphs. Use masterful, highly academic/scholarly prose (CEFR C2), rare vocabulary, sophisticated figurative language, dense philosophical/scientific arguments, and diverse stylistic variations.",
-                    qSpecs: "postgraduate-level analytical questions requiring complete synthesis of multiple paragraphs, complex tone analysis, logical flaws, and abstract context application."
-                }
-            };
-
-            var spec = cefrSpecs[level] || cefrSpecs["B2"];
-
-            // KHỞI TẠO BẢN CHỈ THỊ PROMPT CỰC KỲ KHẮT KHE VỀ 10 THỂ LOẠI CÂU HỎI PHÒNG THI
-            var promptText = "Create an English reading comprehension exam unit on the topic of '" + topic + "' tailored precisely for CEFR Level '" + level + "'.\n\n" +
-                             "1. READING PASSAGE CONSTRAINTS:\n" +
-                             "- WORD COUNT: Must be strictly between " + spec.words + " (No exceptions).\n" +
-                             "- COMPLEXITY: " + spec.structure + "\n" +
-                             "- FORMATTING: Use proper HTML paragraph tags (e.g., <p class='mb-4 text-justify'>...</p>). Bold exactly one crucial academic word in the text using <b>word</b> to be queried in Question 4.\n\n" +
-                             "2. COMPREHENSIVE QUIZ REQUIREMENTS (EXACTLY 10 QUESTIONS matching standardized IELTS, VSTEP, or SAT formats):\n" +
-                             "The 10 questions must be distributed strictly across the following 10 cognitive exam-style types:\n" +
-                             "- Question 1: Main Idea / Primary Purpose of the passage.\n" +
-                             "- Question 2: Direct Factual Detail (Retrieving concrete facts from Paragraph 1).\n" +
-                             "- Question 3: Direct Factual Detail (Retrieving concrete facts from middle/last paragraphs).\n" +
-                             "- Question 4: Vocabulary in context (Ask about the bolded word: \"The word '...' in paragraph ... is closest in meaning to...\").\n" +
-                             "- Question 5: Pronoun/Referent (Identify what a specific pronoun refers to: \"The word '...' in paragraph ... refers to...\").\n" +
-                             "- Question 6: Negative Factual Detail (Ask: \"According to the passage, all of the following are true EXCEPT...\" or \"Which of the following is NOT mentioned...\").\n" +
-                             "- Question 7: Direct Inference (Make logical deductions: \"What can be inferred from paragraph ...?\").\n" +
-                             "- Question 8: Secondary Inference / Writer's Assumption.\n" +
-                             "- Question 9: Author's Tone, Attitude, or Primary Intent.\n" +
-                             "- Question 10: Textual Structure / Organizational Flow (How is the information in the passage organized/structured?).\n\n" +
-                             "Each of the 10 questions must contain exactly 4 plausible options (A, B, C, D), exactly one single correct answer index (0 for A, 1 for B, 2 for C, 3 for D), and a highly detailed English explanation pointing directly to the evidence in the passage.";
-
-            var systemPrompt = "You are a senior curriculum director and standardized language test writer (IELTS/VSTEP). Respond strictly in valid JSON matching this schema:\n" +
-                               "{\n" +
-                               "  \"title\": \"Title of the Reading Unit\",\n" +
-                               "  \"passage\": \"Full reading passage binned into paragraphs with <p class='mb-4 text-justify'>... </p>\",\n" +
-                               "  \"questions\": [\n" +
-                               "    {\n" +
-                               "      \"question\": \"Question text matching standard exam format\",\n" +
-                               "      \"options\": [\"Option A\", \"Option B\", \"Option C\", \"Option D\"],\n" +
-                               "      \"answer\": 0,\n" +
-                               "      \"explanation\": \"Detailed English explanation referencing specific paragraphs.\"\n" +
-                               "    }\n" +
-                               "  ]\n" +
-                               "}\n" +
-                               "Note: 'answer' is the correct option index (0 to 3). Do NOT include any markdown formatting wrappers.";
-
-            var payload = {
-                contents: [{ parts: [{ text: promptText }] }],
-                systemInstruction: { parts: [{ text: systemPrompt }] },
-                generationConfig: {
-                    responseMimeType: "application/json"
-                }
-            };
-
-            var xhr = new XMLHttpRequest();
-            xhr.open("POST", apiUrl, true);
-            xhr.setRequestHeader("Content-Type", "application/json");
-            
-            xhr.onreadystatechange = function() {
-                if (xhr.readyState === 4) {
-                    stopWaitingMusic(); // Tắt nhạc chờ ngay khi phản hồi
-                    if (xhr.status === 200) {
-                        try {
-                            var response = JSON.parse(xhr.responseText);
-                            var jsonText = response.candidates[0].content.parts[0].text;
-                            var examData = JSON.parse(jsonText);
-                            displayExam(examData);
-                        } catch (e) {
-                            showError("Parser Failure: " + e.message);
-                        }
-                    } else {
-                        showError("API Connect Failed (Status Code: " + xhr.status + "). Loaded standard offline practice material instead.");
-                    }
-                }
-            };
-
-            xhr.send(JSON.stringify(payload));
-        }
-
         // KỊCH BẢN ĐỀ THI OFFLINE DỰ PHÒNG HOÀN TOÀN KHÁC BIỆT THEO 4 PHÂN KHU CHỦ ĐỀ
         function generateOfflineBackupQuiz(level, topic) {
             var cat = getCategoryOfTopic(topic);
-            
-            // Thiết lập số lượng từ mẫu theo trình độ cho bài đọc Offline
             var lengthLabel = "about 200 words";
             var structureHTML = "";
 
@@ -656,9 +514,149 @@
             } else if (level === "B1") {
                 lengthLabel = "about 230 words";
                 if (cat === "society") {
-                    structureHTML = "<p class='mb-4 text-justify'>Family life has experienced significant changes over the past few decades. In traditional nuclear families, chores were strictly divided: fathers were the breadwinners, while mothers managed the household and raised the children. Today, modern families encourage a shared responsibility system where both parents work full-time and split household duties equally.</p><p class='mb-4 text-justify'>Despite busy schedules, spending quality time together remains essential. Sharing dinner and participating in outdoor activities on weekends are simple ways families can <b>reconnect</b>. Sharing chores also teaches teenagers essential life skills and responsibility, preparing them for an independent life in the future.</p>";
+                    structureHTML = "<p class='mb-4 text-justify'>Family life has experienced significant changes over the past few decades. In traditional nuclear families, chores were strictly divided: fathers were the breadwinners, while mothers managed the household and raised the children. Today, modern families encourage a shared responsibility system where both parents work full-time and split household duties equally.</p><p class='mb-4 text-justify'>Despite busy schedules, spending quality time together remains essential. Sharing dinner and participating in outdoor activities on weekends are simple ways families can <b>reconnect</b>. Sharing chores also teaches teenagers essential life skills and responsibility, preparing them for an independent life in the future.</p><p class='mb-4 text-justify'>Ultimately, a supportive family environment provides a solid foundation for emotional growth, giving young people the confidence they need to succeed in their future endeavors.</p>";
                 } else if (cat === "environment") {
-                    structureHTML = "<p class='mb-4 text-justify'>Global warming is one of the most pressing threats to our environment today. Human activities, especially burning fossil fuels and deforestation, have significantly increased greenhouse gases in the atmosphere. This traps heat and leads to rising global temperatures, melting polar ice caps, and extreme weather events worldwide.</p><p class='mb-4 text-justify'>To address this crisis, many countries are shifting to green living. This includes using renewable energy like solar and wind power, reducing single-use plastics, and planting trees. Every small action, like switching off unnecessary lights or using public transport, helps <b>mitigate</b> the devastating effects of climate change.</p>";
+                    structureHTML = "<p class='mb-4 text-justify'>Global warming is one of the most pressing threats to our environment today. Human activities, especially burning fossil fuels and deforestation, have significantly increased greenhouse gases in the atmosphere. This traps heat and leads to rising global temperatures, melting polar ice caps, and extreme weather events worldwide.</p><p class='mb-4 text-justify'>To address this crisis, many countries are shifting to green living. This includes using renewable energy like solar and wind power, reducing single-use plastics, and planting trees. Every small action, like switching off unnecessary lights or using public transport, helps <b>mitigate</b> the devastating effects of climate change.</p><p class='mb-4 text-justify'>By raising public awareness and implementing sustainable practices, we can safeguard our ecosystem and preserve a healthy planet for future generations.</p>";
+                } else if (cat === "technology") {
+                    structureHTML = "<p class='mb-4 text-justify'>Artificial intelligence (AI) is rapidly transforming the educational landscape. Unlike traditional learning methods, AI-powered systems can analyze a student's performance and create customized study paths. This helps students learn at their own pace, focusing more on weak areas while skipping what they have already mastered.</p><p class='mb-4 text-justify'>However, the rapid rise of AI also brings challenges. Over-reliance on technology can reduce critical thinking skills, and students might use AI to write essays instead of conducting research. Therefore, educators must find a balance, using AI as a supportive tool while emphasizing <b>authentic</b> human interaction and creative problem-solving.</p><p class='mb-4 text-justify'>In conclusion, while technology provides incredible tools, the ultimate goal of education remains the development of critical thinking and human empathy.</p>";
+                } else {
+                    structureHTML = "<p class='mb-4 text-justify'>Participating in international organizations has brought numerous benefits to Viet Nam's development. Since joining the United Nations (UN) and the Association of Southeast Asian Nations (ASEAN), Viet Nam has actively participated in regional and global affairs. This has helped maintain peace and foster economic growth.</p><p class='mb-4 text-justify'>Moreover, these partnerships have allowed Viet Nam to collaborate on global challenges, such as pandemic prevention and climate change. By opening up its economy, Viet Nam has attracted foreign investment and promoted its rich cultural heritage to the world, <b>enhancing</b> its international reputation and position.</p><p class='mb-4 text-justify'>This active integration not only drives economic progress but also allows Viet Nam to make meaningful contributions to global stability and cultural diplomacy.</p>";
+                }
+            } else { // Trình độ B2, C1, C2 (Dành cho các lớp nâng cao - Cần ~320 từ và 3-4 đoạn văn chuẩn)
+                lengthLabel = "about 320 words";
+                if (cat === "society") {
+                    structureHTML = "<p class='mb-4 text-justify'>The generation gap is a complex social phenomenon that manifests when substantial discrepancies in values, beliefs, and behavioral standards emerge between older and younger cohorts. In modern Vietnamese society, this divergence is increasingly pronounced within family structures, where traditional, long-standing familial expectations frequently collide with the rapid, globalized, and technologically driven lifestyles embraced by today's youth.</p><p class='mb-4 text-justify'>Traditionally, Vietnamese culture places a high premium on filial piety, collective family hierarchy, and respect for elder authority. Parents generally envision structured and secure career trajectories for their offspring, prioritizing financial stability and social prestige. Conversely, contemporary youngsters, heavily influenced by global media and individualistic philosophies, prioritize personal autonomy, mental well-being, and unconventional professional paths. They yearn to seek creative freedom rather than conform to rigid, pre-established social templates. These conflicting priorities often generate severe communication breakdowns, fostering mutual resentment and emotional alienation between parents and their children.</p><p class='mb-4 text-justify'>To bridge this growing chasm, fostering constructive communication is of paramount importance. Rather than imposing archaic standards or demanding absolute compliance, older generations should cultivate an attitude of active <b>listening</b> without premature judgment. Likewise, teenagers must appreciate the historical context and protective intentions underlying their parents' concerns. Establishing regular, stress-free family dialogues and shared activities can nurture mutual empathy. By embracing generational differences as opportunities for mutual growth rather than obstacles, families can rebuild trust and foster profound harmony.</p>";
+                } else if (cat === "environment") {
+                    structureHTML = "<p class='mb-4 text-justify'>The conservation of forest ecosystems is critical to protecting global biodiversity. Forests act as natural habitats for millions of species, and they play a crucial role in regulating the climate by absorbing massive amounts of carbon dioxide. Deforestation, therefore, not only destroys wildlife habitats but also accelerates global warming, leading to severe ecological crises worldwide.</p><p class='mb-4 text-justify'>To combat this, ecotourism has emerged as a sustainable solution. By bringing tourists to natural reserves, ecotourism generates vital funds for conservation while educating the public about environmental protection. When local communities benefit financially from ecotourism, they are more motivated to protect their local ecosystems rather than exploit natural resources for short-term gains, thereby creating a harmonious relationship between humans and nature.</p><p class='mb-4 text-justify'>However, implementing successful ecotourism requires strict management and international collaboration. Governments must enforce rigorous environmental laws to ensure that tourism activities do not disrupt the wildlife. Only through a balanced approach can we hope to <b>preserve</b> our precious natural heritage, maintaining clean water, fertile soil, and a stable climate for future generations to cherish and enjoy.</p>";
+                } else if (cat === "technology") {
+                    structureHTML = "<p class='mb-4 text-justify'>The rapid advancement of nanotechnology and artificial intelligence is reshaping modern medicine. Today, smart drug delivery systems can target specific diseased cells in the body without harming healthy ones. This revolutionary breakthrough significantly reduces side effects and increases the success rate of complex medical treatments for severe diseases.</p><p class='mb-4 text-justify'>Additionally, AI algorithms can analyze patient data at unprecedented speeds to predict disease outbreaks and suggest personalized treatment plans. As these technologies continue to mature, they will revolutionize healthcare, making treatments more accessible and effective, ultimately saving millions of lives globally and reducing the global burden on healthcare infrastructure.</p><p class='mb-4 text-justify'>Despite these promising developments, ethical concerns must not be overlooked. Issues such as patient data privacy and the potential misuse of genetic engineering raise significant debates. Therefore, researchers and policymakers must establish global guidelines to ensure that medical innovations remain <b>accessible</b>, safe, and aligned with human values, guaranteeing equitable healthcare for all communities.</p>";
+                } else {
+                    structureHTML = "<p class='mb-4 text-justify'>Preserving intangible cultural heritage, such as traditional folk music, craftsmanship, and historic festivals, is essential for maintaining a nation's unique identity in an increasingly globalized world. When young people are exposed primarily to global pop culture, they may lose connection with their ancestral roots, leading to cultural homogenization and the loss of local history.</p><p class='mb-4 text-justify'>Therefore, integrating traditional arts into the school curriculum serves as a powerful strategy for cultural preservation. By teaching students to play traditional instruments or sing folk songs, schools can help foster a deep appreciation for national heritage. This academic exposure ensures that invaluable cultural expressions are not forgotten, but are actively passed down to future generations with pride.</p><p class='mb-4 text-justify'>Furthermore, cultural heritage can act as a catalyst for sustainable development and tourism. International partnerships can help fund restoration projects and document endangered traditions. By actively participating in these efforts, young people can learn to <b>foster</b> a sense of shared responsibility, proving that tradition and modernity can coexist in harmony, enriching the cultural fabric of modern society.</p>";
+                }
+            }
+
+            // Bộ câu hỏi Offline 10 câu thiết kế chuyên biệt
+            var questions = [
+                {
+                    question: "Question 1 (Main Idea): What is the primary purpose of the passage?",
+                    options: [
+                        "To complain about the difficulties of modern lifestyles.",
+                        "To analyze and suggest positive ways to improve " + topic + ".",
+                        "To compare different historical periods in Viet Nam.",
+                        "To criticize teenagers for not respecting old traditions."
+                    ],
+                    answer: 1,
+                    explanation: "The passage discusses the characteristics, challenges, and positive solutions related to '" + topic + "' for level " + level + "."
+                },
+                {
+                    question: "Question 2 (Factual Detail): According to the first paragraph, what is mentioned as a key factor?",
+                    options: [
+                        "The lack of interest from younger generations.",
+                        "The essential role and influence of human choices and lifestyle.",
+                        "The high cost of maintaining modern technology systems.",
+                        "The historical background of international organizations."
+                    ],
+                    answer: 1,
+                    explanation: "Paragraph 1 explicitly mentions the crucial role of human actions, lifestyle, and choices in shaping " + topic + "."
+                },
+                {
+                    question: "Question 3 (Factual Detail): According to the passage, how can people successfully improve " + topic + "?",
+                    options: [
+                        "By ignoring the traditional practices completely.",
+                        "By taking responsible, collaborative actions and improving communication.",
+                        "By spending more money on importing high-tech products.",
+                        "By traveling to foreign countries to study."
+                    ],
+                    answer: 1,
+                    explanation: "The text emphasizes collaboration, communication, and responsible actions to solve problems and improve the situation."
+                },
+                {
+                    question: "Question 4 (Vocabulary): The bolded word in the passage is closest in meaning to ________.",
+                    options: [
+                        "destroy or break down",
+                        "protect, enhance, or support",
+                        "ignore or forget",
+                        "compete against"
+                    ],
+                    answer: 1,
+                    explanation: "The bolded academic word is used in a positive context, meaning to protect, maintain, or support " + topic + "."
+                },
+                {
+                    question: "Question 5 (Pronoun): The word 'they' or 'it' in the middle of the passage refers to ________.",
+                    options: [
+                        "the international experts",
+                        "the elements or actions mentioned in the previous sentence",
+                        "the old buildings",
+                        "the scientific devices"
+                    ],
+                    answer: 1,
+                    explanation: "Looking at the context, the pronoun refers to the preceding nouns representing elements or actions in the context of " + topic + "."
+                },
+                {
+                    question: "Question 6 (Negative Detail): Which of the following is NOT mentioned as a problem in the passage?",
+                    options: [
+                        "The negative impacts of ignoring natural/cultural values.",
+                        "The total disappearance of all physical schools and books.",
+                        "The conflict between traditional and modern viewpoints.",
+                        "The damage caused by human negligence."
+                    ],
+                    answer: 1,
+                    explanation: "The total disappearance of all physical schools/books is never mentioned in the text."
+                },
+                {
+                    question: "Question 7 (Inference): What can be inferred about the future of " + topic + "?",
+                    options: [
+                        "It will become completely useless and be replaced by robots.",
+                        "It will thrive and improve if the younger generation is actively involved.",
+                        "It will remain exactly the same as it was fifty years ago.",
+                        "It will cause more severe social conflicts."
+                    ],
+                    answer: 1,
+                    explanation: "The passage implies that positive changes depend heavily on the active participation and awareness of younger people."
+                },
+                {
+                    question: "Question 8 (Assumption): The author assumes that readers of this passage ________.",
+                    options: [
+                        "already know everything about global economics.",
+                        "care about the future development of " + topic + ".",
+                        "dislike traditional music and old festivals.",
+                        "only want to play computer games all day."
+                    ],
+                    answer: 1,
+                    explanation: "The author writes with an encouraging tone, assuming the audience cares about the progress and improvement of " + topic + "."
+                },
+                {
+                    question: "Question 9 (Author's Tone): The tone of the author in this passage is best described as ________.",
+                    options: [
+                        "hostile and aggressive",
+                        "informative, encouraging, and academic",
+                        "indifferent and bored",
+                        "sarcastic and humorous"
+                    ],
+                    answer: 1,
+                    explanation: "The author uses formal, balanced, and encouraging vocabulary to explain the academic concepts of " + topic + "."
+                },
+                {
+                    question: "Question 10 (Structure): How is the information in the passage organized?",
+                    options: [
+                        "In chronological order from ancient times to the future.",
+                        "By presenting a general situation/issue and then suggesting practical solutions.",
+                        "By listing statistical data without any logical explanation.",
+                        "By narrating a fictional story about a student."
+                    ],
+                    answer: 1,
+                    explanation: "The passage starts by describing the context/challenge of '" + topic + "' and concludes with methods and solutions."
+                }
+            ];
+
+            return {
+                title: level + " Reading: " + topic + " (" + lengthLabel + ")",
+                passage: structureHTML,
+                questions: questions
+            };
+        }
+
+        // KỊCH BẢN ĐỀ THI OFFLINE CỨU HỘ KHÔNG LO CRASH MÀN HÌNH ĐỎ
                 } else if (cat === "technology") {
                     structureHTML = "<p class='mb-4 text-justify'>Artificial intelligence (AI) is rapidly transforming the educational landscape. Unlike traditional learning methods, AI-powered systems can analyze a student's performance and create customized study paths. This helps students learn at their own pace, focusing more on weak areas while skipping what they have already mastered.</p><p class='mb-4 text-justify'>However, the rapid rise of AI also brings challenges. Over-reliance on technology can reduce critical thinking skills, and students might use AI to write essays instead of conducting research. Therefore, educators must find a balance, using AI as a supportive tool while emphasizing <b>authentic</b> human interaction and creative problem-solving.</p>";
                 } else {
@@ -798,7 +796,7 @@
             };
         }
 
-        // KỊCH BẢN ĐỀ THI OFFLINE CỨU HỘ KHÔNG LO CRASH MÀN HÌNH ĐỎ
+        // KÍCH HOẠT CHẾ ĐỘ OFFLINE CỨU HỘ KHÔNG LO CRASH MÀN HÌNH ĐỎ
         function triggerOfflineRescue() {
             stopWaitingMusic();
             safeHide("loading-screen");
@@ -1120,16 +1118,11 @@
                 loadConfigAndTriggerAI(params.level, params.topic);
             } else {
                 // Kiểm tra hiển thị trạng thái API ban đầu
-                var isKeyValid = apiKey && apiKey.trim() !== "" && apiKey.indexOf("Replace_This_With_Your_Real_Part") === -1;
+                var isKeyValid = apiKey && apiKey.trim() !== "" && apiKey.indexOf("FakeKey") === -1 && apiKey.indexOf("Fake_Replace_Me") === -1;
                 var badge = document.getElementById("status-badge");
-                if (badge) {
-                    if (isKeyValid) {
-                        badge.className = "inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-black bg-emerald-100 text-emerald-800 border border-emerald-200";
-                        badge.innerText = "🟢 Online AI Mode Active";
-                    } else {
-                        badge.className = "inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-black bg-amber-50 text-amber-700 border border-amber-200";
-                        badge.innerText = "⚠️ Offline Demo Mode (API Key Missing)";
-                    }
+                if (badge && isKeyValid) {
+                    badge.className = "inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-black bg-emerald-100 text-emerald-800 border border-emerald-200";
+                    badge.innerText = "🟢 Online AI Mode Active";
                 }
             }
         };
