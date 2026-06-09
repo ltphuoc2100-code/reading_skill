@@ -84,23 +84,24 @@
         }
 
         .school-image-container {
-            width: 100%;
-            max-width: 500px;
-            border-radius: 16px;
-            overflow: hidden;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.05);
-            border: 1px solid #E2E8F0;
-            background: var(--card-bg);
-            padding: 6px;
-            margin-bottom: 20px;
-        }
+    width: 100%;
+    max-width: 500px;
+    border-radius: 16px;
+    overflow: hidden;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.05);
+    border: 1px solid #E2E8F0;
+    background: var(--card-bg);
+    padding: 6px;
+    margin-bottom: 20px;
+}
 
-        .school-image {
-            width: 100%;
-            height: auto;
-            border-radius: 12px;
-            display: block;
-        }
+.school-image {
+    width: 100%;
+    height: 220px; /* Ép cố định chiều cao hợp lý trên điện thoại */
+    object-fit: cover; /* Giúp ảnh tự co giãn vừa khít khung, không bị tràn viền và không méo hình */
+    border-radius: 12px;
+    display: block;
+}
 
         /* Khối thông báo lỗi (Mặc định ẩn hoàn toàn khi khởi động) */
         #status-container {
