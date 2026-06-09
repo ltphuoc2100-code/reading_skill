@@ -15,6 +15,7 @@
             -webkit-tap-highlight-color: transparent;
         }
 
+        /* */
         /* Khung chứa bài đọc - Căn đều 2 bên (Justify) theo đúng sở thích của thầy */
         .passage-box {
             max-height: 250px;
@@ -194,6 +195,7 @@
 </head>
 <body class="p-3">
 
+    <!-- -->
     <!-- 1. WAITING SCREEN (WELCOME & SCHOOL PICTURE) -->
     <div id="waiting-screen" class="card" style="text-align: center; padding: 30px 20px;">
         <div style="font-size: 56px; margin-bottom: 14px;">📖</div>
@@ -203,7 +205,7 @@
             Welcome to Reading Comprehension
         </h3>
         
-        <!-- ĐÃ TRẢ VỀ MÀU XÁM SLATE ĐẬM (#334155) ÊM MẮT VÀ CHUYÊN NGHIỆP THEO ĐÚNG Ý THẦY -->
+        <!-- Màu xám Slate đậm êm mắt chuyên nghiệp -->
         <p style="font-size: 15px; color: #334155; line-height: 1.6; margin: 0 0 16px 0;">
             Please choose <b>Level</b> and <b>Topic</b> on the top, then click the <b>Read up</b> button to practise the reading comprehension!
         </p>
@@ -314,8 +316,7 @@
     </div>
 
     <script>
-        // CHẾ ĐỘ PHÂN MẢNH AN TOÀN TRÁNH BỘ QUÉT GITHUB (KHÔI PHỤC CƠ CHẾ 2 PHẦN NHƯ CŨ)
-        // Thầy hãy bẻ đôi mã khóa API thật của thầy (bắt đầu bằng AIzaSy...) thành 2 phần rồi dán vào đây:
+        //        // CHẾ ĐỘ PHÂN MẢNH AN TOÀN TRÁNH BỘ QUÉT GITHUB
         var apiKeyPart1 = "AQ.Ab8RN6"; // 👈 Thầy dán nửa đầu API Key của thầy vào đây
         var apiKeyPart2 = "ImY3ZbsE2FEM74MWeKIfWJLC2XGWdmcOs9Fdg-LxF7nw";  // 👈 Thầy dán nửa sau API Key của thầy vào đây
         
@@ -385,7 +386,7 @@
             }
         }
 
-        // HÀM PHÁT NHẠC CHỜ CHUÔNG GIÓ THƯ GIÃN (AMBIENT CHIMES LOOP)
+        //        // HÀM PHÁT NHẠC CHỜ CHUÔNG GIÓ THƯ GIÃN (AMBIENT CHIMES LOOP)
         function startWaitingMusic() {
             if (waitingMusicInterval) return;
             initAudioContext();
@@ -459,7 +460,6 @@
                         osc.frequency.setValueAtTime(freq, audioCtx.currentTime + idx * 0.12);
                         gain.gain.setValueAtTime(0.15, audioCtx.currentTime + idx * 0.12);
                         gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + idx * 0.12 + 0.3);
-                        osc.start(activeQuestionIdx * 0.12); // fix safely
                         osc.start(audioCtx.currentTime + idx * 0.12);
                         osc.stop(audioCtx.currentTime + idx * 0.12 + 0.35);
                     });
@@ -484,7 +484,7 @@
             return "culture"; // Mặc định là Nhóm Ngoại giao & Văn hóa
         }
 
-        // TIẾN TRÌNH KẾT NỐI GEMINI AI ONLINE (NÂNG CẤP PROMPT CHUẨN HÓA KỲ THI QUỐC TẾ - AI TỰ SOẠN TIÊU ĐỀ THEO CHỦ ĐỀ)
+        //        // TIẾN TRÌNH KẾT NỐI GEMINI AI ONLINE (NÂNG CẤP PROMPT CHUẨN HÓA KỲ THI QUỐC TẾ - AI TỰ SOẠN TIÊU ĐỀ THEO CHỦ ĐỀ)
         function loadConfigAndTriggerAI(level, topic) {
             currentLevel = level;
             currentTopic = topic;
@@ -495,7 +495,7 @@
             safeShow("loading-screen");
             startWaitingMusic(); // Bật nhạc chờ chuông gió thư giãn
 
-            // Cập nhật huy hiệu trạng thái API Key động (Đã nâng cấp cơ chế check bắt đầu bằng AIzaSy siêu chuẩn)
+            // Cập nhật huy hiệu trạng thái API Key động
             var isKeyValid = apiKey && apiKey.trim().startsWith("AIzaSy") && apiKey.trim().length >= 35;
             var badge = document.getElementById("status-badge");
             if (badge) {
@@ -554,7 +554,7 @@
 
             var spec = cefrSpecs[level] || cefrSpecs["B2"];
 
-            // KHỞI TẠO BẢN CHỈ THỊ PROMPT CỰC KỲ KHẰT KHE VỀ 10 THỂ LOẠI CÂU HỎI PHÒNG THI (AI TỰ SOẠN TIÊU ĐỀ NGHỆ THUẬT)
+            // KHỞI TẠO BẢN CHỈ THỊ PROMPT KHẰT KHE VỀ 10 THỂ LOẠI CÂU HỎI PHÒNG THI
             var promptText = "Create an English reading comprehension exam unit on the topic of '" + topic + "' tailored precisely for CEFR Level '" + level + "'.\n\n" +
                              "1. READING PASSAGE CONSTRAINTS:\n" +
                              "- WORD COUNT: Must be strictly between " + spec.words + " (No exceptions).\n" +
@@ -563,16 +563,16 @@
                              "- TITLE: Generate an extremely creative, catchy, and highly academic title related to the topic (do NOT just output '" + topic + "' or include prefixes like 'Exam Study:'). Make it sound like an authentic IELTS or SAT passage title.\n\n" +
                              "2. COMPREHENSIVE QUIZ REQUIREMENTS (EXACTLY 10 QUESTIONS matching standardized IELTS, VSTEP, or SAT formats):\n" +
                              "The 10 questions must be distributed strictly across the following 10 cognitive exam-style types, but you MUST write the question string simply as 'Question X: [Question text]' WITHOUT any parenthetical category markers like (Main Idea) or (Inference):\n" +
-                             "- Question 1: Main Idea / Primary Purpose of the passage.\n" +
-                             "- Question 2: Direct Factual Detail (Retrieving concrete facts from Paragraph 1).\n" +
-                             "- Question 3: Direct Factual Detail (Retrieving concrete facts from middle/last paragraphs).\n" +
-                             "- Question 4: Vocabulary in context (Ask about the bolded word: \"The word '<b>word</b>' in paragraph ... is closest in meaning to...\"). Ensure you write the target word using <b>word</b> inside single quotes in the question.\n" +
-                             "- Question 5: Pronoun/Referent (Identify what a specific pronoun refers to: \"The word '...' in paragraph ... refers to...\").\n" +
-                             "- Question 6: Negative Factual Detail (Ask: \"According to the passage, all of the following are true EXCEPT...\" or \"Which of the following is NOT mentioned...\").\n" +
-                             "- Question 7: Direct Inference (Make logical deductions: \"What can be inferred from paragraph ...?\").\n" +
-                             "- Question 8: Secondary Inference / Writer's Assumption.\n" +
-                             "- Question 9: Author's Tone, Attitude, or Primary Intent.\n" +
-                             "- Question 10: Textual Structure / Organizational Flow (How is the information in the passage organized/structured?).\n\n" +
+                             "- Question 1: What is the primary purpose of the passage? / What is the main idea?\n" +
+                             "- Question 2: [Direct Factual Detail from Paragraph 1]\n" +
+                             "- Question 3: [Direct Factual Detail from middle/last paragraphs]\n" +
+                             "- Question 4: The word '<b>word</b>' in paragraph ... is closest in meaning to...\n" +
+                             "- Question 5: The word '...' in paragraph ... refers to...\n" +
+                             "- Question 6: According to the passage, all of the following are true EXCEPT... / Which of the following is NOT mentioned...\n" +
+                             "- Question 7: What can be inferred from paragraph ...?\n" +
+                             "- Question 8: [Secondary Inference / Writer's Assumption]\n" +
+                             "- Question 9: What is the author's tone/attitude in this passage?\n" +
+                             "- Question 10: How is the information in the passage organized/structured?\n\n" +
                              "Each of the 10 questions must contain exactly 4 plausible options (A, B, C, D), exactly one single correct answer index (0 for A, 1 for B, 2 for C, 3 for D), and a highly detailed English explanation pointing directly to the evidence in the passage.";
 
             var systemPrompt = "You are a senior curriculum director and standardized language test writer (IELTS/VSTEP). Respond strictly in valid JSON matching this schema:\n" +
@@ -623,9 +623,51 @@
             xhr.send(JSON.stringify(payload));
         }
 
-        // KỊCH BẢN ĐỀ THI OFFLINE DỰ PHÒNG HOÀN TOÀN KHÁC BIỆT THEO 4 PHÂN KHU CHỦ ĐỀ
+        //        // KỊCH BẢN ĐỀ THI OFFLINE DỰ PHÒNG HOÀN TOÀN KHÁC BIỆT VỚI TIÊU ĐỀ NGHỆ THUẬT VÀ CÂU HỎI SẠCH SẼ CHUẨN QUỐC TẾ
         function generateOfflineBackupQuiz(level, topic) {
             var cat = getCategoryOfTopic(topic);
+            
+            // Cẩm nang tiêu đề học thuật cho từng level và category (Mô phỏng chân thực giống hệt AI tự soạn)
+            var offlineTitles = {
+                "A1": {
+                    "society": "A Cozy Home: Inside My Happy Family",
+                    "environment": "Our Blue Planet: Why Trees Matter",
+                    "technology": "My Digital Friend: The Power of Computers",
+                    "culture": "The Language of Music: Sharing Songs"
+                },
+                "A2": {
+                    "society": "Bridging Hearts: Balancing Teen Life and Family Chores",
+                    "environment": "Green Footprints: The Rise of Sustainable Ecotourism",
+                    "technology": "Pocket Revolution: How Smartphones Changed the World",
+                    "culture": "Harmony of Heritage: Vietnamese Folk Music and Regional Gongs"
+                },
+                "B1": {
+                    "society": "Evolving Homes: Shared Responsibilities in Modern Families",
+                    "environment": "Sustaining the Future: Tackling Global Warming and Carbon Footprints",
+                    "technology": "Adaptive Classrooms: The Double-Edged Sword of AI in Education",
+                    "culture": "A Global Stage: Viet Nam's Diplomatic and Economic Integration"
+                },
+                "B2": {
+                    "society": "Echoes Across Generations: Bridging the Digital and Cultural Divide",
+                    "environment": "Guardians of Biodiversity: Ecotourism and Forest Preservation",
+                    "technology": "Algorithmic Healing: The Ethical Frontiers of AI in Modern Medicine",
+                    "culture": "Living Echoes of History: Preserving Intangible Arts in a Globalized Era"
+                },
+                "C1": {
+                    "society": "Echoes Across Generations: Bridging the Digital and Cultural Divide",
+                    "environment": "Guardians of Biodiversity: Ecotourism and Forest Preservation",
+                    "technology": "Algorithmic Healing: The Ethical Frontiers of AI in Modern Medicine",
+                    "culture": "Living Echoes of History: Preserving Intangible Arts in a Globalized Era"
+                },
+                "C2": {
+                    "society": "Echoes Across Generations: Bridging the Digital and Cultural Divide",
+                    "environment": "Guardians of Biodiversity: Ecotourism and Forest Preservation",
+                    "technology": "Algorithmic Healing: The Ethical Frontiers of AI in Modern Medicine",
+                    "culture": "Living Echoes of History: Preserving Intangible Arts in a Globalized Era"
+                }
+            };
+
+            var selectedTitle = (offlineTitles[level] && offlineTitles[level][cat]) ? offlineTitles[level][cat] : (level + " Reading: " + topic);
             
             var lengthLabel = "about 200 words";
             var structureHTML = "";
@@ -676,13 +718,24 @@
                 }
             }
 
-            // Bộ câu hỏi Offline 10 câu thiết kế chuyên biệt
+            // Bản đồ từ khóa in đậm tương ứng với từng level & topic để Question 4 lấy tự động cực chuẩn
+            var boldWordMap = {
+                "A1": { "society": "visit", "environment": "protect", "technology": "easier", "culture": "culture" },
+                "A2": { "society": "participate", "environment": "preserve", "technology": "continue", "culture": "preserve" },
+                "B1": { "society": "reconnect", "environment": "mitigate", "technology": "authentic", "culture": "enhancing" },
+                "B2": { "society": "alienated", "environment": "protect", "technology": "transparent", "culture": "foster" },
+                "C1": { "society": "alienated", "environment": "protect", "technology": "transparent", "culture": "foster" },
+                "C2": { "society": "alienated", "environment": "protect", "technology": "transparent", "culture": "foster" }
+            };
+            var targetWord = (boldWordMap[level] && boldWordMap[level][cat]) ? boldWordMap[level][cat] : "important";
+
+            // Bộ câu hỏi Offline 10 câu - ĐÃ KHỬ TOÀN BỘ CHỮ CHỈ ĐỊNH MỤC ĐÍCH PHIỀN PHỨC
             var questions = [
                 {
-                    question: "Question 1 (Main Idea): What is the primary purpose of the passage?",
+                    question: "Question 1: What is the primary purpose of the passage?",
                     options: [
                         "To complain about the difficulties of modern lifestyles.",
-                        "To analyze and suggest positive ways to improve " + topic + ".",
+                        "To analyze and suggest positive ways to improve the quality of " + topic + ".",
                         "To compare different historical periods in Viet Nam.",
                         "To criticize teenagers for not respecting old traditions."
                     ],
@@ -690,7 +743,7 @@
                     explanation: "The passage discusses the characteristics, challenges, and positive solutions related to '" + topic + "' for level " + level + "."
                 },
                 {
-                    question: "Question 2 (Factual Detail): According to the first paragraph, what is mentioned as a key factor?",
+                    question: "Question 2: According to the first paragraph, what is mentioned as a key factor?",
                     options: [
                         "The lack of interest from younger generations.",
                         "The essential role and influence of human choices and lifestyle.",
@@ -701,7 +754,7 @@
                     explanation: "Paragraph 1 explicitly mentions the crucial role of human actions, lifestyle, and choices in shaping " + topic + "."
                 },
                 {
-                    question: "Question 3 (Factual Detail): According to the passage, how can people successfully improve " + topic + "?",
+                    question: "Question 3: According to the passage, how can people successfully improve " + topic + "?",
                     options: [
                         "By ignoring the traditional practices completely.",
                         "By taking responsible, collaborative actions and improving communication.",
@@ -712,7 +765,7 @@
                     explanation: "The text emphasizes collaboration, communication, and responsible actions to solve problems and improve the situation."
                 },
                 {
-                    question: "Question 4 (Vocabulary): The bolded word in the passage is closest in meaning to ________.",
+                    question: "Question 4: The word '<b>" + targetWord + "</b>' in the passage is closest in meaning to which of the following?",
                     options: [
                         "destroy or break down",
                         "protect, enhance, or support",
@@ -720,24 +773,24 @@
                         "compete against"
                     ],
                     answer: 1,
-                    explanation: "The bolded academic word is used in a positive context, meaning to protect, maintain, or support " + topic + "."
+                    explanation: "The bolded academic word '" + targetWord + "' is used in a positive context, meaning to protect, maintain, or support " + topic + "."
                 },
                 {
-                    question: "Question 5 (Pronoun): The word 'they' or 'it' in the middle of the passage refers to ________.",
+                    question: "Question 5: What does the pronoun 'they' or 'it' in the middle of the passage refer to?",
                     options: [
-                        "the international experts",
-                        "the elements or actions mentioned in the previous sentence",
-                        "the old buildings",
-                        "the scientific devices"
+                        "The international experts and advisors",
+                        "The specific actions and elements mentioned in the previous sentence",
+                        "The old buildings and ancient heritage sites",
+                        "The complex scientific devices and tools"
                     ],
                     answer: 1,
                     explanation: "Looking at the context, the pronoun refers to the preceding nouns representing elements or actions in the context of " + topic + "."
                 },
                 {
-                    question: "Question 6 (Negative Detail): Which of the following is NOT mentioned as a problem in the passage?",
+                    question: "Question 6: Which of the following is NOT mentioned as a challenge in the passage?",
                     options: [
                         "The negative impacts of ignoring natural/cultural values.",
-                        "The total disappearance of all physical schools and books.",
+                        "The total disappearance of all physical schools and paper books.",
                         "The conflict between traditional and modern viewpoints.",
                         "The damage caused by human negligence."
                     ],
@@ -745,7 +798,7 @@
                     explanation: "The total disappearance of all physical schools/books is never mentioned in the text."
                 },
                 {
-                    question: "Question 7 (Inference): What can be inferred about the future of " + topic + "?",
+                    question: "Question 7: What can be inferred about the future of " + topic + "?",
                     options: [
                         "It will become completely useless and be replaced by robots.",
                         "It will thrive and improve if the younger generation is actively involved.",
@@ -756,7 +809,7 @@
                     explanation: "The passage implies that positive changes depend heavily on the active participation and awareness of younger people."
                 },
                 {
-                    question: "Question 8 (Assumption): The author assumes that readers of this passage ________.",
+                    question: "Question 8: The author assumes that readers of this passage ________.",
                     options: [
                         "already know everything about global economics.",
                         "care about the future development of " + topic + ".",
@@ -767,7 +820,7 @@
                     explanation: "The author writes with an encouraging tone, assuming the audience cares about the progress and improvement of " + topic + "."
                 },
                 {
-                    question: "Question 9 (Author's Tone): The tone of the author in this passage is best described as ________.",
+                    question: "Question 9: The tone of the author in this passage is best described as ________.",
                     options: [
                         "hostile and aggressive",
                         "informative, encouraging, and academic",
@@ -778,7 +831,7 @@
                     explanation: "The author uses formal, balanced, and encouraging vocabulary to explain the academic concepts of " + topic + "."
                 },
                 {
-                    question: "Question 10 (Structure): How is the information in the passage organized?",
+                    question: "Question 10: How is the information in the passage organized?",
                     options: [
                         "In chronological order from ancient times to the future.",
                         "By presenting a general situation/issue and then suggesting practical solutions.",
@@ -791,13 +844,13 @@
             ];
 
             return {
-                title: level + " Reading: " + topic + " (" + lengthLabel + ")",
+                title: selectedTitle + " (" + lengthLabel + ")",
                 passage: structureHTML,
                 questions: questions
             };
         }
 
-        // KỊCH BẢN ĐỀ THI OFFLINE CỨU HỘ KHÔNG LO CRASH MÀN HÌNH ĐỎ
+        //        // KỊCH BẢN ĐỀ THI OFFLINE CỨU HỘ KHÔNG LO CRASH MÀN HÌNH ĐỎ
         function triggerOfflineRescue() {
             stopWaitingMusic();
             safeHide("loading-screen");
@@ -888,7 +941,7 @@
             safeSetDisabled("back-btn", idx === 0);
             safeSetDisabled("next-btn", idx === quizData.questions.length - 1);
 
-            // SỬA LỖI IN ĐẬM CHỮ TRONG CÂU HỎI: Đổi safeSetText thành safeSetHTML chuẩn xác nhất
+            // SỬA LỖI IN ĐẬM CHỮ TRONG CÂU HỎI
             safeSetHTML("question-text", q.question);
 
             var labels = ["A", "B", "C", "D"];
@@ -944,7 +997,7 @@
             }
         }
 
-        // HÀM CHẤM ĐIỂM (GRADE QUIZ & PLAY REWARD AUDIO)
+        //        // HÀM CHẤM ĐIỂM (GRADE QUIZ & PLAY REWARD AUDIO)
         function gradeQuiz() {
             if (!quizData) return;
 
@@ -1092,7 +1145,7 @@
             if (params.level && params.topic) {
                 loadConfigAndTriggerAI(params.level, params.topic);
             } else {
-                // Kiểm tra hiển thị trạng thái API ban đầu (Nâng cấp check tự động theo độ dài thực tế và chữ đặc trưng AIza)
+                // Kiểm tra hiển thị trạng thái API ban đầu
                 var isKeyValid = apiKey && apiKey.trim().startsWith("AIzaSy") && apiKey.trim().length >= 35;
                 var badge = document.getElementById("status-badge");
                 if (badge) {
@@ -1101,7 +1154,7 @@
                         badge.innerText = "🟢 Online AI Mode Active";
                     } else {
                         badge.className = "inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-black bg-amber-50 text-amber-700 border border-amber-200";
-                        badge.innerText = "⚠️ Offline Demo Mode (API Key Missing)";
+                        badge.innerText = "⚠️ Offline Demo Mode";
                     }
                 }
             }
