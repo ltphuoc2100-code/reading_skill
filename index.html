@@ -8,6 +8,7 @@
         :root {
             --primary-color: #4A90E2;
             --success-color: #2ECC71;
+            --danger-color: #E74C3C;
             --text-main: #2C3E50;
             --text-muted: #7F8C8D;
             --bg-light: #F8FAFC;
@@ -76,7 +77,7 @@
             display: block;
         }
 
-        /* KHUNG HIỂN THỊ NỘI DUNG CHÍNH (Chuẩn theo hình image_5e51e4.png) */
+        /* KHUNG HIỂN THỊ NỘI DUNG CHÍNH */
         #content-container {
             display: none;
             max-width: 600px;
@@ -152,6 +153,20 @@
             font-weight: 600;
         }
 
+        /* Trạng thái hiển thị đáp án Đúng/Sai sau khi chấm điểm */
+        .option-item.correct-ans {
+            background-color: #E8F8F5 !important;
+            border-color: var(--success-color) !important;
+            color: #117A65 !important;
+            font-weight: bold;
+        }
+
+        .option-item.wrong-ans {
+            background-color: #FADBD8 !important;
+            border-color: var(--danger-color) !important;
+            color: #78281F !important;
+        }
+
         .quiz-navigation-bar {
             display: flex;
             flex-direction: row;
@@ -199,6 +214,20 @@
             box-shadow: 0 2px 6px rgba(46, 204, 113, 0.2);
         }
 
+        /* Khung hiển thị tổng điểm */
+        #score-summary-box {
+            display: none;
+            background: #EBF5FB;
+            border: 2px dashed #3498DB;
+            padding: 15px;
+            border-radius: 12px;
+            text-align: center;
+            font-size: 18px;
+            font-weight: bold;
+            color: #2980B9;
+            margin-bottom: 16px;
+        }
+
         .footer-credit {
             text-align: center;
             font-size: 11px;
@@ -209,6 +238,7 @@
 </head>
 <body>
 
+    <!-- MÀN HÌNH CHỜ BAN ĐẦU -->
     <div id="welcome-container">
         <div class="welcome-card">
             <h1 class="welcome-title">Welcome to Reading Comprehension 📚</h1>
@@ -219,10 +249,14 @@
         </div>
     </div>
 
+    <!-- GIAO DIỆN BÀI ĐỌC CHUẨN ĐẸP -->
     <div id="content-container">
         <div class="reading-card">
             <div class="article-text" id="render-text"></div>
         </div>
+
+        <!-- Khung hiện bảng điểm sau khi Submit -->
+        <div id="score-summary-box"></div>
 
         <div class="quiz-card">
             <div class="quiz-navigation-bar">
@@ -232,7 +266,7 @@
             </div>
 
             <div id="render-questions"></div>
-            <button type="button" class="btn-submit" onclick="submitTest()">Submit Answers</button>
+            <button type="button" class="btn-submit" id="submit-main-btn" onclick="submitTest()">Submit Answers</button>
         </div>
     </div>
 
@@ -240,16 +274,16 @@
 
     <script>
         // =============================================================
-        // GIỮ NGUYÊN API KEY HIỆN TẠI CỦA THẦY
+        // THẦY KIỂM TRA LẠI CHUỖI KEY XEM ĐÃ ĐỦ TIỀN TỐ "AIzaSy..." CHƯA NHA THẦY PHƯỚC
         // =============================================================
         const API_KEY_PART1 = "AQ.Ab8RN6"; 
-        const API_KEY_PART2 = "ImY3ZbsE2FEM74MWeKIfWJLC2XGWdmcOs9Fdg-LxF7nw"; 
+        const API_KEY_PART2 = "LQmc5uwaVqdkGeUz53FF4un4mad4zJDANhxKYW8YRycw"; 
         // =============================================================
 
         let currentQuestionIndex = 0;
         let totalQuestionsCount = 0;
+        let globalQuestionsData = []; // Lưu trữ đáp án gốc để chấm điểm
 
-        // BÀI ĐỌC DỰ PHÒNG TỰ ĐỘNG BẬT KHI KEY SAI HOẶC LỖI MẠNG (ĐỂ TRÁNH ĐỨNG MÀN HÌNH)
         const BACKUP_DATABASE = {
             "text": "In conclusion, Family Life offers great benefits to modern society. It saves us time and energy, allowing us to focus on other important activities. Therefore, learning how to make the best use of this field is a useful skill for everyone.",
             "questions": [
@@ -267,14 +301,12 @@
             const lvl = getURLParam('level');
             const tpc = getURLParam('topic');
 
-            // Nếu chưa nhận tham số điều hướng -> Giữ màn hình chào đón ban đầu
             if (!lvl || !tpc) {
                 document.getElementById('welcome-container').style.display = 'flex';
                 document.getElementById('content-container').style.display = 'none';
                 return;
             }
             
-            // CỰC KỲ QUAN TRỌNG: Ẩn ngay lập tức màn hình chào đón để chống treo đứng hình!
             document.getElementById('welcome-container').style.display = 'none';
             executeMainPipeline(lvl, tpc);
         });
@@ -306,29 +338,29 @@ Return ONLY a valid JSON object. Do not include markdown code blocks. Use this e
                     body: JSON.stringify({ contents: [{ parts: [{ text: promptText }] }] })
                 });
 
-                if (!response.ok) throw new Error("API response error");
+                if (!response.ok) throw new Error();
 
                 const responseData = await response.json();
                 let rawText = responseData.candidates[0].content.parts[0].text.trim();
                 
                 if (rawText.startsWith("```json")) rawText = rawText.substring(7);
-                if (rawText.startsWith("```")) rawText = rawText.substring(3);
+                if (rawText.startsWith("
+```")) rawText = rawText.substring(3);
                 if (rawText.endsWith("```")) rawText = rawText.substring(0, rawText.length - 3);
                 
                 const cleanData = JSON.parse(rawText.trim());
                 renderExamContent(cleanData);
 
             } catch (error) {
-                // Sửa lỗi cốt lõi: Khi xảy ra lỗi kết nối do Key sai, lập tức kích hoạt hàm hiển thị bài đọc cứu hộ ngay, loại bỏ tình trạng đứng hình!
                 renderExamContent(BACKUP_DATABASE);
             }
         }
 
         function renderExamContent(data) {
-            // Đảm bảo chắc chắn màn hình chờ bị ẩn triệt để
             document.getElementById('welcome-container').style.display = 'none';
             document.getElementById('render-text').innerHTML = data.text;
-
+            
+            globalQuestionsData = data.questions; // Lưu cấu trúc câu hỏi
             let htmlQuestions = "";
             totalQuestionsCount = data.questions.length;
             currentQuestionIndex = 0;
@@ -339,10 +371,10 @@ Return ONLY a valid JSON object. Do not include markdown code blocks. Use this e
                     <div class="question-block" id="question_block_${index}">
                         <div class="question-text"><b>Question ${qNum}:</b> ${item.q}</div>
                         <div class="options-grid">
-                            <label class="option-item"><input type="radio" name="q_${qNum}" value="a"><b>A.</b> ${item.a}</label>
-                            <label class="option-item"><input type="radio" name="q_${qNum}" value="b"><b>B.</b> ${item.b}</label>
-                            <label class="option-item"><input type="radio" name="q_${qNum}" value="c"><b>C.</b> ${item.c}</label>
-                            <label class="option-item"><input type="radio" name="q_${qNum}" value="d"><b>D.</b> ${item.d}</label>
+                            <label class="option-item" id="label_${qNum}_a"><input type="radio" name="q_${qNum}" value="a"><b>A.</b> ${item.a}</label>
+                            <label class="option-item" id="label_${qNum}_b"><input type="radio" name="q_${qNum}" value="b"><b>B.</b> ${item.b}</label>
+                            <label class="option-item" id="label_${qNum}_c"><input type="radio" name="q_${qNum}" value="c"><b>C.</b> ${item.c}</label>
+                            <label class="option-item" id="label_${qNum}_d"><input type="radio" name="q_${qNum}" value="d"><b>D.</b> ${item.d}</label>
                         </div>
                     </div>
                 `;
@@ -351,7 +383,6 @@ Return ONLY a valid JSON object. Do not include markdown code blocks. Use this e
             document.getElementById('render-questions').innerHTML = htmlQuestions;
             updateQuestionVisibility();
             document.getElementById('content-container').style.display = 'block';
-            window.scrollTo({ top: 0, behavior: 'smooth' });
         }
 
         function updateQuestionVisibility() {
@@ -365,7 +396,6 @@ Return ONLY a valid JSON object. Do not include markdown code blocks. Use this e
                     }
                 }
             }
-
             document.getElementById('quiz-page-indicator').innerText = `Question ${currentQuestionIndex + 1} of ${totalQuestionsCount}`;
             document.getElementById('btn-prev-quiz').disabled = (currentQuestionIndex === 0);
             document.getElementById('btn-next-quiz').disabled = (currentQuestionIndex === totalQuestionsCount - 1);
@@ -379,8 +409,60 @@ Return ONLY a valid JSON object. Do not include markdown code blocks. Use this e
             }
         }
 
+        // HÀM CHẤM ĐIỂM CHI TIẾT + TRẢ ĐIỂM VỀ CHO APP INVENTOR
         function submitTest() {
-            alert("Answers submitted successfully!");
+            let correctCount = 0;
+
+            globalQuestionsData.forEach((question, index) => {
+                const qNum = index + 1;
+                const radios = document.getElementsByName(`q_${qNum}`);
+                let selectedValue = "";
+
+                // Tìm đáp án học sinh chọn
+                for (const radio of radios) {
+                    if (radio.checked) {
+                        selectedValue = radio.value;
+                        break;
+                    }
+                }
+
+                // Khóa không cho chọn lại sau khi nộp bài
+                for (const radio of radios) { radio.disabled = true; }
+
+                // Kiểm tra Đúng/Sai để tô màu trực quan
+                const correctLetter = question.ans.toLowerCase().trim();
+                
+                // Tô màu xanh cho đáp án đúng chuẩn
+                const correctLabel = document.getElementById(`label_${qNum}_${correctLetter}`);
+                if (correctLabel) correctLabel.classList.add('correct-ans');
+
+                if (selectedValue === correctLetter) {
+                    correctCount++;
+                } else if (selectedValue !== "") {
+                    // Nếu chọn sai, tô màu đỏ thẻ học sinh chọn
+                    const wrongLabel = document.getElementById(`label_${qNum}_${selectedValue}`);
+                    if (wrongLabel) wrongLabel.classList.add('wrong-ans');
+                }
+            });
+
+            // 1. Hiển thị bảng điểm trên giao diện web
+            const summaryBox = document.getElementById('score-summary-box');
+            summaryBox.innerHTML = `🎉 Your Score: ${correctCount} / ${totalQuestionsCount} Correct Answers!`;
+            summaryBox.style.display = 'block';
+
+            // 2. Ẩn nút Submit đi tránh bấm lại nhiều lần
+            document.getElementById('submit-main-btn').style.display = 'none';
+
+            // 3. LỆNH QUAN TRỌNG: Gửi điểm số về cho khối lệnh App Inventor
+            const finalResultString = `${correctCount}/${totalQuestionsCount}`;
+            if (window.AppInventor) {
+                window.AppInventor.setWebViewString(finalResultString);
+            } else {
+                // Hỗ trợ thiết bị cũ / Đề phòng phiên bản khác
+                window.location.hash = "result=" + finalResultString;
+            }
+
+            alert(`You got ${correctCount}/${totalQuestionsCount} correct answers! Check details below.`);
         }
     </script>
 </body>
