@@ -15,7 +15,7 @@
             -webkit-tap-highlight-color: transparent;
         }
 
-        /* Khung chứa bài đọc - Căn đều 2 bên (Justify) theo đúng sở thích của thầy */
+        /* Khung chứa bài đọc - Căn đều hai bên (Justify) chuẩn sư phạm */
         .passage-box {
             max-height: 250px;
             overflow-y: auto;
@@ -31,7 +31,7 @@
             box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.02);
         }
 
-        /* Tiêu đề bài đọc lồng vào trong khung viền siêu sang trọng */
+        /* Tiêu đề bài đọc lồng trong khung viền trang nhã */
         .passage-title {
             font-size: 17px;
             font-weight: 800;
@@ -44,7 +44,7 @@
             line-height: 1.4;
         }
 
-        /* Highlight từ vựng học thuật - Màu xanh dương cao cấp */
+        /* Highlight từ vựng học thuật - Màu xanh dương dịu mát */
         .word-target {
             background-color: #e0e7ff;
             border-bottom: 2px solid #6366f1;
@@ -54,7 +54,7 @@
             border-radius: 4px;
         }
 
-        /* Highlight đại từ tham chiếu - Màu vàng cam ấm áp */
+        /* Highlight đại từ tham chiếu - Màu vàng cam nổi bật */
         .pronoun-target {
             background-color: #fef3c7;
             border-bottom: 2px solid #f59e0b;
@@ -64,7 +64,7 @@
             border-radius: 4px;
         }
 
-        /* Thanh điều hướng Back - Indicator - Next siêu mỏng */
+        /* Thanh điều hướng Back - Indicator - Next mỏng nhẹ tinh tế */
         .nav-row-container {
             display: flex;
             align-items: center;
@@ -120,7 +120,7 @@
             box-shadow: 0 4px 6px -1px rgba(0,0,0,0.02);
         }
 
-        /* Nút chọn đáp án A, B, C, D */
+        /* Nút chọn đáp án A, B, C, D mượt mà */
         .option-btn {
             width: 100%;
             text-align: left;
@@ -197,7 +197,7 @@
             100% { transform: rotate(360deg); }
         }
 
-        /* Khung chứa Card */
+        /* Khung chứa Card bo góc */
         .card {
             background: #ffffff;
             border: 2px solid #e2e8f0;
@@ -215,7 +215,6 @@
 <body class="p-3">
 
     <!-- 1. WAITING SCREEN (WELCOME & SCHOOL PICTURE) -->
-    <!-- ĐÃ LỌC BỎ HOÀN TOÀN CÁC NÚT DEMO OFFLINE KHỎI GIAO DIỆN CHỜ BAN ĐẦU THEO ĐÚNG Ý THẦY -->
     <div id="waiting-screen" class="card" style="text-align: center; padding: 30px 20px;">
         <div style="font-size: 56px; margin-bottom: 14px;">📖</div>
         
@@ -224,8 +223,8 @@
             Welcome to Reading Comprehension
         </h3>
         
-        <!-- Màu xám Slate đậm êm mắt chuyên nghiệp -->
-        <p style="font-size: 15px; color: #334155; line-height: 1.6; margin: 0 0 16px 0;">
+        <!-- Màu xám Slate đậm êm mắt chuyên nghiệp hướng dẫn sử dụng -->
+        <p style="font-size: 15px; color: #475569; line-height: 1.6; margin: 0 0 16px 0;">
             Please choose <b>Level</b> and <b>Topic</b> on the top, then click the <b>Read up</b> button to practise the reading comprehension!
         </p>
 
@@ -251,8 +250,7 @@
         </p>
     </div>
 
-    <!-- 3. ERROR SCREEN -->
-    <!-- ĐÃ NÂNG CẤP THÀNH BẢNG XIN LỖI VÀ CHỈ HIỆN NÚT OFFLINE TẠI ĐÂY KHI KẾT NỐI THẤT BẠI -->
+    <!-- 3. ERROR SCREEN (CHỈ HIỂN THỊ NÚT OFFLINE KHI KẾT NỐI ONLINE THẤT BẠI) -->
     <div id="error-screen" class="card hidden" style="border-color: #fecaca; background-color: #fef2f2; color: #991b1b; padding: 20px;">
         <h3 style="font-size: 15px; font-weight: 800; margin: 0 0 6px 0; display: flex; align-items: center; gap: 6px;">
             ❌ Connection Failed
@@ -337,7 +335,7 @@
         
         var apiKey = apiKeyPart1.trim() + apiKeyPart2.trim();
 
-        // Hệ thống Quản thái dữ liệu
+        // Hệ thống Quản lý dữ liệu trạng thái
         var quizData = null;
         var selectedAnswers = {};
         var activeQuestionIdx = 0;
@@ -564,7 +562,7 @@
                              "1. READING PASSAGE CONSTRAINTS:\n" +
                              "- WORD COUNT: Must be strictly between " + spec.words + " (No exceptions).\n" +
                              "- COMPLEXITY: " + spec.structure + "\n" +
-                             "- FORMATTING: Use proper HTML paragraph tags. Bold exactly one crucial academic word in the text using <span class='word-target'>word</span> to be queried in Question 4. Bold exactly one pronoun (e.g., 'They' or 'This' or 'It') using <span class='pronoun-target'>pronoun</span> to be queried in Question 5.\n" +
+                             "- FORMATTING: Use proper HTML paragraph tags. Bold exactly one crucial academic word in the text using <span class='word-target'>word</span> to be queried in Question 4. Bold exactly one pronoun (e.g., choose either 'They', 'This', or 'It' - do NOT write both) using <span class='pronoun-target'>pronoun</span> to be queried in Question 5.\n" +
                              "- TITLE: Generate an extremely creative, catchy, and highly academic title related to the topic (do NOT just output '" + topic + "' or include prefixes like 'Exam Study:'). Make it sound like an authentic IELTS or SAT passage title.\n\n" +
                              "2. COMPREHENSIVE QUIZ REQUIREMENTS (EXACTLY 10 QUESTIONS matching standardized IELTS, VSTEP, or SAT formats):\n" +
                              "The 10 questions must be distributed strictly across the following 10 cognitive exam-style types, but you MUST write the question string simply as 'Question X: [Question text]' WITHOUT any parenthetical category markers like (Main Idea) or (Inference):\n" +
@@ -671,7 +669,7 @@
             var lengthLabel = "about 240 words";
             var structureHTML = "";
             var targetWord = "important";
-            var targetPronoun = "they";
+            var targetPronoun = "They";
             var pronounRefName = "something";
 
             if (level === "A1") {
@@ -819,7 +817,7 @@
                         "The external critics or competitors",
                         pronounRefName,
                         "The static elements of the past",
-                        "The general public outside the context"
+                        "The general public"
                     ],
                     answer: 1,
                     explanation: "Looking back at the highlighted paragraph, the pronoun '" + targetPronoun + "' refers exactly to: " + pronounRefName + "."
@@ -1161,7 +1159,6 @@
             loadConfigAndTriggerAI("B1", "Technology");
         }
 
-        // KHỞI ĐỘNG CHUẨN SƯ PHẠM: Giữ nguyên màn hình chờ chào mừng, không tự ý load bài mẫu khi khởi động!
         window.onload = function() {
             setInterval(checkConnection, 500);
 
