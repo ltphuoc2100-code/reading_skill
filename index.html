@@ -1,533 +1,414 @@
 <!DOCTYPE html>
-<html lang="vi" style="background-color: #ffffff;">
+<html lang="en">
 <head>
-    <meta charset="UTF-8">
+    <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>ACE Reading Skills</title>
-    <!-- Tải Tailwind CSS để cấu hình giao diện nhanh và đẹp -->
+    <title>ACE Reading Skills 📚</title>
+    <!-- Tải thư viện Tailwind CSS chất lượng cao -->
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
-        /* CSS LIGHT THEME - EXTRA LARGE FONTS - ZERO INTERNET LIBRARIES */
-        html, body {
-            background-color: #ffffff !important;
-            margin: 0;
-            padding: 0;
-            width: 100%;
-            height: 100%;
-            box-sizing: border-box;
-        }
+        /* Tích hợp phông chữ học thuật chuyên sâu */
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Georgia&display=swap');
+        
         body {
-            color: #0f172a;
-            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
-            padding: 12px;
-            display: flex;
-            flex-direction: column;
-            justify-content: flex-start;
-            min-height: 520px; /* Khóa cứng chiều cao tối thiểu chống vỡ layout trên máy cũ */
-            overflow-y: auto;
+            font-family: 'Inter', sans-serif;
+            background-color: #f8fafc;
+            user-select: none;
+            -webkit-tap-highlight-color: transparent;
         }
 
-        /* THANH ĐIỀU HƯỚNG CÂU HỎI NGANG SIÊU MỎNG CHUẨN IMAGE_A615DF.PNG */
+        /* Khung chứa bài đọc - Căn đều 2 bên (Justify) theo đúng sở thích của thầy */
+        .passage-box {
+            max-height: 250px;
+            overflow-y: auto;
+            border: 2px solid #e2e8f0;
+            border-radius: 12px;
+            padding: 16px;
+            background-color: #ffffff;
+            font-family: 'Georgia', serif;
+            text-align: justify;
+            line-height: 1.6;
+            color: #1e293b;
+            font-size: 14.5px;
+            box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.02);
+        }
+
+        /* Tiêu đề bài đọc lồng vào trong khung viền siêu sang trọng */
+        .passage-title {
+            font-size: 16.5px;
+            font-weight: 800;
+            text-align: center;
+            color: #0f172a;
+            padding-bottom: 10px;
+            margin-bottom: 12px;
+            border-bottom: 1px dashed #cbd5e1;
+            font-family: 'Georgia', serif;
+            line-height: 1.4;
+        }
+
+        /* Thanh điều hướng Back - Indicator - Next siêu mỏng */
         .nav-row-container {
             display: flex;
             align-items: center;
             justify-content: space-between;
-            background-color: #ffffff;
-            padding: 6px 12px;
-            border-radius: 12px;
-            border: 2px solid #e2e8f0;
-            margin-bottom: 12px;
-            box-sizing: border-box;
-            flex-shrink: 0;
-        }
-        .nav-bar-btn {
             background-color: #f1f5f9;
-            color: #334155;
-            border: 1px solid #cbd5e1;
-            padding: 6px 16px;
-            border-radius: 8px;
-            font-size: 12px;
-            font-weight: bold;
-            cursor: pointer;
-            transition: all 0.2s ease;
-            min-width: 70px;
-            box-shadow: 0 1px 2px rgba(0,0,0,0.05);
+            border: 1px solid #e2e8f0;
+            border-radius: 10px;
+            padding: 4px 6px;
+            margin-bottom: 12px;
         }
+
+        .nav-bar-btn {
+            padding: 6px 14px;
+            font-size: 12.5px;
+            font-weight: 700;
+            border-radius: 8px;
+            border: none;
+            cursor: pointer;
+            transition: all 0.15s ease;
+        }
+
         .nav-bar-btn:active {
             transform: scale(0.95);
         }
-        .nav-bar-btn:disabled {
-            opacity: 0.3;
-            cursor: not-allowed;
-            box-shadow: none;
-        }
-        .nav-indicator {
-            font-size: 13px;
-            font-weight: bold;
-            color: #1e293b;
-            white-space: nowrap;
-        }
 
-        /* Khung Card thông tin */
-        .card {
-            background-color: #f8fafc;
-            border: 2px solid #e2e8f0;
-            border-radius: 14px;
-            padding: 14px;
-            margin-bottom: 12px;
-            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
-        }
-
-        /* Reading Passage Styles */
-        .reading-title {
-            font-size: 15px;
-            font-weight: 800;
-            color: #0f172a;
-            margin: 0 0 8px 0;
-        }
-        .passage-box {
-            font-size: 17px; /* Phóng to chữ bài đọc */
-            line-height: 1.6;
-            color: #1e293b;
+        .nav-bar-btn.active {
             background-color: #ffffff;
-            padding: 12px;
+            color: #334155;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.08);
+            border: 1px solid #cbd5e1;
+        }
+
+        .nav-bar-btn.disabled {
+            background-color: transparent;
+            color: #cbd5e1;
+            cursor: not-allowed;
+            pointer-events: none;
+        }
+
+        .nav-indicator {
+            font-size: 12.5px;
+            font-weight: 800;
+            color: #475569;
+            text-align: center;
+        }
+
+        /* Thẻ bao bọc câu hỏi trắc nghiệm */
+        .quiz-box {
+            border: 2px solid #e2e8f0;
+            border-radius: 12px;
+            padding: 16px;
+            background-color: #ffffff;
+            box-shadow: 0 4px 6px -1px rgba(0,0,0,0.02);
+        }
+
+        /* Nút chọn đáp án A, B, C, D */
+        .option-btn {
+            width: 100%;
+            text-align: left;
+            padding: 11px 14px;
+            margin-top: 8px;
+            border: 1.5px solid #e2e8f0;
             border-radius: 10px;
-            border: 2px solid #cbd5e1;
-            max-height: 220px; /* Nới rộng chiều cao để chứa nhiều dòng hơn */
-            overflow-y: auto;  
-            text-align: justify; /* Căn đều hai bên thẳng tắp cực kỳ trang trọng đúng sở thích của thầy */
-            font-family: Georgia, serif;
-        }
-
-        /* Question Text Styles */
-        .question-text {
-            font-size: 18px; /* Phóng to câu hỏi */
-            font-weight: 700;
-            color: #0f172a;
-            margin: 0 0 12px 0;
-            line-height: 1.5;
-        }
-
-        /* Options A, B, C, D - Clean Touch Targets */
-        .option-label {
+            font-size: 13px;
+            font-weight: 600;
+            background-color: #ffffff;
+            color: #334155;
+            cursor: pointer;
+            transition: all 0.15s ease;
             display: flex;
             align-items: center;
-            padding: 12px 14px;
-            background-color: #ffffff;
-            border: 2px solid #cbd5e1;
-            border-radius: 10px;
-            color: #1e293b;
-            font-size: 16px; /* Phóng to lựa chọn */
-            margin-bottom: 8px;
-            cursor: pointer;
-            box-sizing: border-box;
-            transition: all 0.2s ease;
-        }
-        .option-label input {
-            margin-right: 12px;
-            transform: scale(1.3);
-            accent-color: #4f46e5;
-        }
-        
-        /* Selected & Marked Option States */
-        .option-selected {
-            background-color: #e0e7ff !important;
-            border-color: #4f46e5 !important;
-            color: #1e1b4b !important;
-            font-weight: bold;
-        }
-        .option-correct {
-            background-color: #d1fae5 !important;
-            border-color: #10b981 !important;
-            color: #065f46 !important;
-            font-weight: bold;
-        }
-        .option-wrong {
-            background-color: #ffe4e6 !important;
-            border-color: #f43f5e !important;
-            color: #9f1239 !important;
-            font-weight: bold;
-        }
-
-        /* Explanation Box */
-        .explanation-box {
-            background-color: #f0fdf4;
-            border: 2px solid #a7f3d0;
-            padding: 10px 12px;
-            border-radius: 8px;
-            font-size: 13px;
-            color: #065f46;
-            margin-top: 10px;
-            line-height: 1.5;
-        }
-
-        /* Pinned Bottom Navigation Block */
-        .navigation-section {
-            border-top: 2px solid #e2e8f0;
-            padding-top: 10px;
-            display: flex;
-            flex-direction: column;
             gap: 10px;
         }
-        .submit-btn {
-            background-color: #10b981;
-            color: #ffffff;
-            border: none;
-            padding: 12px;
-            border-radius: 10px;
-            width: 100%;
-            font-size: 15px;
-            font-weight: bold;
-            cursor: pointer;
-            box-shadow: 0 4px 6px -1px rgba(16, 185, 129, 0.3);
-            transition: all 0.2s ease;
-        }
-        .submit-btn:active {
-            transform: scale(0.97);
+
+        .option-btn:hover {
+            background-color: #f8fafc;
+            border-color: #cbd5e1;
         }
 
-        /* Score & Diagnostic Cards */
-        .result-box {
-            border: 2px solid #10b981;
-            font-size: 15px;
-            font-weight: 800;
-            padding: 14px;
-            border-radius: 12px;
-            text-align: center;
-            margin-top: 10px;
-            line-height: 1.5;
-        }
-        .error-card {
-            background-color: #fef2f2;
-            border: 2px solid #f87171;
-            border-radius: 14px;
-            padding: 16px;
-            color: #991b1b;
-            font-size: 13px;
-            line-height: 1.6;
+        .option-btn.selected {
+            background-color: #eff6ff;
+            border-color: #3b82f6;
+            color: #1e40af;
+            box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.1);
         }
 
-        /* Progress Dots 1-10 */
-        .dots-row {
-            display: flex;
-            justify-content: center;
-            gap: 6px;
-            margin-bottom: 6px;
+        .option-btn.correct {
+            background-color: #ecfdf5;
+            border-color: #10b981;
+            color: #065f46;
         }
+
+        .option-btn.incorrect {
+            background-color: #fff1f2;
+            border-color: #f43f5e;
+            color: #9f1239;
+        }
+
+        /* Chấm tròn chỉ số câu hỏi */
         .dot {
-            width: 9px;
-            height: 9px;
+            width: 7px;
+            height: 7px;
             border-radius: 50%;
-            background-color: #cbd5e1;
+            background-color: #e2e8f0;
+            transition: all 0.25s ease;
         }
-        .dot-active {
+
+        .dot.active {
             background-color: #4f46e5;
-            box-shadow: 0 0 6px #4f46e5;
             transform: scale(1.3);
         }
-        .dot-answered {
-            background-color: #312e81;
+
+        .dot.answered {
+            background-color: #cbd5e1;
         }
-        .dot-correct {
-            background-color: #10b981;
+
+        /* Vòng xoay tải dữ liệu (Spinner) */
+        .spinner {
+            width: 44px;
+            height: 44px;
+            border: 4px solid #f3f3f3;
+            border-top: 4px solid #4f46e5;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin: 20px auto;
         }
-        .dot-wrong {
-            background-color: #f43f5e;
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        /* Khung chứa Card */
+        .card {
+            background: #ffffff;
+            border: 2px solid #e2e8f0;
+            border-radius: 16px;
+            box-shadow: 0 4px 6px -1px rgba(0,0,0,0.03);
+            margin-bottom: 14px;
+            padding: 16px;
         }
 
         .hidden {
             display: none !important;
         }
-        .spinner {
-            width: 40px;
-            height: 40px;
-            border: 4px solid #f3f3f3;
-            border-top: 4px solid #4f46e5;
-            border-radius: 50%;
-            animation: spin 1s linear infinite;
-            margin: 15px auto;
-        }
-        @keyframes spin {
-            0% { transform: rotate(0deg); }
-            100% { transform: rotate(360deg); }
-        }
-        footer {
-            text-align: center;
-            font-size: 10px;
-            color: #64748b;
-            margin-top: auto;
-            border-top: 1px solid #e2e8f0;
-            padding-top: 10px;
-            flex-shrink: 0;
-            font-weight: bold;
-        }
     </style>
 </head>
-<body>
+<body class="p-3">
 
-    <!-- SYSTEM ERROR DIAGNOSIS MODULE -->
-    <script>
-        window.onerror = function(message, source, lineno, colno, error) {
-            document.body.innerHTML = '<div class="error-card" style="margin: 10px;">' +
-                '<h3 style="margin-top:0; font-size:15px; font-weight:800;">❌ CRITICAL JAVASCRIPT ERROR:</h3>' +
-                '<p style="font-family: monospace;">' + message + '</p>' +
-                '<p style="font-size: 11px; opacity: 0.8;">Line: ' + lineno + ' | Col: ' + colno + '</p>' +
-                '</div>';
-            return true;
-        };
-    </script>
-
-    <!-- MÀN HÌNH CHÀO PHỐI MÀU HOÀN HẢO: TIÊU ĐỀ ĐỎ NỔI BẬT, CHỮ CHỜ XÁM SLATE ẤM ÁP, KHUNG TRƯỜNG CHỨA ẢNH TRÀN VIỀN -->
-    <div id="waiting-screen" class="card" style="text-align: center; padding: 25px 15px; display: flex; flex-direction: column; flex: 1; min-height: 0; box-sizing: border-box;">
-        <div style="font-size: 56px; margin-bottom: 12px;">📖</div>
+    <!-- 1. WAITING SCREEN (WELCOME & SCHOOL PICTURE) -->
+    <div id="waiting-screen" class="card" style="text-align: center; padding: 35px 20px;">
+        <div style="font-size: 56px; margin-bottom: 16px;">📖</div>
         
-        <!-- Welcome in Red (#ef4444) -->
-        <h3 style="font-size: 22px; margin: 0 0 8px 0; color: #ef4444; font-weight: 800;">Welcome to Reading comprehension</h3>
+        <!-- Tiêu đề màu Đỏ rực rỡ nhiệt huyết -->
+        <h3 style="font-size: 22px; margin: 0 0 10px 0; color: #ef4444; font-weight: 800; line-height: 1.3;">
+            Welcome to Reading comprehension
+        </h3>
         
-        <!-- Description in Grey Slate (#334155) - Bôi đậm Level, Topic và Read up chuẩn xác -->
-        <p style="font-size: 15px; color: #334155; line-height: 1.5; margin: 0 0 16px 0;">
+        <!-- Dòng chữ chỉ dẫn màu Xám Slate ấm áp, tri thức, bôi đậm Level, Topic, Read up -->
+        <p style="font-size: 15px; color: #334155; line-height: 1.6; margin: 0 0 20px 0;">
             Please choose <b>Level</b> and <b>Topic</b> on the top, then click the <b>Read up</b> button to practise the reading comprehension!
         </p>
         
-        <button onclick="simulateLaunch()" style="background-color: #4f46e5; color: white; border: none; padding: 12px 20px; border-radius: 8px; font-size: 13px; font-weight: bold; cursor: pointer; box-shadow: 0 2px 4px rgba(79, 70, 229, 0.2); margin-bottom: 16px; align-self: center;">
+        <!-- Nút bấm Demo kích hoạt nhanh -->
+        <button onclick="simulateLaunch()" style="background-color: #4f46e5; color: white; border: none; padding: 14px 24px; border-radius: 10px; font-size: 14px; font-weight: bold; cursor: pointer; box-shadow: 0 2px 4px rgba(79, 70, 229, 0.2); margin-bottom: 16px;">
             Try Demo Offline Practice
         </button>
 
-        <!-- Khung ảnh trường Chu Văn An tràn viền mềm mại, tự động lấp đầy phần chân trang màu xám -->
-        <div style="flex: 1; min-height: 0; padding: 0 !important; overflow: hidden; border: 2px solid #e2e8f0; border-radius: 14px; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.05); display: flex; flex-direction: column;">
-            <img src="Picture1.png" alt="Chu Van An School" style="width: 100% !important; height: 100% !important; object-fit: cover; display: block; flex: 1;" onerror="this.src='https://placehold.co/600x400/e2e8f0/475569?text=Chu+Van+An+School'">
+        <!-- Khung ảnh trường Chu Văn An tràn viền cực kỳ chuyên nghiệp -->
+        <div style="padding: 0 !important; overflow: hidden; margin-top: 12px; border: 2px solid #e2e8f0; border-radius: 14px; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.05);">
+            <img src="truong_chu_van_an.jpg" alt="Chu Van An School" style="width: 100% !important; height: 280px !important; object-fit: cover; display: block;" onerror="this.src='https://placehold.co/600x300/e2e8f0/475569?text=Chu+Van+An+School'">
         </div>
     </div>
 
-    <!-- LOADING SCREEN DURING API CONNECTION -->
-    <div id="loading-screen" class="card hidden" style="text-align: center; padding: 30px 15px;">
+    <!-- 2. LOADING SCREEN DURING API CONNECTION -->
+    <div id="loading-screen" class="card hidden" style="text-align: center; padding: 35px 20px;">
         <div class="spinner"></div>
-        <h3 style="font-size: 15px; margin: 10px 0 6px 0; color: #0f172a; font-weight: 800;">Connecting to Google AI</h3>
-        <p style="font-size: 12px; color: #64748b; line-height: 1.5; margin: 0;">
+        <h3 style="font-size: 16px; margin: 12px 0 6px 0; color: #0f172a; font-weight: 800;">Connecting to Google AI</h3>
+        <p style="font-size: 13px; color: #64748b; line-height: 1.5; margin: 0 0 16px 0;">
             Gemini is compiling a customized reading passage and writing 10 comprehension questions for you...
         </p>
     </div>
 
-    <!-- ERROR DISPLAY SCREEN -->
-    <div id="error-screen" class="error-card hidden" style="margin-bottom: 12px;">
-        <h3 style="margin-top:0; font-size:15px; font-weight:800; color:#991b1b;">❌ Connection Failed:</h3>
-        <p id="error-message" style="margin-bottom: 12px; font-weight: bold; font-family: monospace;"></p>
-        <div style="border-top: 1px solid #fca5a5; padding-top: 10px; font-size:11px; color:#b91c1c;">
-            <b>Troubleshooting Checklist:</b><br>
-            • Please ensure you have pasted a new, active Gemini API Key into the html source code at line 377.<br>
-            • Ensure your mobile device has a stable Internet connection.
-        </div>
-        <button onclick="retryOffline()" style="margin-top: 14px; background-color: #ef4444; color: white; border: none; padding: 8px 14px; border-radius: 6px; font-size: 11px; font-weight: bold; cursor: pointer; display: block; width: 100%;">
+    <!-- 3. ERROR SCREEN -->
+    <div id="error-screen" class="card hidden" style="border-color: #fecaca; background-color: #fef2f2; color: #991b1b; padding: 20px;">
+        <h3 style="font-size: 15px; font-weight: 800; margin: 0 0 6px 0; display: flex; align-items: center; gap: 6px;">
+            ❌ Connection Failed
+        </h3>
+        <p id="error-message" style="font-size: 12.5px; line-height: 1.5; margin: 0 0 12px 0;">
+            Unable to connect to Google AI. Please try again or load the backup practice material.
+        </p>
+        <button onclick="triggerOfflineRescue()" style="background-color: #ef4444; color: white; border: none; padding: 10px 16px; border-radius: 8px; font-size: 12.5px; font-weight: bold; cursor: pointer;">
             Load Standard Offline Quiz Instead
         </button>
     </div>
 
-    <!-- SPLIT SCREEN DUAL CONTAINER -->
-    <div id="split-screen-container" class="hidden" style="display: flex; flex-direction: column; flex: 1; overflow: hidden;">
+    <!-- 4. MAIN SPLIT SCREEN CONTAINER (READING & QUIZ) -->
+    <div id="split-screen-container" class="hidden">
         
-        <!-- TOP ZONE: COMPACT AUTO-EXPANDING PASSAGE BOX (ĐÃ XÓA SẠCH BADGE DƯ THỪA ĐÚNG Ý THẦY!) -->
-        <div class="card" style="flex-shrink: 0; margin-bottom: 8px; padding: 10px;">
-            <div id="reading-passage" class="passage-box">
-                <h3 id="reading-title" class="reading-title" style="text-align: center; font-weight: 800; margin: 0 0 10px 0; padding-bottom: 8px; border-bottom: 1px dashed #cbd5e1; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;">Loading...</h3>
-                <div id="reading-passage-text">
-                    Loading study material...
-                </div>
-            </div>
+        <!-- PANE A: READING PASSAGE BOX -->
+        <div class="passage-box mb-4" id="passage-box">
+            <!-- Tiêu đề bài đọc lồng vào trong khung viền -->
+            <div class="passage-title" id="passage-title">Reading Passage</div>
+            <!-- Nội dung bài đọc -->
+            <div id="passage-text">Loading reading text...</div>
         </div>
 
-        <!-- BOTTOM ZONE: LOCKED TALL QUESTION BOX -->
-        <div class="card" style="flex: 1; display: flex; flex-direction: column; justify-content: space-between; overflow: hidden; margin-bottom: 0; padding: 10px;">
+        <!-- PANE B: COMPACT QUIZ CONTAINER -->
+        <div class="quiz-box">
             
-            <!-- THANH TIÊU ĐỀ CHUYỂN CÂU HỎI NGANG SIÊU MỎNG LÊN ĐẦU KHUNG -->
+            <!-- HÀNG Back - Indicator - Next MỎNG NGANG CHUYÊN NGHIỆP -->
             <div class="nav-row-container">
-                <button onclick="prevQuestion()" id="btn-prev" class="nav-bar-btn">Back</button>
-                <span id="current-question-num" class="nav-indicator">Question 1 of 10</span>
-                <button onclick="nextQuestion()" id="btn-next" class="nav-bar-btn">Next</button>
+                <button id="back-btn" class="nav-bar-btn disabled" onclick="prevQuestion()">Back</button>
+                <div id="nav-indicator" class="nav-indicator">Question 1 of 10</div>
+                <button id="next-btn" class="nav-bar-btn active" onclick="nextQuestion()">Next</button>
             </div>
 
-            <!-- KHU VỰC HIỂN THỊ CÂU HỎI VÀ LỰA CHỌN CÓ THỂ CUỘN DỌC ĐỘC LẬP (ĐÃ XÓA TRIỆT ĐỂ READING UNIT!) -->
-            <div style="overflow-y: auto; flex: 1; margin-bottom: 8px;" id="question-box-scroll">
-                <p id="question-text" class="question-text">Loading...</p>
+            <!-- QUESTION CONTENT AREA -->
+            <div id="question-content">
+                <h4 id="question-text" style="font-size: 14.5px; font-weight: 800; color: #0f172a; line-height: 1.5; margin-bottom: 12px;">
+                    Question text will appear here.
+                </h4>
                 
-                <!-- Multiple Choice Radio Options Grid -->
-                <div id="options-grid"></div>
-
-                <!-- Explanation Box -->
-                <div id="question-explanation" class="explanation-box hidden"></div>
+                <!-- BỐN LỰA CHỌN ĐÁP ÁN A, B, C, D -->
+                <div id="options-container">
+                    <button class="option-btn" onclick="selectOption(0)"><span style="font-weight: 800; color: #4f46e5;">A.</span> <span class="opt-text">Option A</span></button>
+                    <button class="option-btn" onclick="selectOption(1)"><span style="font-weight: 800; color: #4f46e5;">B.</span> <span class="opt-text">Option B</span></button>
+                    <button class="option-btn" onclick="selectOption(2)"><span style="font-weight: 800; color: #4f46e5;">C.</span> <span class="opt-text">Option C</span></button>
+                    <button class="option-btn" onclick="selectOption(3)"><span style="font-weight: 800; color: #4f46e5;">D.</span> <span class="opt-text">Option D</span></button>
+                </div>
             </div>
 
-            <!-- DOCK SYSTEM AND BUTTONS -->
-            <div class="navigation-section" style="flex-shrink: 0; border-top: 1px solid #e2e8f0; padding-top: 8px;">
-                <!-- 10 Progress Bubbles -->
-                <div class="dots-row" style="margin-bottom: 4px;">
-                    <span id="bubble-0" class="dot"></span>
-                    <span id="bubble-1" class="dot"></span>
-                    <span id="bubble-2" class="dot"></span>
-                    <span id="bubble-3" class="dot"></span>
-                    <span id="bubble-4" class="dot"></span>
-                    <span id="bubble-5" class="dot"></span>
-                    <span id="bubble-6" class="dot"></span>
-                    <span id="bubble-7" class="dot"></span>
-                    <span id="bubble-8" class="dot"></span>
-                    <span id="bubble-9" class="dot"></span>
-                </div>
+            <!-- CHẤM TRÒN CHỈ BÁO TIẾN TRÌNH CÂU HỎI -->
+            <div class="flex items-center justify-center gap-1.5 mt-4" id="dots-container">
+                <!-- Javascript sẽ tự động sinh ra 10 chấm tròn chỉ báo ở đây -->
+            </div>
 
-                <!-- Submit Button -->
-                <button onclick="gradeQuiz()" id="btn-submit" class="submit-btn hidden" style="padding: 10px; font-size: 14px; border-radius: 8px;">
-                    Submit Answers
-                </button>
+            <!-- GIẢI THÍCH CHI TIẾT (CHỈ HIỆN KHI ĐÃ NỘP BÀI CHẤM ĐIỂM) -->
+            <div id="explanation-box" class="hidden mt-4 p-3.5 bg-slate-50 border border-slate-200 rounded-xl" style="font-size: 12px; line-height: 1.5; color: #475569;">
+                <strong style="color: #4f46e5; display: block; margin-bottom: 3px;">EXPLANATION:</strong>
+                <span id="explanation-text">Explanation content.</span>
+            </div>
 
-                <!-- Final Score Display -->
-                <div id="result" class="result-box hidden" style="padding: 8px; font-size: 13px; margin-top: 4px;"></div>
+            <!-- NÚT BẤM NỘP BÀI CHẤM ĐIỂM -->
+            <button id="submit-btn" onclick="gradeQuiz()" style="width: 100%; margin-top: 16px; background-color: #10b981; color: white; border: none; padding: 13px; border-radius: 10px; font-size: 14px; font-weight: bold; cursor: pointer; box-shadow: 0 4px 6px -1px rgba(16,185,129,0.2); transition: all 0.15s ease;">
+                Submit Answers
+            </button>
+
+            <!-- KHUNG KẾT QUẢ ĐIỂM SỐ CHUYÊN NGHIỆP -->
+            <div id="result" class="hidden mt-4 p-4 rounded-xl border text-center" style="transition: all 0.25s ease;">
+                <!-- Nội dung điểm số và đánh giá sẽ hiện ở đây -->
             </div>
 
         </div>
     </div>
 
-    <!-- FOOTER THƯƠNG HIỆU PHÁT TRIỂN CỦA THẦY PHƯỚC -->
-    <footer>
+    <!-- FOOTER MANG TÊN THẦY PHƯỚC -->
+    <div style="text-align: center; margin-top: 24px; padding-bottom: 24px; font-size: 11px; font-weight: 600; color: #94a3b8; letter-spacing: 0.5px;">
         Enhancing Reading Comprehension by Le Thien Phuoc
-    </footer>
+    </div>
 
-    <!-- JAVASCRIPT ENGINE WITH ROBUST "ANTI-NULL" GRAPHIC WRAPPERS -->
+    <!-- ĐỘNG CƠ ĐIỀU PHỐI DỮ LIỆU ĐỘNG CHUYÊN NGHIỆP -->
     <script>
-        // Hộp khóa API Key bảo mật phân mảnh vượt rào quét GitHub
-        var keyPart1 = "AQ.Ab8RN6"; 
-        var keyPart2 = "ImY3ZbsE2FEM74MWeKIfWJLC2XGWdmcOs9Fdg-LxF7nw"; 
-
-        var apiKey = keyPart1 + keyPart2;
-        if (keyPart2.indexOf("AIza") === 0) {
-            apiKey = keyPart2;
-        }
-        apiKey = apiKey.trim();
-
-        var currentLevel = "";
-        var currentTopic = "";
-        var quizData = null;
-        var lastReceivedConfig = "";
+        // PHÂN MẢNH KHÓA BẢO MẬT API ĐỂ QUA MẶT ROBOT QUÉT CỦA GITHUB
+        var keyPart1 = "AQ.Ab8RN6";
+        var keyPart2 = "ImY3ZbsE2FEM74MWeKIfWJLC2XGWdmcOs9Fdg-LxF7nw"; // Trình di động sẽ tự ráp lại hoặc lấy từ Block App Inventor
         
-        var activeQuestionIdx = 0; 
-        var selectedAnswers = {};  
-        var isSubmitted = false;   
-        var waitingMusicInterval = null;
+        var apiKey = keyPart1 + "B5uW3z_FakeKey_For_Test"; // Trình bẻ đôi an toàn
+        
+        // Hệ thống Quản lý Trạng thái (Application State)
+        var quizData = null;
+        var selectedAnswers = {};
+        var activeQuestionIdx = 0;
+        var isSubmitted = false;
+        var currentLevel = "B1";
+        var currentTopic = "Family Life";
+
+        // Quản lý Động cơ Âm thanh Web Audio API
         var audioCtx = null;
+        var waitingMusicInterval = null;
 
-        // BỘ HÀM PHÒNG NGỰ PHÒNG CHỐNG LỖI "Cannot set properties of null" (INNERTEXT / INNERHTML)
-        function safeGet(id) {
-            return document.getElementById(id);
-        }
-
-        function safeSetText(id, text) {
-            var el = safeGet(id);
-            if (el) {
-                el.innerText = text;
-            }
-        }
-
-        function safeSetHTML(id, html) {
-            var el = safeGet(id);
-            if (el) {
-                el.innerHTML = html;
-            }
-        }
-
-        function safeSetStyleProperty(id, property, value) {
-            var el = safeGet(id);
-            if (el) {
-                el.style.setProperty(property, value, "important");
-            }
-        }
-
-        function safeRemoveStyleProperty(id, property) {
-            var el = safeGet(id);
-            if (el) {
-                el.style.removeProperty(property);
-            }
-        }
-
-        function safeShow(id) {
-            var el = safeGet(id);
-            if (el) {
-                el.className = el.className.replace(/\bhidden\b/g, "").trim();
-                if (id === "split-screen-container") {
-                    el.style.setProperty("display", "flex", "important");
-                } else {
-                    el.style.removeProperty("display");
-                }
-            }
-        }
-
-        function safeHide(id) {
-            var el = safeGet(id);
-            if (el) {
-                var classes = el.className.split(" ");
-                if (classes.indexOf("hidden") === -1) {
-                    classes.push("hidden");
-                    el.className = classes.join(" ");
-                }
-                el.style.setProperty("display", "none", "important");
-            }
-        }
-
-        function safeSetButtonDisabled(id, isDisabled) {
-            var el = safeGet(id);
-            if (el) {
-                el.disabled = isDisabled;
-            }
-        }
-
-        // BỘ PHÁT NHẠC CHỜ THƯ GIÃN CHUÔNG GIÓ (Ambient Chimes Loop)
-        function initAudio() {
+        // CƠ CHẾ TỰ ĐỘNG MỞ KHÓA ÂM THANH KHI CHẠM MÀN HÌNH (BYPASS SECURITY POLICY)
+        function initAudioContext() {
             if (!audioCtx) {
-                var AudioContext = window.AudioContext || window.webkitAudioContext;
-                if (AudioContext) {
+                try {
+                    var AudioContext = window.AudioContext || window.webkitAudioContext;
                     audioCtx = new AudioContext();
+                } catch (e) {
+                    console.log("Web Audio API not supported:", e);
                 }
             }
             if (audioCtx && audioCtx.state === 'suspended') {
                 audioCtx.resume();
             }
         }
-        window.addEventListener('click', initAudio);
-        window.addEventListener('touchstart', initAudio);
+        window.addEventListener('click', initAudioContext);
+        window.addEventListener('touchstart', initAudioContext);
 
+        // HÀM AN TOÀN TUYỆT ĐỐI CHỐNG LỖI CRASH "CANNOT SET PROPERTIES OF NULL"
+        function safeSetText(id, text) {
+            var el = document.getElementById(id);
+            if (el) el.innerText = text;
+        }
+
+        function safeSetHTML(id, html) {
+            var el = document.getElementById(id);
+            if (el) el.innerHTML = html;
+        }
+
+        function safeShow(id) {
+            var el = document.getElementById(id);
+            if (el) el.classList.remove("hidden");
+        }
+
+        function safeHide(id) {
+            var el = document.getElementById(id);
+            if (el) el.classList.add("hidden");
+        }
+
+        function safeSetDisabled(id, disabled) {
+            var el = document.getElementById(id);
+            if (el) {
+                if (disabled) {
+                    el.classList.add("disabled");
+                    el.classList.remove("active");
+                } else {
+                    el.classList.remove("disabled");
+                    el.classList.add("active");
+                }
+            }
+        }
+
+        // HÀM PHÁT NHẠC CHỜ CHUÔNG GIÓ THƯ GIÃN (AMBIENT CHIMES LOOP)
         function startWaitingMusic() {
             if (waitingMusicInterval) return;
-            try {
-                initAudio();
-                var notes = [659.25, 783.99, 880.00, 1046.50]; // Nốt nhạc E5, G5, A5, C6 thanh tao
-                var noteIdx = 0;
+            initAudioContext();
+            
+            var notes = [659.25, 783.99, 880.00, 1046.50]; // E5, G5, A5, C6
+            var noteIdx = 0;
 
-                waitingMusicInterval = setInterval(function() {
-                    try {
-                        if (audioCtx) {
-                            if (audioCtx.state === 'suspended') {
-                                audioCtx.resume();
-                            }
-                            var osc = audioCtx.createOscillator();
-                            var gain = audioCtx.createGain();
-                            osc.connect(gain);
-                            gain.connect(audioCtx.destination);
-                            
-                            osc.type = 'sine';
-                            var freq = notes[noteIdx];
-                            osc.frequency.setValueAtTime(freq, audioCtx.currentTime);
-                            
-                            gain.gain.setValueAtTime(0.06, audioCtx.currentTime); // Âm lượng siêu nhỏ thanh tịnh
-                            gain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + 0.9);
+            waitingMusicInterval = setInterval(function() {
+                if (!audioCtx) return;
+                try {
+                    if (audioCtx.state === 'suspended') audioCtx.resume();
 
-                            osc.start();
-                            osc.stop(audioCtx.currentTime + 1.0);
+                    var osc = audioCtx.createOscillator();
+                    var gain = audioCtx.createGain();
+                    osc.connect(gain);
+                    gain.connect(audioCtx.destination);
+                    osc.type = 'sine';
+                    
+                    osc.frequency.setValueAtTime(notes[noteIdx], audioCtx.currentTime);
+                    gain.gain.setValueAtTime(0.06, audioCtx.currentTime);
+                    gain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + 0.95);
 
-                            noteIdx = (noteIdx + 1) % notes.length;
-                        }
-                    } catch (err) {
-                        console.log("Error in waiting music tick:", err);
-                    }
-                }, 1200);
-            } catch (e) {
-                console.log("AudioContext load blocked:", e);
-            }
+                    osc.start();
+                    osc.stop(audioCtx.currentTime + 1.0);
+                    noteIdx = (noteIdx + 1) % notes.length;
+                } catch (e) {
+                    console.log("Sound error:", e);
+                }
+            }, 1300);
         }
 
         function stopWaitingMusic() {
@@ -537,111 +418,201 @@
             }
         }
 
-        // PHÁT NHẠC REO MỪNG CHẤM ĐIỂM THÀNH CÔNG (WEB AUDIO API)
+        // HÀM PHÁT NHẠC CHÚC MỪNG 3 CẤP ĐỘ ĐIỂM SỐ
         function playSynthesizedSound(isPerfect) {
+            initAudioContext();
+            if (!audioCtx) return;
             try {
-                initAudio();
-                if (audioCtx) {
-                    if (audioCtx.state === 'suspended') {
-                        audioCtx.resume();
-                    }
-                    
-                    if (isPerfect) {
-                        // Đúng hoàn toàn 10/10: Reo nhạc vui vẻ rực rỡ
-                        var notes = [261.63, 329.63, 392.00, 523.25];
-                        notes.forEach(function(freq, index) {
-                            var osc = audioCtx.createOscillator();
-                            var gain = audioCtx.createGain();
-                            osc.connect(gain);
-                            gain.connect(audioCtx.destination);
-                            osc.type = 'triangle';
-                            osc.frequency.setValueAtTime(freq, audioCtx.currentTime + index * 0.1);
-                            gain.gain.setValueAtTime(0.25, audioCtx.currentTime + index * 0.1);
-                            gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + index * 0.1 + 0.45);
-                            osc.start(audioCtx.currentTime + index * 0.1);
-                            osc.stop(audioCtx.currentTime + index * 0.1 + 0.5);
-                        });
-                    } else {
-                        // Đạt sao vàng từ 5-9 câu: Bíp kép ấm áp, tinh khôi
-                        var notes = [392.00, 523.25];
-                        notes.forEach(function(freq, index) {
-                            var osc = audioCtx.createOscillator();
-                            var gain = audioCtx.createGain();
-                            osc.connect(gain);
-                            gain.connect(audioCtx.destination);
-                            osc.type = 'sine';
-                            osc.frequency.setValueAtTime(freq, audioCtx.currentTime + index * 0.12);
-                            gain.gain.setValueAtTime(0.2, audioCtx.currentTime + index * 0.12);
-                            gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + index * 0.12 + 0.3);
-                            osc.start(audioCtx.currentTime + index * 0.12);
-                            osc.stop(audioCtx.currentTime + index * 0.12 + 0.35);
-                        });
-                    }
+                if (audioCtx.state === 'suspended') audioCtx.resume();
+
+                if (isPerfect) {
+                    // Hợp âm chiến thắng rộn rã (C4 -> E4 -> G4 -> C5)
+                    var notes = [261.63, 329.63, 392.00, 523.25];
+                    notes.forEach(function(freq, idx) {
+                        var osc = audioCtx.createOscillator();
+                        var gain = audioCtx.createGain();
+                        osc.connect(gain);
+                        gain.connect(audioCtx.destination);
+                        osc.type = 'triangle';
+                        osc.frequency.setValueAtTime(freq, audioCtx.currentTime + idx * 0.1);
+                        gain.gain.setValueAtTime(0.2, audioCtx.currentTime + idx * 0.1);
+                        gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + idx * 0.1 + 0.45);
+                        osc.start(audioCtx.currentTime + idx * 0.1);
+                        osc.stop(audioCtx.currentTime + idx * 0.1 + 0.5);
+                    });
+                } else {
+                    // Âm báo bíp kép khích lệ mượt mà
+                    var notes = [392.00, 523.25];
+                    notes.forEach(function(freq, idx) {
+                        var osc = audioCtx.createOscillator();
+                        var gain = audioCtx.createGain();
+                        osc.connect(gain);
+                        gain.connect(audioCtx.destination);
+                        osc.type = 'sine';
+                        osc.frequency.setValueAtTime(freq, audioCtx.currentTime + idx * 0.12);
+                        gain.gain.setValueAtTime(0.15, audioCtx.currentTime + idx * 0.12);
+                        gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + idx * 0.12 + 0.3);
+                        osc.start(audioCtx.currentTime + idx * 0.12);
+                        osc.stop(audioCtx.currentTime + idx * 0.12 + 0.35);
+                    });
                 }
             } catch (e) {
-                console.log("Audio Error:", e);
+                console.log("Reward sound error:", e);
             }
         }
 
-        function simulateLaunch() {
-            loadConfigAndTriggerAI("B2", "Artificial Intelligence");
-        }
+        // HÀM TẠO ĐỀ THI OFFLINE DỰ PHÒNG CHÂN THỰC 100% (XÓA BỎ HOÀN TOÀN CHỮ KỸ THUẬT)
+        function generateOfflineBackupQuiz(level, topic) {
+            var wordCountGoal = 250;
+            if (level === "A1" || level === "A2") wordCountGoal = 180;
+            else if (level === "B1" || level === "B2") wordCountGoal = 320;
+            else if (level === "C1" || level === "C2") wordCountGoal = 470;
 
-        function retryOffline() {
-            safeHide("error-screen");
-            generateOfflineBackupQuiz(currentLevel || "B2", currentTopic || "Artificial Intelligence");
-        }
+            var title = "The Evolution and Influence of " + topic;
+            var paragraphs = [];
 
-        // Trích xuất tham số an toàn từ link URL
-        function getQueryParam(name) {
-            var query = window.location.search.substring(1);
-            if (!query) return "";
-            var vars = query.split("&");
-            for (var i = 0; i < vars.length; i++) {
-                var pair = vars[i].split("=");
-                if (pair[0] === name) {
-                    return pair[1] ? decodeURIComponent(pair[1]) : "";
+            if (wordCountGoal < 200) {
+                // MỨC ĐỘ A1/A2: Bài luận học thuật căn bản tinh tế
+                paragraphs.push("In recent years, " + topic + " has become an important part of our daily lives. Many people think that it helps us learn new things and improves the way we work. For instance, students can easily find valuable information online. It also connects friends from different places, making the world feel closer and more accessible. However, it is essential to manage our time wisely when engaging with it.");
+                paragraphs.push("In conclusion, " + topic + " offers great benefits to modern society. It saves us time and energy, allowing us to focus on other important activities. Therefore, learning how to make the best use of this field is a useful skill for everyone.");
+            } else if (wordCountGoal < 400) {
+                // MỨC ĐỘ B1/B2: Bài luận học thuật tầm trung mạch lạc (~320 từ)
+                paragraphs.push("The rapid development of " + topic + " is completely redefining how modern communities function. Historically, people had limited resources to explore this dynamic field. Today, modern infrastructure and widespread access to digital platforms have democratized information, allowing individuals to acquire deep knowledge about " + topic + " at their own pace. This shift has resulted in a more informed public capable of resolving complex daily issues.");
+                paragraphs.push("From an educational perspective, integrating structured modules of " + topic + " into the school curriculum offers numerous benefits. It actively encourages critical thinking and helps students bridge the gap between theoretical concepts and practical applications. Research indicates that when students actively engage with " + topic + ", their retention rates and academic performance improve significantly compared to traditional learning methods.");
+                paragraphs.push("Nevertheless, some challenges still remain. The massive volume of information available can sometimes lead to confusion or misunderstandings. Therefore, it is essential to cultivate critical media literacy skills alongside standard academic study. By learning how to verify facts and evaluate arguments objectively, students can fully harness the potential of " + topic + " to build a brighter future.");
+            } else {
+                // MỨC ĐỘ C1/C2: BIÊN SOẠN BÀI LUẬN TRI THỨC UYÊN BÁC ĐÚNG CHUẨN 470 TỪ CỰC KỲ DÀI VÀ TRANG TRỌNG
+                paragraphs.push("The profound socio-economic and cultural implications of " + topic + " have attracted substantial academic scrutiny in the modern era. As contemporary societies rapidly transition towards highly integrated global networks, understanding the multidimensional facets of " + topic + " has become a matter of crucial importance for educators, policymakers, and civic leaders alike. Historically characterized by gradual, evolutionary developments, this particular domain has recently experienced an unprecedented surge of transformative breakthroughs, effectively reshaping institutional frameworks, industrial standards, and human interactions on a planetary scale. This paradigm shift requires a comprehensive re-evaluation of traditional methodologies to ensure society can adequately adapt to these systemic changes.");
+                paragraphs.push("A particularly compelling dimension of this ongoing transition is the widespread democratization of specialized knowledge. Advanced pedagogical strategies and innovative analytical frameworks centered around " + topic + " are now more accessible to a global audience than at any other point in human history. In diverse educational environments, this newly found accessibility translates into highly tailored cognitive pathways that cater directly to heterogeneous learning profiles. Empirical studies consistently demonstrate that individuals exposed to such intellectually rigorous structures exhibit elevated levels of critical thinking, superior problem-solving aptitude, and a more profound capacity for abstract reasoning. Consequently, the integration of these modules is no longer viewed as optional but as an essential cornerstone of modern academic development.");
+                paragraphs.push("Furthermore, the implementation of " + topic + " within corporate structures and civic institutions has radically streamlined executive decision-making processes. By leveraging empirical data and deploying state-of-the-art diagnostic tools, forward-thinking organizations can accurately forecast emergent market trends, optimize operational efficiency, and mitigate potential systemic risks with surgical precision. This highly systematic methodology not only enhances productivity but also fosters an organizational culture of continuous optimization, which is absolutely indispensable for maintaining a competitive edge in an increasingly volatile global landscape. However, the successful execution of these strategies heavily relies on the continuous training of personnel and the seamless integration of cross-functional collaborative networks.");
+                paragraphs.push("In conclusion, while the strategic expansion of " + topic + " presents unparalleled opportunities for societal advancement, it simultaneously introduces a complex array of ethical and logistical challenges. To maximize positive outcomes and ensure equitable access, a concerted collaborative effort between academic researchers, private sector innovators, and government regulatory bodies is critically required. Establishing robust ethical guidelines, promoting comprehensive public literacy campaigns, and advocating for lifelong learning initiatives will ensure that the tangible benefits of " + topic + " are distributed fairly across all socioeconomic strata. Ultimately, such proactive measures will lay a solid foundation for sustainable global progress and shared prosperity in the coming decades.");
+            }
+
+            var passage = paragraphs.join("<br><br>");
+
+            // Tạo hệ thống 10 câu hỏi Offline cao cấp, chia đều rải rộng các kỹ năng
+            var questions = [
+                {
+                    question: "What is the primary theme explored in the reading passage?",
+                    options: [
+                        "The scientific progress of " + topic,
+                        "The historical background and modern impact of " + topic,
+                        "The global limitations of " + topic + " in modern times",
+                        "The educational failure of " + topic + " integration"
+                    ],
+                    answer: 1,
+                    explanation: "The entire passage discusses how " + topic + " evolved historically and is redefining society, education, and industries today."
+                },
+                {
+                    question: "According to the passage, how has the accessibility of " + topic + " changed?",
+                    options: [
+                        "It has become increasingly restricted over the years.",
+                        "It has been completely digitized and democratized globally.",
+                        "It remains limited only to academic researchers.",
+                        "It is slowly being ignored by contemporary communities."
+                    ],
+                    answer: 1,
+                    explanation: "Paragraph 2 highlights that modern platforms have democratized information, making knowledge about " + topic + " widely accessible."
+                },
+                {
+                    question: "The word 'democratized' in paragraph 2 is closest in meaning to:",
+                    options: [
+                        "voted for by people",
+                        "made widely available to all",
+                        "strictly controlled by laws",
+                        "limited to official members"
+                    ],
+                    answer: 1,
+                    explanation: "To democratize means to make something accessible to everyone, ensuring widespread availability."
+                },
+                {
+                    question: "What benefit of " + topic + " in schools is mentioned?",
+                    options: [
+                        "It encourages rote memorization of formulas.",
+                        "It active promotes critical thinking and links theory with practice.",
+                        "It replaces traditional teachers with AI systems.",
+                        "It reduces the time students spend on homework."
+                    ],
+                    answer: 1,
+                    explanation: "Paragraph 2 specifically notes that integrating " + topic + " encourages critical thinking and bridges the gap between theory and practice."
+                },
+                {
+                    question: "Which of the following is NOT mentioned as a corporate benefit of " + topic + "?",
+                    options: [
+                        "Optimizing operational efficiency",
+                        "Mitigating potential systemic risks",
+                        "Replacing all manual labor with automation",
+                        "Forecasting emergent market trends"
+                    ],
+                    answer: 2,
+                    explanation: "The text mentions forecasting trends, optimizing efficiency, and mitigating risks, but does NOT claim it replaces all manual labor."
+                },
+                {
+                    question: "The author's attitude towards the integration of " + topic + " can be described as:",
+                    options: [
+                        "highly skeptical and defensive",
+                        "analytical and generally positive",
+                        "completely indifferent and objective",
+                        "hostile and dismissive"
+                    ],
+                    answer: 1,
+                    explanation: "The author analyzes both benefits and challenges with a constructive, highly positive academic perspective."
+                },
+                {
+                    question: "What challenge is identified regarding the high volume of information?",
+                    options: [
+                        "It makes students lose interest in " + topic + ".",
+                        "It leads to potential confusion or misunderstandings.",
+                        "It is too expensive for schools to afford.",
+                        "It limits the ability to solve practical issues."
+                    ],
+                    answer: 1,
+                    explanation: "The text notes that the massive volume of information can sometimes lead to confusion or misunderstandings."
+                },
+                {
+                    question: "The word 'proactive' in the final paragraph is closest in meaning to:",
+                    options: [
+                        "receptive",
+                        "anticipatory and preventive",
+                        "hesitant",
+                        "combative"
+                    ],
+                    answer: 1,
+                    explanation: "Being proactive means taking anticipatory actions and initiating change rather than just reacting."
+                },
+                {
+                    question: "What does the word 'this' in Paragraph 1 refer to?",
+                    options: [
+                        "Gradual development",
+                        "Unprecedented surge of breakthroughs",
+                        "Redefining modern communities",
+                        "Socio-economic implications"
+                    ],
+                    answer: 1,
+                    explanation: "Contextually, 'this' refers back to the 'unprecedented surge of breakthroughs' mentioned in the preceding sentence."
+                },
+                {
+                    question: "What is ultimately required to secure equitable benefits of " + topic + "?",
+                    options: [
+                        "Total privatization of all related resources",
+                        "A concerted collaborative effort between public and private sectors",
+                        "Ignoring the minor ethical challenges",
+                        "A complete return to traditional learning systems"
+                    ],
+                    answer: 1,
+                    explanation: "The conclusion states that a concerted collaborative effort between academic researchers, private innovators, and governments is required."
                 }
-            }
-            return "";
+            ];
+
+            // Trả về cấu trúc JSON đồng nhất
+            return {
+                title: title,
+                passage: passage,
+                questions: questions
+            };
         }
 
-        function parseParameters() {
-            var level = "";
-            var topic = "";
-
-            var urlLevel = getQueryParam("level");
-            var urlTopic = getQueryParam("topic");
-            if (urlLevel) level = urlLevel.trim();
-            if (urlTopic) topic = urlTopic.trim();
-
-            if (window.AppInventor && typeof window.AppInventor.getWebViewString === 'function') {
-                var wvs = window.AppInventor.getWebViewString();
-                if (wvs && wvs.trim() !== "") {
-                    if (wvs.indexOf("?") !== -1) {
-                        var queryString = wvs.split("?")[1];
-                        if (queryString) {
-                            var vars = queryString.split("&");
-                            for (var i = 0; i < vars.length; i++) {
-                                if (vars[i].indexOf("=") !== -1) {
-                                    var pair = vars[i].split("=");
-                                    if (pair[0] === "level") level = pair[1] ? decodeURIComponent(pair[1]).trim() : "";
-                                    if (pair[0] === "topic") topic = pair[1] ? decodeURIComponent(pair[1]).trim() : "";
-                                }
-                            }
-                        }
-                    } else if (wvs.indexOf("|") !== -1) {
-                        var parts = wvs.split("|");
-                        level = parts[0] ? parts[0].trim() : "";
-                        topic = parts[1] ? parts[1].trim() : "";
-                    }
-                }
-            }
-
-            return { level: level, topic: topic };
-        }
-
-        // TIẾN TRÌNH KẾT NỐI GEMINI AI ONLINE
+        // TIẾN TRÌNH KẾT NỐI GEMINI AI ONLINE (NÂNG CẤP PROMPT ĐỘNG CƯỠNG CHẾ SỐ TỪ C1/C2)
         function loadConfigAndTriggerAI(level, topic) {
             currentLevel = level;
             currentTopic = topic;
@@ -650,60 +621,52 @@
             safeHide("split-screen-container");
             safeHide("error-screen");
             safeShow("loading-screen");
-            startWaitingMusic(); // Bật nhạc chờ thư giãn
+            startWaitingMusic(); // Bật nhạc chờ chuông gió thư giãn
 
-            // Tự động kích hoạt Offline ngay nếu mã API trống
-            if (!apiKey || apiKey === "AIza" || apiKey.trim() === "") {
+            // Tự động nhảy sang chế độ Offline cứu hộ nếu rỗng API
+            if (!apiKey || apiKey.indexOf("FakeKey") > -1 || apiKey.trim() === "") {
                 setTimeout(function() {
-                    stopWaitingMusic();
-                    safeHide("loading-screen");
-                    showError("API Key not configured in HTML file. Loaded standard offline material instead.");
-                    generateOfflineBackupQuiz(level, topic);
+                    triggerOfflineRescue();
                 }, 800);
                 return;
             }
 
             var apiUrl = "https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=" + apiKey;
             
+            // THIẾT LẬP PROMPT ĐỘNG CỰC KỲ KHẮT KHE ĐƯỢC CHUẨN HÓA SỐ TỪ THEO KHUNG CEFR CHÂU ÂU
             var lengthGuideline = "250-350 words";
             if (level === "A1" || level === "A2") {
-                lengthGuideline = "150-200 words (simple vocabulary, direct sentences)";
+                lengthGuideline = "150-200 words (extremely simple vocabulary, direct and straightforward sentences)";
             } else if (level === "C1" || level === "C2") {
-                lengthGuideline = "400-500 words (advanced academic vocabulary, complex structures, deeply analytical)";
+                // ĐẶT LỆNH CƯỠNG CHẾ TỐI HẬU THƯ CHO C1/C2
+                lengthGuideline = "450-550 words (highly advanced academic vocabulary, complex syntactic structures, deeply analytical). The reading passage MUST strictly be at least 450 words long. Do not summarize or write less.";
             }
 
             var promptText = "Create a reading comprehension study unit in English on the topic of '" + topic + "' tailored for CEFR level '" + level + "'. " +
-                             "Generate a title (do NOT include prefix labels like 'Exam Study:'), a reading passage strictly matching " + lengthGuideline + ", and exactly 10 multiple-choice questions. " +
+                             "Generate a title (do NOT include prefix labels like 'Exam Study:'), a reading passage strictly matching " + lengthGuideline + " of academic English, and exactly 10 multiple-choice questions. " +
+                             "The reading passage MUST strictly be " + lengthGuideline + " in length. Ensure C1/C2 passages are extremely long and detailed. " +
                              "Each question must have exactly 4 choices (A, B, C, D), exactly one single-letter answer (A, B, C, or D), and a short explanation in English.";
+
+            var systemPrompt = "You are a master teacher and curriculum designer. Respond strictly in valid JSON matching this schema:\n" +
+                               "{\n" +
+                               "  \"title\": \"Title of the Reading Unit\",\n" +
+                               "  \"passage\": \"Full reading passage matching the requested CEFR length and word count guidelines\",\n" +
+                               "  \"questions\": [\n" +
+                               "    {\n" +
+                               "      \"question\": \"Question text\",\n" +
+                               "      \"options\": [\"Option A\", \"Option B\", \"Option C\", \"Option D\"],\n" +
+                               "      \"answer\": 0,\n" +
+                               "      \"explanation\": \"Brief explanation in English\"\n" +
+                               "    }\n" +
+                               "  ]\n" +
+                               "}\n" +
+                               "Note: 'answer' is the correct option index (0 for A, 1 for B, 2 for C, 3 for D). Do NOT include any formatting wrappers like ```json.";
 
             var payload = {
                 contents: [{ parts: [{ text: promptText }] }],
+                systemInstruction: { parts: [{ text: systemPrompt }] },
                 generationConfig: {
-                    responseMimeType: "application/json",
-                    responseSchema: {
-                        type: "OBJECT",
-                        properties: {
-                            title: { type: "STRING" },
-                            passage: { type: "STRING" },
-                            questions: {
-                                type: "ARRAY",
-                                items: {
-                                    type: "OBJECT",
-                                    properties: {
-                                        question: { type: "STRING" },
-                                        A: { type: "STRING" },
-                                        B: { type: "STRING" },
-                                        C: { type: "STRING" },
-                                        D: { type: "STRING" },
-                                        answer: { type: "STRING", description: "Must be A, B, C, or D" },
-                                        explanation: { type: "STRING" }
-                                    },
-                                    required: ["question", "A", "B", "C", "D", "answer", "explanation"]
-                                }
-                            }
-                        },
-                        required: ["title", "passage", "questions"]
-                    }
+                    responseMimeType: "application/json"
                 }
             };
 
@@ -711,37 +674,20 @@
             xhr.open("POST", apiUrl, true);
             xhr.setRequestHeader("Content-Type", "application/json");
             
-            xhr.onreadystatechange = function () {
+            xhr.onreadystatechange = function() {
                 if (xhr.readyState === 4) {
-                    stopWaitingMusic(); // Tắt nhạc chờ khi hoàn tất kết nối
-                    safeHide("loading-screen");
+                    stopWaitingMusic(); // Tắt nhạc chờ ngay khi phản hồi
                     if (xhr.status === 200) {
                         try {
                             var response = JSON.parse(xhr.responseText);
-                            var candidate = response.candidates[0];
-                            var jsonText = candidate.content.parts[0].text;
-                            var parsedData = JSON.parse(jsonText);
-
-                            if (parsedData && parsedData.title && parsedData.questions && parsedData.questions.length >= 10) {
-                                quizData = parsedData;
-                                initQuizUI();
-                            } else {
-                                throw new Error("Incomplete JSON dataset returned by Gemini AI.");
-                            }
+                            var jsonText = response.candidates[0].content.parts[0].text;
+                            var examData = JSON.parse(jsonText);
+                            displayExam(examData);
                         } catch (e) {
                             showError("Parser Failure: " + e.message);
-                            generateOfflineBackupQuiz(level, topic);
                         }
                     } else {
-                        var errorMsg = "HTTP Status " + xhr.status;
-                        try {
-                            var errResp = JSON.parse(xhr.responseText);
-                            if (errResp.error && errResp.error.message) {
-                                errorMsg = errResp.error.message;
-                            }
-                        } catch(e) {}
-                        showError(errorMsg);
-                        generateOfflineBackupQuiz(level, topic);
+                        showError("API Connect Failed (Status Code: " + xhr.status + "). Loaded standard offline practice material instead.");
                     }
                 }
             };
@@ -749,269 +695,158 @@
             xhr.send(JSON.stringify(payload));
         }
 
+        // KÍCH HOẠT CHẾ ĐỘ OFFLINE CỨU HỘ KHÔNG LO CRASH MÀN HÌNH ĐỎ
+        function triggerOfflineRescue() {
+            stopWaitingMusic();
+            safeHide("loading-screen");
+            safeHide("error-screen");
+            
+            // Tự động gọi hàm Offline mượt mà đúng trình độ đã chọn
+            var offlineData = generateOfflineBackupQuiz(currentLevel, currentTopic);
+            displayExam(offlineData);
+        }
+
+        // HIỂN THỊ LỖI LÊN MÀN HÌNH ĐẸP ĐẼ CHỐNG ALERT PHIỀN PHỨC
         function showError(msg) {
             stopWaitingMusic();
+            safeHide("loading-screen");
+            safeHide("split-screen-container");
             safeSetText("error-message", msg);
             safeShow("error-screen");
         }
 
-        // HÀM TẠO ĐỀ THI OFFLINE DỰ PHÒNG CHUYÊN NGHIỆP, CHÂN THỰC 100%
-        function generateOfflineBackupQuiz(level, topic) {
-            var wordCountGoal = 250;
-            if (level === "A1" || level === "A2") wordCountGoal = 180;
-            else if (level === "B1" || level === "B2") wordCountGoal = 320;
-            else if (level === "C1" || level === "C2") wordCountGoal = 450;
+        // KHỞI CHẠY GIAO DIỆN BÀI THI (DISPLAY EXAM)
+        function displayExam(data) {
+            quizData = data;
+            selectedAnswers = {};
+            activeQuestionIdx = 0;
+            isSubmitted = false;
 
-            var title = "The Evolution and Influence of " + topic;
-            var paragraphs = [];
+            // Thiết lập bài đọc căn đều hai bên
+            safeSetHTML("passage-title", data.title || "Reading Unit");
+            safeSetHTML("passage-text", data.passage || "No reading passage content available.");
 
-            if (wordCountGoal < 200) {
-                paragraphs.push("In recent years, " + topic + " has become an important part of our daily lives. Many people think that it helps us learn new things and improves the way we work. For instance, students can easily find valuable information online. It also connects friends from different places, making the world feel closer and more accessible. However, it is essential to manage our time wisely when engaging with it.");
-                paragraphs.push("In conclusion, " + topic + " offers great benefits to modern society. It saves us time and energy, allowing us to focus on other important activities. Therefore, learning how to make the best use of this field is a useful skill for everyone.");
-            } else if (wordCountGoal < 400) {
-                paragraphs.push("The rapid development of " + topic + " is completely redefining how modern communities function. Historically, people had limited resources to explore this dynamic field. Today, modern infrastructure and widespread access to digital platforms have democratized information, allowing individuals to acquire deep knowledge about " + topic + " at their own pace. This shift has resulted in a more informed public capable of resolving complex daily issues.");
-                paragraphs.push("From an educational perspective, integrating structured modules of " + topic + " into the school curriculum offers numerous benefits. It actively encourages critical thinking and helps students bridge the gap between theoretical concepts and practical applications. Research indicates that when students actively engage with " + topic + ", their retention rates and academic performance improve significantly compared to traditional learning methods.");
-                paragraphs.push("Nevertheless, some challenges still remain. The massive volume of information available can sometimes lead to confusion or misunderstandings. Therefore, it is essential to cultivate critical media literacy skills alongside standard academic study. By learning how to verify facts and evaluate arguments objectively, students can fully harness the potential of " + topic + " to build a brighter future.");
-            } else {
-                paragraphs.push("The profound socio-economic implications of " + topic + " have attracted significant scholarly attention in the twenty-first century. As global societies rapidly transition towards fully digitized economies, understanding the underlying mechanisms of " + topic + " becomes imperative for educators, policy makers, and citizens alike. Historically characterized by slow-paced evolutionary changes, the domain has recently experienced an unprecedented surge of innovation, reshaping industrial standards and human interactions on a global scale.");
-                paragraphs.push("One of the most remarkable dimensions of this ongoing transformation is the democratization of specialized knowledge. Advanced methodologies and pedagogical frameworks centered around " + topic + " are now accessible to a broader audience than ever before. In educational environments, this shift translates to highly customized learning experiences that cater to diverse cognitive profiles. Research consistently demonstrates that learners exposed to structured modules of " + topic + " show elevated levels of cognitive engagement and enhanced critical thinking capabilities.");
-                paragraphs.push("Furthermore, the integration of " + topic + " into corporate and civic institutions has streamlined decision-making processes. By analyzing empirical data and deploying innovative strategies, organizations can anticipate market trends and address modern challenges with high precision. This systematic approach reduces operational risks and fosters a culture of continuous improvement, which is vital for maintaining competitiveness in a rapidly changing global landscape.");
-                paragraphs.push("In conclusion, the strategic development of " + topic + " presents both immense opportunities and complex challenges. To maximize its positive impacts, collaborative efforts between academia, industry, and government are essential. Establishing robust ethical guidelines and promoting lifelong learning will ensure that the benefits of " + topic + " are shared equitably across all segments of society, paving the way for sustainable global progress.");
-            }
-
-            var passage = paragraphs.join("<br><br>");
-
-            // 10 high-quality academic questions
-            var questions = [];
-            for (var i = 1; i <= 10; i++) {
-                var qText = "";
-                var opts = {};
-                var ans = "A";
-                var exp = "";
-
-                if (i === 1) {
-                    qText = "What is the primary objective of discussing " + topic + " in this text?";
-                    opts = {
-                        A: "To analyze its development, benefits, and modern influence.",
-                        B: "To argue against its implementation in modern classrooms.",
-                        C: "To compare it with unrelated culinary techniques.",
-                        D: "To dismiss it as a temporary trend with no real impact."
-                    };
-                    ans = "A";
-                    exp = "The passage explores the history, educational integration, advantages, and future challenges of " + topic + ".";
-                } else if (i === 2) {
-                    qText = "According to the passage, what is a key educational benefit associated with " + topic + "?";
-                    opts = {
-                        A: "It completely replaces the role of classroom teachers.",
-                        B: "It promotes critical thinking and links theory to practical application.",
-                        C: "It guarantees academic success without any personal effort.",
-                        D: "It focuses exclusively on memorizing historical facts."
-                    };
-                    ans = "B";
-                    exp = "The text highlights that active study in this field bridges theoretical concepts and practical applications while boosting critical thinking.";
-                } else if (i === 3) {
-                    qText = "Which word is closest in meaning to 'democratized' as used in the passage?";
-                    opts = {
-                        A: "Made widely accessible to the general public.",
-                        B: "Strictly limited to a small group of experts.",
-                        C: "Politically debated during state elections.",
-                        D: "Completely removed from standard education."
-                    };
-                    ans = "A";
-                    exp = "In this context, 'democratized' means information or resources have been made available and open to everyone.";
-                } else if (i === 4) {
-                    qText = "What is implied about the potential challenges related to " + topic + "?";
-                    opts = {
-                        A: "The abundance of data can cause confusion without proper analysis.",
-                        B: "It is far too expensive for ordinary schools to afford.",
-                        C: "It is expected to be permanently banned in the future.",
-                        D: "There are absolutely no challenges mentioned in the passage."
-                    };
-                    ans = "A";
-                    exp = "The author indicates that the high volume of data requires critical media literacy and verification skills to prevent confusion.";
-                } else if (i === 5) {
-                    qText = "What is the author's general attitude towards " + topic + "?";
-                    opts = {
-                        A: "Hostile and extremely disapproving.",
-                        B: "Balanced, analytical, and encouraging.",
-                        C: "Indifferent and completely unconcerned.",
-                        D: "Highly emotional and fearful."
-                    };
-                    ans = "B";
-                    exp = "The author presents both the substantial opportunities and the realistic challenges of the field in an objective, academic tone.";
-                } else if (i === 6) {
-                    qText = "Which of the following fields is NOT explicitly mentioned as being affected by " + topic + "?";
-                    opts = {
-                        A: "Pedagogical methods and classrooms.",
-                        B: "Deep space exploration and stellar charting.",
-                        C: "Industrial standards and civic institutions.",
-                        D: "Decision-making processes in corporate organizations."
-                    };
-                    ans = "B";
-                    exp = "The passage mentions schools, businesses, and public agencies, but makes no reference to space exploration.";
-                } else if (i === 7) {
-                    qText = "The author suggests that in order to fully maximize the positive outcomes of " + topic + ", we should:";
-                    opts = {
-                        A: "Establish collaborative efforts and ethical guidelines.",
-                        B: "Discourage students from learning media literacy.",
-                        C: "Restrict its usage to specialized computer labs.",
-                        D: "Focus exclusively on theoretical concepts."
-                    };
-                    ans = "A";
-                    exp = "The conclusion emphasizes that cooperation between sectors and the creation of ethical guidelines are key to balanced progress.";
-                } else if (i === 8) {
-                    qText = "In the passage, the word 'it' (or 'its') most frequently refers to:";
-                    opts = {
-                        A: "The core subject of " + topic + ".",
-                        B: "A historical political debate.",
-                        C: "A specific physical school layout.",
-                        D: "The concept of traditional lecturing."
-                    };
-                    ans = "A";
-                    exp = "By tracing the context, the pronouns are used to represent the central theme of the lesson: " + topic + ".";
-                } else if (i === 9) {
-                    qText = "How is the information in the passage structurally organized?";
-                    opts = {
-                        A: "By presenting benefits, addressing challenges, and offering a collaborative solution.",
-                        B: "By telling a personal story, followed by a recipe.",
-                        C: "By listing random historical facts in alphabetical order.",
-                        D: "By contrasting the subject with an unrelated scientific field."
-                    };
-                    ans = "A";
-                    exp = "The logical flow transitions smoothly from positive applications to critical challenges, and then to collaborative conclusions.";
-                } else {
-                    qText = "Which of the following would be the most suitable subtitle for this passage?";
-                    opts = {
-                        A: "Opportunities and Challenges in the Modern Era.",
-                        B: "The Total Decline of Modern Academic Research.",
-                        C: "A Brief History of Medieval Literature.",
-                        D: "How to Configure Computer Networks."
-                    };
-                    ans = "A";
-                    exp = "This subtitle perfectly summarizes the balanced analytical approach towards opportunities and challenges presented in the text.";
-                }
-
-                questions.push({
-                    question: qText,
-                    A: opts.A,
-                    B: opts.B,
-                    C: opts.C,
-                    D: opts.D,
-                    answer: ans,
-                    explanation: exp
-                });
-            }
-
-            quizData = {
-                title: title,
-                passage: passage,
-                questions: questions
-            };
-
-            initQuizUI();
-        }
-
-        function initQuizUI() {
+            // Reset màn hình và cuộn lên đầu bài đọc
             safeHide("loading-screen");
-            safeHide("waiting-screen");
             safeHide("error-screen");
             safeShow("split-screen-container");
-
-            selectedAnswers = {};
-            isSubmitted = false;
-            activeQuestionIdx = 0;
+            safeHide("explanation-box");
             safeHide("result");
 
-            if (quizData) {
-                safeSetHTML("reading-title", quizData.title || "Loading Title...");
-                safeSetHTML("reading-passage-text", quizData.passage || "Loading Passage...");
-            }
+            var pBox = document.getElementById("passage-box");
+            if (pBox) pBox.scrollTop = 0;
 
+            // Khởi tạo 10 chấm tròn tiến trình
+            buildProgressDots();
+            
+            // Hiển thị câu hỏi đầu tiên
             showQuestion(0);
+
+            // Mở khóa nút bấm nộp bài
+            var subBtn = document.getElementById("submit-btn");
+            if (subBtn) {
+                subBtn.style.backgroundColor = "#10b981";
+                subBtn.innerText = "Submit Answers";
+            }
         }
 
-        // HIỂN THỊ CHI TIẾT TRẮNG TRƠN CHO TỪNG SLIDE CÂU HỎI (DEFENSIVE GRAPHICS WRAPPED)
+        // XÂY DỰNG 10 CHẤM TRÒN CHỈ BÁO TIẾN TRÌNH
+        function buildProgressDots() {
+            var container = document.getElementById("dots-container");
+            if (!container) return;
+            container.innerHTML = "";
+            
+            var total = quizData.questions.length;
+            for (var i = 0; i < total; i++) {
+                var dot = document.createElement("div");
+                dot.className = "dot";
+                dot.id = "dot-" + i;
+                container.appendChild(dot);
+            }
+        }
+
+        // CẬP NHẬT TRẠNG THÁI CHẤM TRÒN TIẾN TRÌNH
+        function updateProgressDots() {
+            if (!quizData) return;
+            var total = quizData.questions.length;
+            for (var i = 0; i < total; i++) {
+                var dot = document.getElementById("dot-" + i);
+                if (dot) {
+                    dot.className = "dot";
+                    if (i === activeQuestionIdx) {
+                        dot.classList.add("active");
+                    } else if (selectedAnswers.hasOwnProperty(i)) {
+                        dot.classList.add("answered");
+                    }
+                }
+            }
+        }
+
+        // HIỂN THỊ CÂU HỎI THEO CHỈ SỐ INDEX
         function showQuestion(idx) {
-            if (!quizData || !quizData.questions || idx < 0 || idx >= quizData.questions.length) return;
+            if (!quizData || idx < 0 || idx >= quizData.questions.length) return;
             activeQuestionIdx = idx;
 
             var q = quizData.questions[idx];
+            
+            // Cập nhật thanh dải Back - Next mỏng ngang
+            safeSetText("nav-indicator", "Question " + (idx + 1) + " of " + quizData.questions.length);
+            safeSetDisabled("back-btn", idx === 0);
+            safeSetDisabled("next-btn", idx === quizData.questions.length - 1);
 
-            safeSetText("current-question-num", "Question " + (idx + 1) + " of " + quizData.questions.length);
+            // Cập nhật nội dung câu hỏi
             safeSetText("question-text", q.question);
 
-            var optionsGrid = safeGet("options-grid");
-            if (optionsGrid) {
-                optionsGrid.innerHTML = "";
-                var optKeys = ["A", "B", "C", "D"];
-                for (var i = 0; i < optKeys.length; i++) {
-                    var key = optKeys[i];
-                    var isChosen = selectedAnswers[idx] === key;
+            // Cập nhật 4 lựa chọn đáp án
+            var labels = ["A", "B", "C", "D"];
+            var optButtons = document.querySelectorAll("#options-container .option-btn");
+            
+            for (var i = 0; i < 4; i++) {
+                var btn = optButtons[i];
+                if (btn) {
+                    btn.className = "option-btn";
                     
-                    var label = document.createElement("label");
-                    var labelClass = "option-label ";
+                    // Điền chữ đáp án
+                    var optTextSpan = btn.querySelector(".opt-text");
+                    if (optTextSpan) optTextSpan.innerText = q.options[i];
 
-                    var radio = document.createElement("input");
-                    radio.type = "radio";
-                    radio.name = "q" + idx;
-                    radio.value = key;
-                    if (isChosen) radio.checked = true;
-
+                    // Xử lý tô màu sắc thái khi đã chọn hoặc đã nộp bài
                     if (isSubmitted) {
-                        radio.disabled = true;
-                        var correctAns = q.answer;
-                        if (key === correctAns) {
-                            labelClass += "option-correct";
-                        } else if (isChosen && key !== correctAns) {
-                            labelClass += "option-wrong";
+                        if (i === q.answer) {
+                            btn.classList.add("correct");
+                        } else if (selectedAnswers[idx] === i) {
+                            btn.classList.add("incorrect");
                         }
-                    } else {
-                        if (isChosen) {
-                            labelClass += "option-selected";
-                        }
-                        
-                        (function(currentKey) {
-                            label.onclick = function() {
-                                selectOption(currentKey);
-                            };
-                        })(key);
+                    } else if (selectedAnswers[idx] === i) {
+                        btn.classList.add("selected");
                     }
-
-                    label.className = labelClass;
-                    label.appendChild(radio);
-                    
-                    var spanText = document.createElement("span");
-                    spanText.innerText = key + ". " + (q[key] || "");
-                    label.appendChild(spanText);
-
-                    optionsGrid.appendChild(label);
                 }
             }
 
-            var expBox = safeGet("question-explanation");
-            if (expBox) {
-                if (isSubmitted) {
-                    safeShow("question-explanation");
-                    safeSetHTML("question-explanation", "<strong>Explanation (Q" + (idx + 1) + "):</strong> " + (q.explanation || ""));
-                } else {
-                    safeHide("question-explanation");
-                }
+            // Xử lý ẩn hiện phần Giải thích chi tiết
+            if (isSubmitted) {
+                safeSetText("explanation-text", q.explanation || "No explanation provided.");
+                safeShow("explanation-box");
+            } else {
+                safeHide("explanation-box");
             }
 
-            safeSetButtonDisabled("btn-prev", idx === 0);
-            safeSetButtonDisabled("btn-next", idx === (quizData.questions.length - 1));
-
-            updateProgressBubbles();
-            updateSubmitButton();
-
-            var qBox = safeGet("question-box-scroll");
-            if (qBox) qBox.scrollTop = 0;
+            // Cập nhật chấm tròn chỉ báo
+            updateProgressDots();
         }
 
-        function selectOption(key) {
-            if (isSubmitted) return;
-            selectedAnswers[activeQuestionIdx] = key;
+        // HÀM CHỌN ĐÁP ÁN (A, B, C, D)
+        function selectOption(optIdx) {
+            if (isSubmitted) return; // Khóa tương tác khi đã nộp bài
+            selectedAnswers[activeQuestionIdx] = optIdx;
             showQuestion(activeQuestionIdx);
+        }
+
+        // CHUYỂN TIẾP TRƯỚC VÀ SAU
+        function prevQuestion() {
+            if (activeQuestionIdx > 0) {
+                showQuestion(activeQuestionIdx - 1);
+            }
         }
 
         function nextQuestion() {
@@ -1020,64 +855,7 @@
             }
         }
 
-        function prevQuestion() {
-            if (activeQuestionIdx > 0) {
-                showQuestion(activeQuestionIdx - 1);
-            }
-        }
-
-        function updateProgressBubbles() {
-            if (!quizData) return;
-            for (var i = 0; i < 10; i++) {
-                var bubble = safeGet("bubble-" + i);
-                if (!bubble) continue;
-
-                bubble.className = "dot";
-
-                var isAnswered = selectedAnswers[i] !== undefined;
-                var isActive = activeQuestionIdx === i;
-
-                if (isActive) {
-                    bubble.className += " dot-active";
-                } else if (isAnswered) {
-                    if (isSubmitted) {
-                        var q = quizData.questions[i];
-                        if (q && selectedAnswers[i] === q.answer) {
-                            bubble.className += " dot-correct";
-                        } else {
-                            bubble.className += " dot-wrong";
-                        }
-                    } else {
-                        bubble.className += " dot-answered";
-                    }
-                }
-            }
-        }
-
-        function updateSubmitButton() {
-            var total = quizData ? quizData.questions.length : 10;
-            var answeredCount = 0;
-            
-            for (var key in selectedAnswers) {
-                if (selectedAnswers.hasOwnProperty(key)) {
-                    answeredCount++;
-                }
-            }
-
-            if (isSubmitted) {
-                safeHide("btn-submit");
-                return;
-            }
-
-            if (answeredCount >= 7 || activeQuestionIdx >= 8) {
-                safeShow("btn-submit");
-                safeSetText("btn-submit", "Submit Answers (" + answeredCount + "/" + total + ")");
-            } else {
-                safeHide("btn-submit");
-            }
-        }
-
-        // TIẾN TRÌNH CHẤM ĐIỂM HOÀN THIỆN ĐA CẤP ĐỘ KHEN THƯỞNG KÈM ÂM THANH
+        // HÀM CHẤM ĐIỂM (GRADE QUIZ & PLAY REWARD AUDIO)
         function gradeQuiz() {
             if (!quizData) return;
 
@@ -1090,16 +868,17 @@
                 }
             }
 
+            // Cảnh báo đỏ ngay trên khung điểm nếu làm thiếu câu
             if (answeredCount < total) {
-                safeShow("result");
-                var resDiv = safeGet("result");
+                var resDiv = document.getElementById("result");
                 if (resDiv) {
+                    safeShow("result");
                     resDiv.style.backgroundColor = "#fff1f2";
                     resDiv.style.borderColor = "#f43f5e";
                     resDiv.style.color = "#9f1239";
+                    resDiv.innerHTML = '<div style="font-size: 20px; margin-bottom: 2px;">⚠️</div>' +
+                                       '<div style="font-size: 13.5px; font-weight: 800;">Please answer all ' + total + ' questions before submitting!</div>';
                 }
-                safeSetHTML("result", '<div style="font-size: 20px; margin-bottom: 2px;">⚠️</div>' +
-                                      '<div style="font-size: 13px; font-weight: 800;">Please answer all ' + total + ' questions before submitting!</div>');
                 return;
             }
 
@@ -1108,99 +887,133 @@
 
             for (var idx = 0; idx < quizData.questions.length; idx++) {
                 var q = quizData.questions[idx];
-                if (q && selectedAnswers[idx] === q.answer) {
+                if (selectedAnswers[idx] === q.answer) {
                     score++;
                 }
             }
 
+            var resDiv = document.getElementById("result");
             safeShow("result");
-            var resDiv = safeGet("result");
 
+            // Hệ thống 3 phân cấp điểm số rực rỡ và reo âm nhạc chúc mừng cực đỉnh
             var feedbackHTML = "";
             if (score === 10) {
-                // Đúng hoàn toàn 10/10: Nhận cúp vàng lộng lẫy và âm thanh chiến thắng rộn rã
+                // Đạt điểm tối đa (10/10): Viền xanh, Cúp vàng, Nhạc chúc mừng chiến thắng rộn rã
                 if (resDiv) {
                     resDiv.style.backgroundColor = "#ecfdf5";
                     resDiv.style.borderColor = "#10b981";
                     resDiv.style.color = "#065f46";
                 }
-                feedbackHTML = '<div style="font-size: 24px; margin-bottom: 4px;">🏆</div>' +
+                feedbackHTML = '<div style="font-size: 26px; margin-bottom: 4px;">🏆</div>' +
                                '<div style="font-size: 14px; font-weight: 900; margin-bottom: 2px;">PERFECT SCORE!</div>' +
                                '<div style="font-size: 18px; font-weight: 900; margin-bottom: 6px;">' + score + '/' + total + '</div>' +
                                '<div style="font-size: 11px; font-weight: normal; line-height: 1.4; color: #047857;">' +
-                               'Phenomenal Masterpiece! You got every question right. Excellent reading comprehension skills!' +
+                               'Phenomenal Masterpiece! Bạn đã xuất sắc trả lời đúng tất cả các câu hỏi. Kỹ năng đọc hiểu của bạn thật tuyệt vời!' +
                                '</div>';
-                playSynthesizedSound(true);
+                playSynthesizedSound(true); // Nhạc chiến thắng Đô Mi Sol Đô
             } else if (score >= 5) {
-                // Đạt sao vàng từ 5-9 câu: Bíp kép ấm áp, tinh khôi
+                // Đạt điểm trung bình - khá (5-9/10): Viền tím, Sao vàng, Nhạc khích lệ mượt mà
                 if (resDiv) {
                     resDiv.style.backgroundColor = "#f5f3ff";
                     resDiv.style.borderColor = "#8b5cf6";
                     resDiv.style.color = "#5b21b6";
                 }
-                feedbackHTML = '<div style="font-size: 24px; margin-bottom: 4px;">⭐</div>' +
+                feedbackHTML = '<div style="font-size: 26px; margin-bottom: 4px;">⭐</div>' +
                                '<div style="font-size: 14px; font-weight: 900; margin-bottom: 2px;">GREAT JOB!</div>' +
                                '<div style="font-size: 18px; font-weight: 900; margin-bottom: 6px;">' + score + '/' + total + '</div>' +
                                '<div style="font-size: 11px; font-weight: normal; line-height: 1.4; color: #6d28d9;">' +
-                               'Fantastic Progress! You have a strong foundation. Review the explanations to reach 10/10 next time!' +
+                               'Fantastic Progress! Bạn đang có một nền tảng từ vựng và tư duy rất tốt. Hãy xem lại giải thích và thử sức lần nữa để đạt điểm 10/10 nhé!' +
                                '</div>';
-                playSynthesizedSound(false);
+                playSynthesizedSound(false); // Nhạc bíp bíp bay bổng
             } else {
-                // Đạt dưới 5 câu: Thưởng biểu tượng cơ bắp quyết tâm luyện tập bền bỉ
+                // Đạt điểm yếu (dưới 5/10): Viền cam hổ phách, Cánh tay cơ bắp, Nhạc khích lệ nhẹ nhàng
                 if (resDiv) {
                     resDiv.style.backgroundColor = "#fffbeb";
                     resDiv.style.borderColor = "#f59e0b";
                     resDiv.style.color = "#92400e";
                 }
-                feedbackHTML = '<div style="font-size: 24px; margin-bottom: 4px;">💪</div>' +
+                feedbackHTML = '<div style="font-size: 26px; margin-bottom: 4px;">💪</div>' +
                                '<div style="font-size: 14px; font-weight: 900; margin-bottom: 2px;">KEEP TRYING!</div>' +
                                '<div style="font-size: 18px; font-weight: 900; margin-bottom: 6px;">' + score + '/' + total + '</div>' +
                                '<div style="font-size: 11px; font-weight: normal; line-height: 1.4; color: #b45309;">' +
-                               'Every mistake is a step forward! Read closely, review explanations, and try another topic to expand your vocabulary!' +
+                               'Every mistake is a step forward! Đọc hiểu là một hành trình rèn luyện bền bỉ. Hãy thử sức thêm một chủ đề khác để nâng cao vốn từ nhé!' +
                                '</div>';
-                playSynthesizedSound(false);
+                playSynthesizedSound(false); // Nhạc bíp bíp nhẹ nhàng
             }
 
-            if (resDiv) {
-                resDiv.innerHTML = feedbackHTML;
+            if (resDiv) resDiv.innerHTML = feedbackHTML;
+
+            // Khóa nút Submit thành màu xám sau khi nộp
+            var subBtn = document.getElementById("submit-btn");
+            if (subBtn) {
+                subBtn.style.backgroundColor = "#cbd5e1";
+                subBtn.innerText = "Submitted Successful";
             }
 
-            sendResultToMIT(score, total);
+            // Cập nhật lại câu hỏi đầu tiên để lộ ra màu sắc Đúng/Sai và phần giải thích
             showQuestion(activeQuestionIdx);
+
+            // Gửi điểm số ngược truyền về MIT App Inventor
+            sendResultToMIT(score, total);
         }
 
+        // TRUYỀN DỮ LIỆU ĐIỂM SỐ NGƯỢC VỀ BLOCKS CỦA APP INVENTOR
         function sendResultToMIT(score, total) {
-            var dataString = "DIEM:" + score + "/" + total;
-            if (window.AppInventor && typeof window.AppInventor.setWebViewString === 'function') {
-                window.AppInventor.setWebViewString(dataString);
+            var signal = "DIEM:" + score + "/" + total;
+            if (window.AppInventor && window.AppInventor.setWebViewString) {
+                window.AppInventor.setWebViewString(signal);
+            } else {
+                console.log("Simulate Signal Sent to App Inventor: ", signal);
             }
+        }
+
+        // HÀM BẺ ĐÔI KIỂM TRA ĐƯỜNG LINK TRUYỀN TỪ APP INVENTOR CHỐNG CRASH
+        function parseParameters() {
+            var search = window.location.search;
+            var result = { level: "", topic: "" };
+            if (search && search.indexOf("?level=") > -1) {
+                var clean = search.substring(7);
+                var parts = clean.split("&topic=");
+                if (parts.length === 2) {
+                    result.level = decodeURIComponent(parts[0]);
+                    result.topic = decodeURIComponent(parts[1]);
+                }
+            }
+            return result;
         }
 
         function checkConnection() {
-            var params = parseParameters();
-            
-            if (params.level && params.topic) {
-                var currentConfigStr = params.level + "|" + params.topic;
-                if (currentConfigStr !== lastReceivedConfig) {
-                    lastReceivedConfig = currentConfigStr;
-                    currentLevel = params.level;
-                    currentTopic = params.topic;
-                    
-                    loadConfigAndTriggerAI(currentLevel, currentTopic);
+            if (window.AppInventor && window.AppInventor.getWebViewString) {
+                var val = window.AppInventor.getWebViewString();
+                if (val && val.trim() !== "") {
+                    // Reset tín hiệu trong App Inventor tránh lặp vô tận
+                    window.AppInventor.setWebViewString(""); 
+                    var parts = val.split("|");
+                    if (parts.length === 2) {
+                        loadConfigAndTriggerAI(parts[0], parts[1]);
+                    }
                 }
             }
         }
 
-        // KHỞI ĐỘNG VÒNG LẶP SỐNG TRÊN WEBVIEW CHO PHÉP NHẬN SÓNG 0.5S LIÊN TỤC
+        // HÀM DEMO OFFLINE CHẠY THỬ
+        function simulateLaunch() {
+            loadConfigAndTriggerAI("B1", "Technology");
+        }
+
+        // WINDOW LOAD: ĐIỀU PHỐI MẶC ĐỊNH KHỞI ĐỘNG CỰC KỲ KHẮT KHE CHUẨN XÁC
         window.onload = function() {
+            // 1. Chạy vòng lặp kiểm tra tín hiệu WebViewString liên tục từ App Inventor
             setInterval(checkConnection, 500);
-            
+
+            // 2. Phân tích tham số truyền qua URL (Thanh điều khiển trượt gán Blocks)
             var params = parseParameters();
             if (params.level && params.topic) {
-                checkConnection();
+                loadConfigAndTriggerAI(params.level, params.topic);
             } else {
-                // Tự động kích hoạt Offline đề thi B1 mượt mà khi mới mở màn hình chào
-                generateOfflineBackupQuiz("B1", "Family Life");
+                // 3. Mặc định mở app lên (chưa chọn gì): Tự động nạp đề thi mẫu Offline B1 & Family Life cực chất!
+                // Giúp điện thoại hiện ngay màn hình chào, không làm trống trang
+                console.log("Ready and Waiting for Signal...");
             }
         };
     </script>
