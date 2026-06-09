@@ -176,12 +176,12 @@
             margin-bottom: 20px;
         }
 
-        /* ẨN NÚT TRÒN */
+        /* ẨN HOÀN TOÀN NÚT TRÒN THEO Ý THẦY */
         .option-item input[type="radio"] {
             display: none !important;
         }
 
-        /* Biến câu trả lời thành dạng thẻ hộp nút bấm sạch sẽ */
+        /* Biến câu trả lời thành dạng thẻ hộp nút bấm */
         .option-item {
             display: block;
             background: #F8FAFC;
@@ -249,7 +249,6 @@
 </head>
 <body>
 
-    <!-- KHỐI 1: MÀN HÌNH CHỜ -->
     <div id="welcome-message-block">
         <div class="welcome-card">
             <h1 class="welcome-title">Welcome to Reading Comprehension</h1>
@@ -257,14 +256,12 @@
         </div>
     </div>
         
-    <!-- KHỐI 2: HÌNH ẢNH TRƯỜNG -->
     <div id="welcome-image-block">
         <div class="school-image-container">
             <img src="Picture1.png" alt="School" class="school-image">
         </div>
     </div>
 
-    <!-- KHỐI THÔNG BÁO LỖI -->
     <div id="status-container">
         <div class="alert-box">
             <div style="color:var(--danger-color); font-weight:700; margin-bottom:8px;">❌ Connection Failed</div>
@@ -273,7 +270,6 @@
         </div>
     </div>
 
-    <!-- KHUNG HIỂN THỊ BÀI ĐỌC CHÍNH THỨC -->
     <div id="content-container">
         <div class="reading-card">
             <h2 class="article-title" id="render-title"></h2>
@@ -283,7 +279,6 @@
         <div class="quiz-card">
             <div id="render-questions"></div>
             
-            <!-- THANH ĐIỀU HƯỚNG CÙNG MỘT HÀNG NGANG -->
             <div class="quiz-navigation-bar">
                 <button type="button" class="btn-nav" id="btn-prev-quiz" onclick="navigateQuestion(-1)">Back</button>
                 <div class="nav-indicator" id="quiz-page-indicator">Question 1/10</div>
@@ -321,20 +316,18 @@
         }
 
         window.addEventListener('DOMContentLoaded', () => {
-            // TẠO ĐỘ TRỄ 0.5 GIÂY ĐỂ ĐỢI APP INVENTOR TRUYỀN LINK SANG 
+            // ĐỘ TRỄ CHUẨN ĐỂ NHẬN THAM SỐ TỪ APP INVENTOR
             setTimeout(() => {
                 const lvl = getURLParam('level');
                 const tpc = getURLParam('topic');
 
                 if (!lvl || !tpc) {
-                    // Nếu thực sự không bấm nút gì, giữ nguyên màn hình chờ
                     document.getElementById('welcome-message-block').style.display = 'flex';
                     document.getElementById('welcome-image-block').style.display = 'flex';
                     document.getElementById('content-container').style.display = 'none';
                     return;
                 }
                 
-                // Nếu có bấm Read up -> Ẩn ngay lập tức màn hình chờ và chạy ứng dụng
                 hideWelcomeElements();
                 executeMainPipeline(lvl, tpc);
             }, 500); 
@@ -361,7 +354,16 @@
                 const baseEndpoint = obfuscatedURL[0].split("").reverse().join("");
                 const apiURL = baseEndpoint + API_KEY_PART1 + finalPart2;
                 
-                const promptText = `Generate JSON for Level: ${level}, Topic: ${topic}...`;
+                // ĐÃ BỔ SUNG LẠI PROMPT CHUẨN ĐỂ AI KHÔNG BỊ PHẢN ỨNG TRƠ
+                const promptText = `You are an expert ESL test creator. Create an English reading comprehension test for Level: ${level} and Topic: ${topic}.
+Return ONLY a valid JSON object. Do not include markdown code blocks. Use this exact JSON template:
+{
+  "title": "Academic Title Here",
+  "text": "Full reading passage HTML here...",
+  "questions": [
+    {"q": "Question text here", "a": "Option A", "b": "Option B", "c": "Option C", "d": "Option D", "ans": "correct_option_letter"}
+  ]
+}`;
 
                 const response = await fetch(apiURL, {
                     method: 'POST',
@@ -373,11 +375,16 @@
 
                 const responseData = await response.json();
                 let rawText = responseData.candidates[0].content.parts[0].text.trim();
-                const cleanData = JSON.parse(rawText.replace(/```json|
-```/g, "").trim());
+                
+                if (rawText.startsWith("```json")) rawText = rawText.substring(7);
+                if (rawText.startsWith("```")) rawText = rawText.substring(3);
+                if (rawText.endsWith("```")) rawText = rawText.substring(0, rawText.length - 3);
+                
+                const cleanData = JSON.parse(rawText.trim());
                 renderExamContent(cleanData);
 
             } catch (error) {
+                console.error(error);
                 triggerErrorState();
             }
         }
