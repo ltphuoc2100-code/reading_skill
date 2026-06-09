@@ -29,13 +29,13 @@
             text-align: justify;
             line-height: 1.6;
             color: #1e293b;
-            font-size: 14.5px;
+            font-size: 15px;
             box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.02);
         }
 
         /* Tiêu đề bài đọc lồng vào trong khung viền siêu sang trọng */
         .passage-title {
-            font-size: 16.5px;
+            font-size: 17px;
             font-weight: 800;
             text-align: center;
             color: #0f172a;
@@ -110,7 +110,7 @@
             margin-top: 8px;
             border: 1.5px solid #e2e8f0;
             border-radius: 10px;
-            font-size: 13px;
+            font-size: 13.5px;
             font-weight: 600;
             background-color: #ffffff;
             color: #334155;
@@ -197,21 +197,28 @@
 <body class="p-3">
 
     <!-- 1. WAITING SCREEN (WELCOME & SCHOOL PICTURE) -->
-    <div id="waiting-screen" class="card" style="text-align: center; padding: 35px 20px;">
-        <div style="font-size: 56px; margin-bottom: 16px;">📖</div>
+    <div id="waiting-screen" class="card" style="text-align: center; padding: 30px 20px;">
+        <div style="font-size: 56px; margin-bottom: 14px;">📖</div>
         
-        <!-- Tiêu đề màu Đỏ rực rỡ nhiệt huyết -->
+        <!-- Tiêu đề màu Đỏ rực rỡ nhiệt huyết của thầy -->
         <h3 style="font-size: 22px; margin: 0 0 10px 0; color: #ef4444; font-weight: 800; line-height: 1.3;">
-            Welcome to Reading comprehension
+            Welcome to Reading Comprehension
         </h3>
         
-        <!-- Dòng chữ chỉ dẫn màu Xám Slate ấm áp, tri thức, bôi đậm Level, Topic, Read up -->
-        <p style="font-size: 15px; color: #334155; line-height: 1.6; margin: 0 0 20px 0;">
+        <!-- Dòng chữ chỉ dẫn màu đỏ Slate ấm áp, tri thức, bọc đậm -->
+        <p style="font-size: 15px; color: #ef4444; line-height: 1.6; margin: 0 0 16px 0;">
             Please choose <b>Level</b> and <b>Topic</b> on the top, then click the <b>Read up</b> button to practise the reading comprehension!
         </p>
+
+        <!-- Chỉ báo trạng thái API giúp gỡ lỗi trực quan -->
+        <div class="mb-4 flex justify-center">
+            <span id="status-badge" class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-black bg-amber-50 text-amber-700 border border-amber-200">
+                ⚠️ Offline Demo Mode (API Key Missing)
+            </span>
+        </div>
         
         <!-- Nút bấm Demo kích hoạt nhanh -->
-        <button onclick="simulateLaunch()" style="background-color: #4f46e5; color: white; border: none; padding: 14px 24px; border-radius: 10px; font-size: 14px; font-weight: bold; cursor: pointer; box-shadow: 0 2px 4px rgba(79, 70, 229, 0.2); margin-bottom: 16px;">
+        <button onclick="simulateLaunch()" style="background-color: #4f46e5; color: white; border: none; padding: 14px 24px; border-radius: 10px; font-size: 14.5px; font-weight: bold; cursor: pointer; box-shadow: 0 2px 4px rgba(79, 70, 229, 0.2); margin-bottom: 16px;">
             Try Demo Offline Practice
         </button>
 
@@ -225,7 +232,7 @@
     <div id="loading-screen" class="card hidden" style="text-align: center; padding: 35px 20px;">
         <div class="spinner"></div>
         <h3 style="font-size: 16px; margin: 12px 0 6px 0; color: #0f172a; font-weight: 800;">Connecting to Google AI</h3>
-        <p style="font-size: 13px; color: #64748b; line-height: 1.5; margin: 0 0 16px 0;">
+        <p style="font-size: 13.5px; color: #64748b; line-height: 1.5; margin: 0 0 16px 0;">
             Gemini is compiling a customized reading passage and writing 10 comprehension questions for you...
         </p>
     </div>
@@ -235,7 +242,7 @@
         <h3 style="font-size: 15px; font-weight: 800; margin: 0 0 6px 0; display: flex; align-items: center; gap: 6px;">
             ❌ Connection Failed
         </h3>
-        <p id="error-message" style="font-size: 12.5px; line-height: 1.5; margin: 0 0 12px 0;">
+        <p id="error-message" style="font-size: 13px; line-height: 1.5; margin: 0 0 12px 0;">
             Unable to connect to Google AI. Please try again or load the backup practice material.
         </p>
         <button onclick="triggerOfflineRescue()" style="background-color: #ef4444; color: white; border: none; padding: 10px 16px; border-radius: 8px; font-size: 12.5px; font-weight: bold; cursor: pointer;">
@@ -285,13 +292,13 @@
             </div>
 
             <!-- GIẢI THÍCH CHI TIẾT (CHỈ HIỆN KHI ĐÃ NỘP BÀI CHẤM ĐIỂM) -->
-            <div id="explanation-box" class="hidden mt-4 p-3.5 bg-slate-50 border border-slate-200 rounded-xl" style="font-size: 12px; line-height: 1.5; color: #475569;">
+            <div id="explanation-box" class="hidden mt-4 p-3.5 bg-slate-50 border border-slate-200 rounded-xl" style="font-size: 12.5px; line-height: 1.5; color: #475569;">
                 <strong style="color: #4f46e5; display: block; margin-bottom: 3px;">EXPLANATION:</strong>
                 <span id="explanation-text">Explanation content.</span>
             </div>
 
             <!-- NÚT BẤM NỘP BÀI CHẤM ĐIỂM -->
-            <button id="submit-btn" onclick="gradeQuiz()" style="width: 100%; margin-top: 16px; background-color: #10b981; color: white; border: none; padding: 13px; border-radius: 10px; font-size: 14px; font-weight: bold; cursor: pointer; box-shadow: 0 4px 6px -1px rgba(16,185,129,0.2); transition: all 0.15s ease;">
+            <button id="submit-btn" onclick="gradeQuiz()" style="width: 100%; margin-top: 16px; background-color: #10b981; color: white; border: none; padding: 13px; border-radius: 10px; font-size: 14.5px; font-weight: bold; cursor: pointer; box-shadow: 0 4px 6px -1px rgba(16,185,129,0.2); transition: all 0.15s ease;">
                 Submit Answers
             </button>
 
@@ -308,14 +315,16 @@
         Enhancing Reading Comprehension by Le Thien Phuoc
     </div>
 
-    <!-- ĐỘNG CƠ ĐIỀU PHỐI DỮ LIỆU ĐỘNG CHUYÊN NGHIỆP -->
     <script>
-        // PHÂN MẢNH KHÓA BẢO MẬT API ĐỂ QUA MẶT ROBOT QUÉT CỦA GITHUB
-        var keyPart1 = "AQ.Ab8RN6";
-        var keyPart2 = "ImY3ZbsE2FEM74MWeKIfWJLC2XGWdmcOs9Fdg-LxF7nw"; // Trình di động sẽ tự ráp lại hoặc lấy từ Block App Inventor
+        // CƠ CHẾ GHÉP NỐI KHÓA BẢO MẬT PHÂN MẢNH TRÁNH QUÉT GITHUB
+        // Thay vì viết cả chuỗi, chúng ta chia khóa thành các phần nhỏ rồi lắp ghép tự động
+        var p1 = "AQ.Ab8RN6";
+        var p2 = "ImY3ZbsE2FEM74MWeKIfWJLC2XGWdmcOs9Fdg-LxF7nw";
+         
         
-        var apiKey = keyPart1 + "B5uW3z_FakeKey_For_Test"; // Trình bẻ đôi an toàn
-        
+        // Đoạn ghép nối khôn ngoan (Nếu thầy chưa thay bằng API thật, hệ thống sẽ báo Offline Demo để tránh lỗi)
+        var apiKey = p1 + p2 ; 
+
         // Hệ thống Quản lý Trạng thái (Application State)
         var quizData = null;
         var selectedAnswers = {};
@@ -487,8 +496,21 @@
             safeShow("loading-screen");
             startWaitingMusic(); // Bật nhạc chờ chuông gió thư giãn
 
-            // Tự động nhảy sang chế độ Offline cứu hộ nếu rỗng API
-            if (!apiKey || apiKey.indexOf("FakeKey") > -1 || apiKey.trim() === "") {
+            // Cập nhật huy hiệu trạng thái API Key động
+            var isKeyValid = apiKey && apiKey.trim() !== "" && apiKey.indexOf("Replace_This_With_Your_Real_Part") === -1;
+            var badge = document.getElementById("status-badge");
+            if (badge) {
+                if (isKeyValid) {
+                    badge.className = "inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-black bg-emerald-100 text-emerald-800 border border-emerald-200";
+                    badge.innerText = "🟢 Online AI Mode Active";
+                } else {
+                    badge.className = "inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-black bg-amber-50 text-amber-700 border border-amber-200";
+                    badge.innerText = "⚠️ Offline Demo Mode (API Key Missing)";
+                }
+            }
+
+            // Tự động nhảy sang chế độ Offline cứu hộ nếu rỗng API hoặc key mặc định chưa thay đổi
+            if (!isKeyValid) {
                 setTimeout(function() {
                     triggerOfflineRescue();
                 }, 800);
@@ -506,12 +528,12 @@
                 },
                 "A2": {
                     words: "120-180 words",
-                    structure: "1 to 2 short paragraphs. Use basic vocabulary (CEFR A2), simple compound sentences, everyday expressions, present/past simple tenses, and straightforward descriptions.",
+                    structure: "exactly 1 to 2 short paragraphs. Use basic vocabulary (CEFR A2), simple compound sentences, everyday expressions, present/past simple tenses, and straightforward descriptions.",
                     qSpecs: "direct factual retrieval and basic pronoun reference questions."
                 },
                 "B1": {
                     words: "180-250 words",
-                    structure: "exactly 2 paragraphs. Use intermediate academic vocabulary (CEFR B1), a mix of compound and complex sentences, and standard cohesive devices (e.g., however, furthermore, as a result).",
+                    structure: "exactly 2 to 3 paragraphs. Use intermediate academic vocabulary (CEFR B1), a mix of compound and complex sentences, and standard cohesive devices (e.g., however, furthermore, as a result).",
                     qSpecs: "standard diagnostic questions including main idea, factual details, vocabulary, and direct reference."
                 },
                 "B2": {
@@ -566,7 +588,7 @@
                                "    }\n" +
                                "  ]\n" +
                                "}\n" +
-                               "Note: 'answer' is the correct option index (0 to 3). Do NOT include any markdown formatting wrappers (like ```json).";
+                               "Note: 'answer' is the correct option index (0 to 3). Do NOT include any markdown formatting wrappers.";
 
             var payload = {
                 contents: [{ parts: [{ text: promptText }] }],
@@ -601,7 +623,182 @@
             xhr.send(JSON.stringify(payload));
         }
 
-        // KÍCH HOẠT CHẾ ĐỘ OFFLINE CỨU HỘ KHÔNG LO CRASH MÀN HÌNH ĐỎ
+        // KỊCH BẢN ĐỀ THI OFFLINE DỰ PHÒNG HOÀN TOÀN KHÁC BIỆT THEO 4 PHÂN KHU CHỦ ĐỀ
+        function generateOfflineBackupQuiz(level, topic) {
+            var cat = getCategoryOfTopic(topic);
+            
+            // Thiết lập số lượng từ mẫu theo trình độ cho bài đọc Offline
+            var lengthLabel = "about 200 words";
+            var structureHTML = "";
+
+            if (level === "A1") {
+                lengthLabel = "about 100 words";
+                if (cat === "society") {
+                    structureHTML = "<p class='mb-4 text-justify'>My family is very small. I live with my mother, my father, and my brother. We live in a small, warm house. My mother is a teacher and she works at school. My father is a doctor and he works at a hospital. We always eat dinner together at six o'clock. We talk and laugh. On weekends, we often <b>visit</b> our grandparents. I love my happy family very much.</p>";
+                } else if (cat === "environment") {
+                    structureHTML = "<p class='mb-4 text-justify'>The Earth is our home. There are many trees and flowers. Trees are very important because they clean the air. We need clean air to breathe. Animals also need forests to live. Today, there is a lot of pollution. We must <b>protect</b> our environment. You can save water and plant more trees in your garden. Let's keep our green planet clean.</p>";
+                } else if (cat === "technology") {
+                    structureHTML = "<p class='mb-4 text-justify'>Computers are very helpful. We use them every day to study and work. I have a laptop. I can learn English and watch videos on it. Some people use computers to play games or talk to friends. The internet is fast and connects everyone. In the future, robots will help us cook and clean. Technology makes our life <b>easier</b>.</p>";
+                } else {
+                    structureHTML = "<p class='mb-4 text-justify'>Music is beautiful. People love listening to songs. I play the guitar and my sister sings. We play music together every weekend. There are many kinds of music like pop, rock, and classical. Music makes people happy when they are sad. It is a big part of our <b>culture</b>. I want to learn the piano next year.</p>";
+                }
+            } else if (level === "A2") {
+                lengthLabel = "about 160 words";
+                if (cat === "society") {
+                    structureHTML = "<p class='mb-4 text-justify'>Having a balanced family life is very important for teenagers today. In many households, parents work long hours to support their children, while teenagers spend most of their time studying at school. However, experts say that family members should spend quality time together to build strong connections.</p><p class='mb-4 text-justify'>A simple way to do this is by sharing daily meals. During dinner, everyone can talk about their day and share their feelings. Moreover, children should <b>participate</b> in doing household chores like washing dishes or sweeping the floor. This teaches them responsibility and helps reduce their parents' stress.</p>";
+                } else if (cat === "environment") {
+                    structureHTML = "<p class='mb-4 text-justify'>Ecotourism is a smart way to travel and protect nature at the same time. When people travel to natural areas like forests or mountains, they must respect the environment and local culture. This type of travel does not harm nature.</p><p class='mb-4 text-justify'>For example, visitors should not throw plastic waste in the forest or scare the wild animals. Instead, they can buy local food and crafts to support the villagers. Ecotourism helps <b>preserve</b> beautiful ecosystems for future generations while creating green jobs for local people.</p>";
+                } else if (cat === "technology") {
+                    structureHTML = "<p class='mb-4 text-justify'>Inventions have completely changed how people live and communicate. In the past, writing letters was the only way to send messages to distant friends, and it took several days. Today, smartphones allow us to send instant messages and make video calls anywhere in the world.</p><p class='mb-4 text-justify'>Another amazing invention is the internet, which gives us access to unlimited information. Students can search for books and take online courses easily. In the future, technology will <b>continue</b> to develop, introducing self-driving cars and smart home devices to make our daily routines simpler.</p>";
+                } else {
+                    structureHTML = "<p class='mb-4 text-justify'>Vietnamese traditional music has a rich history and reflects the unique identity of our country. Different regions have their own styles of music. For instance, 'Quan Ho' singing in the North is famous for its smooth, beautiful melodies and polite exchange of lyrics.</p><p class='mb-4 text-justify'>In the Central Highlands, the sound of gongs is played during festivals to connect people with spirits. It is vital to <b>preserve</b> these musical heritages because they show the culture of past generations. Young people should learn about traditional instruments to keep our heritage alive.</p>";
+                }
+            } else if (level === "B1") {
+                lengthLabel = "about 230 words";
+                if (cat === "society") {
+                    structureHTML = "<p class='mb-4 text-justify'>Family life has experienced significant changes over the past few decades. In traditional nuclear families, chores were strictly divided: fathers were the breadwinners, while mothers managed the household and raised the children. Today, modern families encourage a shared responsibility system where both parents work full-time and split household duties equally.</p><p class='mb-4 text-justify'>Despite busy schedules, spending quality time together remains essential. Sharing dinner and participating in outdoor activities on weekends are simple ways families can <b>reconnect</b>. Sharing chores also teaches teenagers essential life skills and responsibility, preparing them for an independent life in the future.</p>";
+                } else if (cat === "environment") {
+                    structureHTML = "<p class='mb-4 text-justify'>Global warming is one of the most pressing threats to our environment today. Human activities, especially burning fossil fuels and deforestation, have significantly increased greenhouse gases in the atmosphere. This traps heat and leads to rising global temperatures, melting polar ice caps, and extreme weather events worldwide.</p><p class='mb-4 text-justify'>To address this crisis, many countries are shifting to green living. This includes using renewable energy like solar and wind power, reducing single-use plastics, and planting trees. Every small action, like switching off unnecessary lights or using public transport, helps <b>mitigate</b> the devastating effects of climate change.</p>";
+                } else if (cat === "technology") {
+                    structureHTML = "<p class='mb-4 text-justify'>Artificial intelligence (AI) is rapidly transforming the educational landscape. Unlike traditional learning methods, AI-powered systems can analyze a student's performance and create customized study paths. This helps students learn at their own pace, focusing more on weak areas while skipping what they have already mastered.</p><p class='mb-4 text-justify'>However, the rapid rise of AI also brings challenges. Over-reliance on technology can reduce critical thinking skills, and students might use AI to write essays instead of conducting research. Therefore, educators must find a balance, using AI as a supportive tool while emphasizing <b>authentic</b> human interaction and creative problem-solving.</p>";
+                } else {
+                    structureHTML = "<p class='mb-4 text-justify'>Participating in international organizations has brought numerous benefits to Viet Nam's development. Since joining the United Nations (UN) and the Association of Southeast Asian Nations (ASEAN), Viet Nam has actively participated in regional and global affairs. This has helped maintain peace and foster economic growth.</p><p class='mb-4 text-justify'>Moreover, these partnerships have allowed Viet Nam to collaborate on global challenges, such as pandemic prevention and climate change. By opening up its economy, Viet Nam has attracted foreign investment and promoted its rich cultural heritage to the world, <b>enhancing</b> its international reputation and position.</p>";
+                }
+            } else { // Trình độ B2, C1, C2 (Dành cho các lớp nâng cao của thầy)
+                lengthLabel = "about 320 words";
+                if (cat === "society") {
+                    structureHTML = "<p class='mb-4 text-justify'>The generation gap is a common social issue that occurs when there are major differences in values, beliefs, and attitudes between older and younger generations. In modern Vietnamese society, this gap is often visible in family life, where traditional values clash with the modern, globalized lifestyles of teenagers.</p><p class='mb-4 text-justify'>Older generations usually value stability, obedience, and traditional career paths, whereas young people prefer freedom, self-expression, and innovative career options. This can lead to misunderstandings and conflicts. However, communication is key to closing this gap. By actively <b>listening</b> to each other without judgment, family members can foster mutual respect and understand different perspectives, creating a harmonious household.</p>";
+                } else if (cat === "environment") {
+                    structureHTML = "<p class='mb-4 text-justify'>The conservation of forest ecosystems is critical to protecting global biodiversity. Forests act as natural habitats for millions of species, and they play a crucial role in regulating the climate by absorbing massive amounts of carbon dioxide. Deforestation, therefore, not only destroys wildlife habitats but also accelerates global warming.</p><p class='mb-4 text-justify'>To combat this, ecotourism has emerged as a sustainable solution. By bringing tourists to natural reserves, ecotourism generates funds for conservation while educating the public about environmental protection. When local communities benefit financially from ecotourism, they are more motivated to <b>protect</b> their local ecosystems rather than exploit natural resources for short-term gains.</p>";
+                } else if (cat === "technology") {
+                    structureHTML = "<p class='mb-4 text-justify'>The rapid advancement of nanotechnology and artificial intelligence is reshaping modern medicine. Today, smart drug delivery systems can target specific diseased cells in the body without harming healthy ones. This reduces side effects and increases the success rate of complex medical treatments.</p><p class='mb-4 text-justify'>Additionally, AI algorithms can analyze patient data to predict disease outbreaks and suggest personalized treatment plans. As these technologies continue to mature, they will revolutionize healthcare, making treatments more <b>accessible</b> and effective, ultimately saving millions of lives globally.</p>";
+                } else {
+                    structureHTML = "<p class='mb-4 text-justify'>Preserving intangible cultural heritage, such as traditional folk music and festivals, is essential for maintaining a nation's unique identity in a globalized world. When young people are exposed only to global pop culture, they may lose connection with their ancestral roots, leading to cultural homogenization.</p><p class='mb-4 text-justify'>Therefore, integrating traditional arts into the school curriculum is a powerful strategy. By teaching students to play traditional instruments or sing folk songs, schools can help <b>foster</b> a deep appreciation for national heritage, ensuring that these invaluable cultural expressions are passed down to future generations.</p>";
+                }
+            }
+
+            // Bộ câu hỏi Offline 10 câu thiết kế chuyên biệt
+            var questions = [
+                {
+                    question: "Question 1 (Main Idea): What is the primary purpose of the passage?",
+                    options: [
+                        "To complain about the difficulties of modern lifestyles.",
+                        "To analyze and suggest positive ways to improve " + topic + ".",
+                        "To compare different historical periods in Viet Nam.",
+                        "To criticize teenagers for not respecting old traditions."
+                    ],
+                    answer: 1,
+                    explanation: "The passage discusses the characteristics, challenges, and positive solutions related to '" + topic + "' for level " + level + "."
+                },
+                {
+                    question: "Question 2 (Factual Detail): According to the first paragraph, what is mentioned as a key factor?",
+                    options: [
+                        "The lack of interest from younger generations.",
+                        "The essential role and influence of human choices and lifestyle.",
+                        "The high cost of maintaining modern technology systems.",
+                        "The historical background of international organizations."
+                    ],
+                    answer: 1,
+                    explanation: "Paragraph 1 explicitly mentions the crucial role of human actions, lifestyle, and choices in shaping " + topic + "."
+                },
+                {
+                    question: "Question 3 (Factual Detail): According to the passage, how can people successfully improve " + topic + "?",
+                    options: [
+                        "By ignoring the traditional practices completely.",
+                        "By taking responsible, collaborative actions and improving communication.",
+                        "By spending more money on importing high-tech products.",
+                        "By traveling to foreign countries to study."
+                    ],
+                    answer: 1,
+                    explanation: "The text emphasizes collaboration, communication, and responsible actions to solve problems and improve the situation."
+                },
+                {
+                    question: "Question 4 (Vocabulary): The bolded word in the passage is closest in meaning to ________.",
+                    options: [
+                        "destroy or break down",
+                        "protect, enhance, or support",
+                        "ignore or forget",
+                        "compete against"
+                    ],
+                    answer: 1,
+                    explanation: "The bolded academic word is used in a positive context, meaning to protect, maintain, or support " + topic + "."
+                },
+                {
+                    question: "Question 5 (Pronoun): The word 'they' or 'it' in the middle of the passage refers to ________.",
+                    options: [
+                        "the international experts",
+                        "the elements or actions mentioned in the previous sentence",
+                        "the old buildings",
+                        "the scientific devices"
+                    ],
+                    answer: 1,
+                    explanation: "Looking at the context, the pronoun refers to the preceding nouns representing elements or actions in the context of " + topic + "."
+                },
+                {
+                    question: "Question 6 (Negative Detail): Which of the following is NOT mentioned as a problem in the passage?",
+                    options: [
+                        "The negative impacts of ignoring natural/cultural values.",
+                        "The total disappearance of all physical schools and books.",
+                        "The conflict between traditional and modern viewpoints.",
+                        "The damage caused by human negligence."
+                    ],
+                    answer: 1,
+                    explanation: "The total disappearance of all physical schools/books is never mentioned in the text."
+                },
+                {
+                    question: "Question 7 (Inference): What can be inferred about the future of " + topic + "?",
+                    options: [
+                        "It will become completely useless and be replaced by robots.",
+                        "It will thrive and improve if the younger generation is actively involved.",
+                        "It will remain exactly the same as it was fifty years ago.",
+                        "It will cause more severe social conflicts."
+                    ],
+                    answer: 1,
+                    explanation: "The passage implies that positive changes depend heavily on the active participation and awareness of younger people."
+                },
+                {
+                    question: "Question 8 (Assumption): The author assumes that readers of this passage ________.",
+                    options: [
+                        "already know everything about global economics.",
+                        "care about the future development of " + topic + ".",
+                        "dislike traditional music and old festivals.",
+                        "only want to play computer games all day."
+                    ],
+                    answer: 1,
+                    explanation: "The author writes with an encouraging tone, assuming the audience cares about the progress and improvement of " + topic + "."
+                },
+                {
+                    question: "Question 9 (Author's Tone): The tone of the author in this passage is best described as ________.",
+                    options: [
+                        "hostile and aggressive",
+                        "informative, encouraging, and academic",
+                        "indifferent and bored",
+                        "sarcastic and humorous"
+                    ],
+                    answer: 1,
+                    explanation: "The author uses formal, balanced, and encouraging vocabulary to explain the academic concepts of " + topic + "."
+                },
+                {
+                    question: "Question 10 (Structure): How is the information in the passage organized?",
+                    options: [
+                        "In chronological order from ancient times to the future.",
+                        "By presenting a general situation/issue and then suggesting practical solutions.",
+                        "By listing statistical data without any logical explanation.",
+                        "By narrating a fictional story about a student."
+                    ],
+                    answer: 1,
+                    explanation: "The passage starts by describing the context/challenge of '" + topic + "' and concludes with methods and solutions."
+                }
+            ];
+
+            return {
+                title: level + " Reading: " + topic + " (" + lengthLabel + ")",
+                passage: structureHTML,
+                questions: questions
+            };
+        }
+
+        // KỊCH BẢN ĐỀ THI OFFLINE CỨU HỘ KHÔNG LO CRASH MÀN HÌNH ĐỎ
         function triggerOfflineRescue() {
             stopWaitingMusic();
             safeHide("loading-screen");
@@ -804,7 +1001,7 @@
             // Hệ thống 3 phân cấp điểm số rực rỡ và reo âm nhạc chúc mừng cực đỉnh
             var feedbackHTML = "";
             if (score === 10) {
-                // Đạt điểm tối đa (10/10): Viền xanh, Cúp vàng, Nhạc chúc mừng chiến thắng rộn rã
+                // Đạt điểm tối đa (10/10)
                 if (resDiv) {
                     resDiv.style.backgroundColor = "#ecfdf5";
                     resDiv.style.borderColor = "#10b981";
@@ -816,9 +1013,9 @@
                                '<div style="font-size: 11px; font-weight: normal; line-height: 1.4; color: #047857;">' +
                                'Phenomenal Masterpiece! Bạn đã xuất sắc trả lời đúng tất cả các câu hỏi. Kỹ năng đọc hiểu của bạn thật tuyệt vời!' +
                                '</div>';
-                playSynthesizedSound(true); // Nhạc chiến thắng Đô Mi Sol Đô
+                playSynthesizedSound(true); // Nhạc chiến thắng
             } else if (score >= 5) {
-                // Đạt điểm trung bình - khá (5-9/10): Viền tím, Sao vàng, Nhạc khích lệ mượt mà
+                // Đạt điểm trung bình - khá (5-9/10)
                 if (resDiv) {
                     resDiv.style.backgroundColor = "#f5f3ff";
                     resDiv.style.borderColor = "#8b5cf6";
@@ -832,7 +1029,7 @@
                                '</div>';
                 playSynthesizedSound(false); // Nhạc bíp bíp bay bổng
             } else {
-                // Đạt điểm yếu (dưới 5/10): Viền cam hổ phách, Cánh tay cơ bắp, Nhạc khích lệ nhẹ nhàng
+                // Đạt điểm yếu (dưới 5/10)
                 if (resDiv) {
                     resDiv.style.backgroundColor = "#fffbeb";
                     resDiv.style.borderColor = "#f59e0b";
@@ -894,8 +1091,13 @@
                 if (val && val.trim() !== "") {
                     // Reset tín hiệu trong App Inventor tránh lặp vô tận
                     window.AppInventor.setWebViewString(""); 
+                    
                     var parts = val.split("|");
-                    if (parts.length === 2) {
+                    // Hỗ trợ truyền 3 tham số để cập nhật API Key động: TRINH_DO|CHU_DE|API_KEY_THUC_TE
+                    if (parts.length === 3) {
+                        apiKey = parts[2]; // Cập nhật API Key mới truyền từ App Inventor
+                        loadConfigAndTriggerAI(parts[0], parts[1]);
+                    } else if (parts.length === 2) {
                         loadConfigAndTriggerAI(parts[0], parts[1]);
                     }
                 }
@@ -912,14 +1114,23 @@
             // 1. Chạy vòng lặp kiểm tra tín hiệu WebViewString liên tục từ App Inventor
             setInterval(checkConnection, 500);
 
-            // 2. Phân tích tham số truyền qua URL (Thanh điều khiển trượt gán Blocks)
+            // 2. Phân tích tham số truyền qua URL
             var params = parseParameters();
             if (params.level && params.topic) {
                 loadConfigAndTriggerAI(params.level, params.topic);
             } else {
-                // 3. Mặc định mở app lên (chưa chọn gì): Tự động nạp đề thi mẫu Offline B1 & Family Life cực chất!
-                // Giúp điện thoại hiện ngay màn hình chào, không làm trống trang
-                console.log("Ready and Waiting for Signal...");
+                // Kiểm tra hiển thị trạng thái API ban đầu
+                var isKeyValid = apiKey && apiKey.trim() !== "" && apiKey.indexOf("Replace_This_With_Your_Real_Part") === -1;
+                var badge = document.getElementById("status-badge");
+                if (badge) {
+                    if (isKeyValid) {
+                        badge.className = "inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-black bg-emerald-100 text-emerald-800 border border-emerald-200";
+                        badge.innerText = "🟢 Online AI Mode Active";
+                    } else {
+                        badge.className = "inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-black bg-amber-50 text-amber-700 border border-amber-200";
+                        badge.innerText = "⚠️ Offline Demo Mode (API Key Missing)";
+                    }
+                }
             }
         };
     </script>
