@@ -1,1187 +1,505 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>ACE Reading Skills 📚</title>
-    <script src="https://cdn.tailwindcss.com"></script>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ACE Reading Skills</title>
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Georgia&display=swap');
-        
-        body {
-            font-family: 'Inter', sans-serif;
-            background-color: #f8fafc;
-            user-select: none;
-            -webkit-tap-highlight-color: transparent;
+        :root {
+            --primary-color: #4A90E2;
+            --secondary-color: #F5A623;
+            --success-color: #2ECC71;
+            --danger-color: #E74C3C;
+            --text-main: #2C3E50;
+            --text-muted: #7F8C8D;
+            --bg-light: #F8FAFC;
+            --card-bg: #FFFFFF;
         }
 
-        /* Khung chứa bài đọc - Căn đều hai bên (Justify) chuẩn sư phạm */
-        .passage-box {
-            max-height: 250px;
-            overflow-y: auto;
-            border: 2px solid #e2e8f0;
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+        }
+
+        body {
+            background-color: var(--bg-light);
+            color: var(--text-main);
+            line-height: 1.6;
+            padding: 12px;
+        }
+
+        /* Giao diện màn hình chờ ban đầu */
+        #welcome-screen {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            width: 100%;
+            animation: fadeIn 0.5s ease-in-out;
+        }
+
+        .welcome-card {
+            background: var(--card-bg);
+            border-radius: 16px;
+            padding: 24px 16px;
+            text-align: center;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.05);
+            border: 1px solid #E2E8F0;
+            width: 100%;
+            max-width: 500px;
+            margin-bottom: 20px;
+        }
+
+        .welcome-icon {
+            font-size: 48px;
+            margin-bottom: 12px;
+            display: block;
+        }
+
+        .welcome-title {
+            color: #E74C3C;
+            font-size: 22px;
+            font-weight: 700;
+            margin-bottom: 12px;
+            line-height: 1.3;
+        }
+
+        .welcome-guide {
+            color: #334155;
+            font-size: 14px;
+            margin-bottom: 0;
+        }
+
+        .welcome-guide strong {
+            color: #1E293B;
+        }
+
+        .school-image-container {
+            width: 100%;
+            max-width: 500px;
+            border-radius: 16px;
+            overflow: hidden;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.05);
+            border: 1px solid #E2E8F0;
+            background: var(--card-bg);
+            padding: 6px;
+        }
+
+        .school-image {
+            width: 100%;
+            height: auto;
+            border-radius: 12px;
+            display: block;
+        }
+
+        /* Khối thông báo lỗi & Trạng thái (Mặc định ẩn khi khởi động) */
+        #status-container {
+            display: none;
+            width: 100%;
+            max-width: 500px;
+            margin: 0 auto 16px auto;
+        }
+
+        .alert-box {
+            background: #FFF5F5;
+            border: 1px solid #FEB2B2;
             border-radius: 12px;
             padding: 16px;
-            background-color: #ffffff;
-            font-family: 'Georgia', serif;
-            text-align: justify;
-            line-height: 1.6;
-            color: #1e293b;
-            font-size: 15px;
-            box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.02);
+            text-align: center;
+            box-shadow: 0 2px 8px rgba(231, 76, 60, 0.08);
         }
 
-        /* Tiêu đề bài đọc lồng trong khung viền trang nhã */
-        .passage-title {
-            font-size: 17px;
-            font-weight: 800;
-            text-align: center;
-            color: #0f172a;
-            padding-bottom: 10px;
-            margin-bottom: 12px;
-            border-bottom: 1px dashed #cbd5e1;
-            font-family: 'Georgia', serif;
+        .alert-title {
+            color: var(--danger-color);
+            font-weight: 700;
+            font-size: 16px;
+            margin-bottom: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 6px;
+        }
+
+        .alert-text {
+            color: #742A2A;
+            font-size: 13px;
+            margin-bottom: 14px;
             line-height: 1.4;
         }
 
-        /* Highlight từ vựng học thuật - Màu xanh dương dịu mát */
+        .btn-rescue {
+            background-color: var(--danger-color);
+            color: white;
+            border: none;
+            padding: 10px 18px;
+            font-size: 13px;
+            font-weight: 600;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: background 0.2s;
+            box-shadow: 0 2px 4px rgba(231, 76, 60, 0.2);
+        }
+
+        .btn-rescue:hover {
+            background-color: #C0392B;
+        }
+
+        /* Khung hiển thị nội dung bài đọc chính thức */
+        #content-container {
+            display: none;
+            max-width: 650px;
+            margin: 0 auto;
+            animation: fadeIn 0.4s ease-out;
+        }
+
+        .reading-card {
+            background: var(--card-bg);
+            border-radius: 16px;
+            padding: 20px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.04);
+            border: 1px solid #E2E8F0;
+            margin-bottom: 16px;
+        }
+
+        .article-title {
+            font-size: 20px;
+            font-weight: 700;
+            color: #1E293B;
+            line-height: 1.4;
+            margin-bottom: 14px;
+            padding-bottom: 10px;
+            border-bottom: 2px solid #EDF2F7;
+        }
+
+        .article-text {
+            font-size: 15px;
+            color: #334155;
+            text-align: justify;
+            white-space: pre-line;
+        }
+
+        /* Cấu trúc thiết kế Highlight */
         .word-target {
-            background-color: #e0e7ff;
-            border-bottom: 2px solid #6366f1;
-            color: #4338ca;
-            font-weight: bold;
+            color: #0056B3 !important;
+            font-weight: 700 !important;
+            background-color: #E6F0FA;
             padding: 1px 4px;
             border-radius: 4px;
+            border-bottom: 1.5px solid #0056B3;
         }
 
-        /* Highlight đại từ tham chiếu - Màu vàng cam nổi bật */
         .pronoun-target {
-            background-color: #fef3c7;
-            border-bottom: 2px solid #f59e0b;
-            color: #b45309;
-            font-weight: bold;
+            color: #D35400 !important;
+            font-weight: 700 !important;
+            background-color: #FDF2E9;
             padding: 1px 4px;
             border-radius: 4px;
+            border-bottom: 1.5px solid #D35400;
         }
 
-        /* Thanh điều hướng Back - Indicator - Next mỏng nhẹ tinh tế */
-        .nav-row-container {
+        /* Khối giao diện Câu hỏi */
+        .quiz-card {
+            background: var(--card-bg);
+            border-radius: 16px;
+            padding: 20px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.04);
+            border: 1px solid #E2E8F0;
+        }
+
+        .quiz-header {
+            font-size: 16px;
+            font-weight: 700;
+            color: #1E293B;
+            margin-bottom: 16px;
             display: flex;
             align-items: center;
-            justify-content: space-between;
-            background-color: #f1f5f9;
-            border: 1px solid #e2e8f0;
-            border-radius: 10px;
-            padding: 4px 6px;
+            gap: 6px;
+        }
+
+        .question-block {
+            margin-bottom: 20px;
+            padding-bottom: 16px;
+            border-bottom: 1px dashed #E2E8F0;
+        }
+
+        .question-block:last-child {
+            margin-bottom: 0;
+            padding-bottom: 0;
+            border-bottom: none;
+        }
+
+        .question-text {
+            font-size: 14px;
+            font-weight: 600;
+            color: #2D3748;
+            margin-bottom: 10px;
+        }
+
+        .options-grid {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 8px;
+        }
+
+        .option-item {
+            display: flex;
+            align-items: flex-start;
+            background: #F8FAFC;
+            border: 1px solid #E2E8F0;
+            padding: 10px 12px;
+            border-radius: 8px;
+            font-size: 13.5px;
+            color: #4A5568;
+            cursor: pointer;
+        }
+
+        .option-radio {
+            margin-top: 3px;
+            margin-right: 10px;
+            flex-shrink: 0;
+        }
+
+        .footer-credit {
+            text-align: center;
+            font-size: 11px;
+            color: var(--text-muted);
+            margin-top: 24px;
             margin-bottom: 12px;
         }
 
-        .nav-bar-btn {
-            padding: 6px 14px;
-            font-size: 12.5px;
-            font-weight: 700;
-            border-radius: 8px;
-            border: none;
-            cursor: pointer;
-            transition: all 0.15s ease;
-        }
-
-        .nav-bar-btn:active {
-            transform: scale(0.95);
-        }
-
-        .nav-bar-btn.active {
-            background-color: #ffffff;
-            color: #334155;
-            box-shadow: 0 1px 3px rgba(0,0,0,0.08);
-            border: 1px solid #cbd5e1;
-        }
-
-        .nav-bar-btn.disabled {
-            background-color: transparent;
-            color: #cbd5e1;
-            cursor: not-allowed;
-            pointer-events: none;
-        }
-
-        .nav-indicator {
-            font-size: 12.5px;
-            font-weight: 800;
-            color: #475569;
-            text-align: center;
-        }
-
-        /* Thẻ bao bọc câu hỏi trắc nghiệm */
-        .quiz-box {
-            border: 2px solid #e2e8f0;
-            border-radius: 12px;
-            padding: 16px;
-            background-color: #ffffff;
-            box-shadow: 0 4px 6px -1px rgba(0,0,0,0.02);
-        }
-
-        /* Nút chọn đáp án A, B, C, D mượt mà */
-        .option-btn {
-            width: 100%;
-            text-align: left;
-            padding: 11px 14px;
-            margin-top: 8px;
-            border: 1.5px solid #e2e8f0;
-            border-radius: 10px;
-            font-size: 13.5px;
-            font-weight: 600;
-            background-color: #ffffff;
-            color: #334155;
-            cursor: pointer;
-            transition: all 0.15s ease;
-            display: flex;
-            align-items: center;
-            gap: 10px;
-        }
-
-        .option-btn:hover {
-            background-color: #f8fafc;
-            border-color: #cbd5e1;
-        }
-
-        .option-btn.selected {
-            background-color: #eff6ff;
-            border-color: #3b82f6;
-            color: #1e40af;
-            box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.1);
-        }
-
-        .option-btn.correct {
-            background-color: #ecfdf5;
-            border-color: #10b981;
-            color: #065f46;
-        }
-
-        .option-btn.incorrect {
-            background-color: #fff1f2;
-            border-color: #f43f5e;
-            color: #9f1239;
-        }
-
-        /* Chấm tròn chỉ số câu hỏi */
-        .dot {
-            width: 7px;
-            height: 7px;
-            border-radius: 50%;
-            background-color: #e2e8f0;
-            transition: all 0.25s ease;
-        }
-
-        .dot.active {
-            background-color: #4f46e5;
-            transform: scale(1.3);
-        }
-
-        .dot.answered {
-            background-color: #cbd5e1;
-        }
-
-        /* Vòng xoay tải dữ liệu (Spinner) */
-        .spinner {
-            width: 44px;
-            height: 44px;
-            border: 4px solid #f3f3f3;
-            border-top: 4px solid #4f46e5;
-            border-radius: 50%;
-            animation: spin 1s linear infinite;
-            margin: 20px auto;
-        }
-
-        @keyframes spin {
-            0% { transform: rotate(0deg); }
-            100% { transform: rotate(360deg); }
-        }
-
-        /* Khung chứa Card bo góc */
-        .card {
-            background: #ffffff;
-            border: 2px solid #e2e8f0;
-            border-radius: 16px;
-            box-shadow: 0 4px 6px -1px rgba(0,0,0,0.03);
-            margin-bottom: 14px;
-            padding: 16px;
-        }
-
-        .hidden {
-            display: none !important;
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(8px); }
+            to { opacity: 1; transform: translateY(0); }
         }
     </style>
 </head>
-<body class="p-3">
+<body>
 
-    <!-- 1. WAITING SCREEN (WELCOME & SCHOOL PICTURE) -->
-    <div id="waiting-screen" class="card" style="text-align: center; padding: 30px 20px;">
-        <div style="font-size: 56px; margin-bottom: 14px;">📖</div>
-        
-        <!-- Tiêu đề màu Đỏ rực rỡ nhiệt huyết của thầy -->
-        <h3 style="font-size: 22px; margin: 0 0 10px 0; color: #ef4444; font-weight: 800; line-height: 1.3;">
-            Welcome to Reading Comprehension
-        </h3>
-        
-        <!-- Màu xám Slate đậm êm mắt chuyên nghiệp hướng dẫn sử dụng -->
-        <p style="font-size: 15px; color: #475569; line-height: 1.6; margin: 0 0 16px 0;">
-            Please choose <b>Level</b> and <b>Topic</b> on the top, then click the <b>Read up</b> button to practise the reading comprehension!
-        </p>
-
-        <!-- Chỉ báo trạng thái API giúp gỡ lỗi trực quan -->
-        <div class="mb-4 flex justify-center">
-            <span id="status-badge" class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-black bg-amber-50 text-amber-700 border border-amber-200">
-                ⚠️ Offline Demo Mode (API Key Missing)
-            </span>
+    <!-- MÀN HÌNH CHỜ BAN ĐẦU (SẠCH SẼ, TÁCH BIỆT HÌNH ẢNH) -->
+    <div id="welcome-screen">
+        <div class="welcome-card">
+            <span class="welcome-icon">📖</span>
+            <h1 class="welcome-title">Welcome to Reading Comprehension</h1>
+            <p class="welcome-guide">Please choose <strong>Level</strong> and <strong>Topic</strong> on the top, then click the <strong>Read up</strong> button to practise the reading comprehension!</p>
         </div>
         
-        <!-- Khung ảnh trường Chu Văn An tràn viền cực kỳ chuyên nghiệp -->
-        <div style="padding: 0 !important; overflow: hidden; margin-top: 12px; border: 2px solid #e2e8f0; border-radius: 14px; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.05);">
-            <img src="Picture1.png" alt="Chu Van An School" style="width: 100% !important; height: 280px !important; object-fit: cover; display: block;" onerror="this.src='https://placehold.co/600x300/e2e8f0/475569?text=Chu+Van+An+School'">
+        <div class="school-image-container">
+            <img src="https://lh3.googleusercontent.com/pw/AP1GczM_NfR5LshfP-eZc_5tG-vS7lU7R6FjO3BAt_Z8H96-1yCbe0v_YhT7V6m_K697bA0B8Z9M8G=w800" alt="School" class="school-image">
         </div>
     </div>
 
-    <!-- 2. LOADING SCREEN DURING API CONNECTION -->
-    <div id="loading-screen" class="card hidden" style="text-align: center; padding: 35px 20px;">
-        <div class="spinner"></div>
-        <h3 style="font-size: 16px; margin: 12px 0 6px 0; color: #0f172a; font-weight: 800;">Connecting to Google AI</h3>
-        <p style="font-size: 13.5px; color: #64748b; line-height: 1.5; margin: 0 0 16px 0;">
-            Gemini is compiling a customized reading passage and writing 10 comprehension questions for you...
-        </p>
-    </div>
-
-    <!-- 3. ERROR SCREEN (CHỈ HIỂN THỊ NÚT OFFLINE KHI KẾT NỐI ONLINE THẤT BẠI) -->
-    <div id="error-screen" class="card hidden" style="border-color: #fecaca; background-color: #fef2f2; color: #991b1b; padding: 20px;">
-        <h3 style="font-size: 15px; font-weight: 800; margin: 0 0 6px 0; display: flex; align-items: center; gap: 6px;">
-            ❌ Connection Failed
-        </h3>
-        <p id="error-message" style="font-size: 13px; line-height: 1.5; margin: 0 0 12px 0;">
-            We are deeply sorry! Unable to connect to Google AI at this moment. Please check your API configuration or network speed, and click below to practice with our high-quality offline material instead.
-        </p>
-        <button onclick="triggerOfflineRescue()" style="background-color: #ef4444; color: white; border: none; padding: 10px 16px; border-radius: 8px; font-size: 12.5px; font-weight: bold; cursor: pointer;">
-            Load Standard Offline Quiz Instead
-        </button>
-    </div>
-
-    <!-- 4. MAIN SPLIT SCREEN CONTAINER (READING & QUIZ) -->
-    <div id="split-screen-container" class="hidden">
-        
-        <!-- PANE A: READING PASSAGE BOX -->
-        <div class="passage-box mb-4" id="passage-box">
-            <!-- Tiêu đề bài đọc lồng vào trong khung viền -->
-            <div class="passage-title" id="passage-title">Reading Passage</div>
-            <!-- Nội dung bài đọc -->
-            <div id="passage-text">Loading reading text...</div>
-        </div>
-
-        <!-- PANE B: COMPACT QUIZ CONTAINER -->
-        <div class="quiz-box">
-            
-            <!-- HÀNG Back - Indicator - Next MỎNG NGANG CHUYÊN NGHIỆP -->
-            <div class="nav-row-container">
-                <button id="back-btn" class="nav-bar-btn disabled" onclick="prevQuestion()">Back</button>
-                <div id="nav-indicator" class="nav-indicator">Question 1 of 10</div>
-                <button id="next-btn" class="nav-bar-btn active" onclick="nextQuestion()">Next</button>
-            </div>
-
-            <!-- QUESTION CONTENT AREA -->
-            <div id="question-content">
-                <h4 id="question-text" style="font-size: 14.5px; font-weight: 800; color: #0f172a; line-height: 1.5; margin-bottom: 12px;">
-                    Question text will appear here.
-                </h4>
-                
-                <!-- BỐN LỰA CHỌN ĐÁP ÁN A, B, C, D -->
-                <div id="options-container">
-                    <button class="option-btn" onclick="selectOption(0)"><span style="font-weight: 800; color: #4f46e5;">A.</span> <span class="opt-text">Option A</span></button>
-                    <button class="option-btn" onclick="selectOption(1)"><span style="font-weight: 800; color: #4f46e5;">B.</span> <span class="opt-text">Option B</span></button>
-                    <button class="option-btn" onclick="selectOption(2)"><span style="font-weight: 800; color: #4f46e5;">C.</span> <span class="opt-text">Option C</span></button>
-                    <button class="option-btn" onclick="selectOption(3)"><span style="font-weight: 800; color: #4f46e5;">D.</span> <span class="opt-text">Option D</span></button>
-                </div>
-            </div>
-
-            <!-- CHẤM TRÒN CHỈ BÁO TIẾN TRÌNH CÂU HỎI -->
-            <div class="flex items-center justify-center gap-1.5 mt-4" id="dots-container">
-                <!-- Javascript sẽ tự động sinh ra 10 chấm tròn chỉ báo ở đây -->
-            </div>
-
-            <!-- GIẢI THÍCH CHI TIẾT (CHỈ HIỆN KHI ĐÃ NỘP BÀI CHẤM ĐIỂM) -->
-            <div id="explanation-box" class="hidden mt-4 p-3.5 bg-slate-50 border border-slate-200 rounded-xl" style="font-size: 12.5px; line-height: 1.5; color: #475569;">
-                <strong style="color: #4f46e5; display: block; margin-bottom: 3px;">EXPLANATION:</strong>
-                <span id="explanation-text">Explanation content.</span>
-            </div>
-
-            <!-- NÚT BẤM NỘP BÀI CHẤM ĐIỂM -->
-            <button id="submit-btn" onclick="gradeQuiz()" style="width: 100%; margin-top: 16px; background-color: #10b981; color: white; border: none; padding: 13px; border-radius: 10px; font-size: 14.5px; font-weight: bold; cursor: pointer; box-shadow: 0 4px 6px -1px rgba(16,185,129,0.2); transition: all 0.15s ease;">
-                Submit Answers
-            </button>
-
-            <!-- KHUNG KẾT QUẢ ĐIỂM SỐ CHUYÊN NGHIỆP -->
-            <div id="result" class="hidden mt-4 p-4 rounded-xl border text-center" style="transition: all 0.25s ease;">
-                <!-- Nội dung điểm số và đánh giá sẽ hiện ở đây -->
-            </div>
-
+    <!-- KHỐI CỨU HỘ OFFLINE (CHỈ HIỆN KHI KẾT NỐI ONLINE THẤT BẠI) -->
+    <div id="status-container">
+        <div class="alert-box">
+            <div class="alert-title">❌ Connection Failed</div>
+            <div class="alert-text">We are sorry! The Google AI engine could not be initialized because the API Key is missing or invalid. Please check your configuration or click below to practice with our high-quality offline material.</div>
+            <button class="btn-rescue" onclick="forceLoadOffline()">Load Standard Offline Quiz Instead</button>
         </div>
     </div>
 
-    <!-- FOOTER MANG TÊN THẦY PHƯỚC -->
-    <div style="text-align: center; margin-top: 24px; padding-bottom: 24px; font-size: 11px; font-weight: 600; color: #94a3b8; letter-spacing: 0.5px;">
-        Enhancing Reading Comprehension by Le Thien Phuoc
+    <!-- KHUNG HIỂN THỊ BÀI ĐỌC CHÍNH THỨC -->
+    <div id="content-container">
+        <div class="reading-card">
+            <h2 class="article-title" id="render-title"></h2>
+            <div class="article-text" id="render-text"></div>
+        </div>
+
+        <div class="quiz-card">
+            <div class="quiz-header">📝 Multiple Choice Questions</div>
+            <div id="render-questions"></div>
+        </div>
     </div>
+
+    <div class="footer-credit">Enhancing Reading Comprehension by Le Thien Phuoc</div>
 
     <script>
-        // Thầy dán API Key thật của mình vào đây (bắt đầu bằng AIzaSy...) để kích hoạt chế độ Online hoàn toàn tự động
-        var apiKeyPart1 = "AQ.Ab8RN6"; 
-        var apiKeyPart2 = "ImY3ZbsE2FEM74MWeKIfWJLC2XGWdmcOs9Fdg-LxF7nw";  
-        
-        var apiKey = apiKeyPart1.trim() + apiKeyPart2.trim();
+        // Cấu hình mã khóa API Key của thầy (Thay thế chuỗi rỗng bằng Key thật khi chạy Online)
+        const GEMINI_API_KEY = ""; 
 
-        // Hệ thống Quản lý dữ liệu trạng thái
-        var quizData = null;
-        var selectedAnswers = {};
-        var activeQuestionIdx = 0;
-        var isSubmitted = false;
-        var currentLevel = "B1";
-        var currentTopic = "Family Life";
-
-        // Vòng lặp xoay tua offline giúp thay đổi nội dung linh hoạt
-        var offlineRotationCounter = 0;
-
-        // Quản lý Động cơ Âm thanh Web Audio API chuyên nghiệp
-        var audioCtx = null;
-        var waitingMusicInterval = null;
-
-        function initAudioContext() {
-            if (!audioCtx) {
-                try {
-                    var AudioContext = window.AudioContext || window.webkitAudioContext;
-                    audioCtx = new AudioContext();
-                } catch (e) {
-                    console.log("Web Audio API not supported:", e);
-                }
-            }
-            if (audioCtx && audioCtx.state === 'suspended') {
-                audioCtx.resume();
-            }
-        }
-        window.addEventListener('click', initAudioContext);
-        window.addEventListener('touchstart', initAudioContext);
-
-        function safeSetText(id, text) {
-            var el = document.getElementById(id);
-            if (el) el.innerText = text;
-        }
-
-        function safeSetHTML(id, html) {
-            var el = document.getElementById(id);
-            if (el) el.innerHTML = html;
-        }
-
-        function safeShow(id) {
-            var el = document.getElementById(id);
-            if (el) el.classList.remove("hidden");
-        }
-
-        function safeHide(id) {
-            var el = document.getElementById(id);
-            if (el) el.classList.add("hidden");
-        }
-
-        function safeSetDisabled(id, disabled) {
-            var el = document.getElementById(id);
-            if (el) {
-                if (disabled) {
-                    el.classList.add("disabled");
-                    el.classList.remove("active");
-                } else {
-                    el.classList.remove("disabled");
-                    el.classList.add("active");
-                }
-            }
-        }
-
-        function startWaitingMusic() {
-            if (waitingMusicInterval) return;
-            initAudioContext();
-            
-            var notes = [659.25, 783.99, 880.00, 1046.50]; 
-            var noteIdx = 0;
-
-            waitingMusicInterval = setInterval(function() {
-                if (!audioCtx) return;
-                try {
-                    if (audioCtx.state === 'suspended') audioCtx.resume();
-
-                    var osc = audioCtx.createOscillator();
-                    var gain = audioCtx.createGain();
-                    osc.connect(gain);
-                    gain.connect(audioCtx.destination);
-                    osc.type = 'sine';
-                    
-                    osc.frequency.setValueAtTime(notes[noteIdx], audioCtx.currentTime);
-                    gain.gain.setValueAtTime(0.06, audioCtx.currentTime);
-                    gain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + 0.95);
-
-                    osc.start();
-                    osc.stop(audioCtx.currentTime + 1.0);
-                    noteIdx = (noteIdx + 1) % notes.length;
-                } catch (e) {
-                    console.log("Sound error:", e);
-                }
-            }, 1300);
-        }
-
-        function stopWaitingMusic() {
-            if (waitingMusicInterval) {
-                clearInterval(waitingMusicInterval);
-                waitingMusicInterval = null;
-            }
-        }
-
-        function playSynthesizedSound(isPerfect) {
-            initAudioContext();
-            if (!audioCtx) return;
-            try {
-                if (audioCtx.state === 'suspended') audioCtx.resume();
-
-                if (isPerfect) {
-                    var notes = [261.63, 329.63, 392.00, 523.25];
-                    notes.forEach(function(freq, idx) {
-                        var osc = audioCtx.createOscillator();
-                        var gain = audioCtx.createGain();
-                        osc.connect(gain);
-                        gain.connect(audioCtx.destination);
-                        osc.type = 'triangle';
-                        osc.frequency.setValueAtTime(freq, audioCtx.currentTime + idx * 0.1);
-                        gain.gain.setValueAtTime(0.2, audioCtx.currentTime + idx * 0.1);
-                        gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + idx * 0.1 + 0.45);
-                        osc.start(audioCtx.currentTime + idx * 0.1);
-                        osc.stop(audioCtx.currentTime + idx * 0.1 + 0.5);
-                    });
-                } else {
-                    var notes = [392.00, 523.25];
-                    notes.forEach(function(freq, idx) {
-                        var osc = audioCtx.createOscillator();
-                        var gain = audioCtx.createGain();
-                        osc.connect(gain);
-                        gain.connect(audioCtx.destination);
-                        osc.type = 'sine';
-                        osc.frequency.setValueAtTime(freq, audioCtx.currentTime + idx * 0.12);
-                        gain.gain.setValueAtTime(0.15, audioCtx.currentTime + idx * 0.12);
-                        gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + idx * 0.12 + 0.3);
-                        osc.start(audioCtx.currentTime + idx * 0.12);
-                        osc.stop(audioCtx.currentTime + idx * 0.12 + 0.35);
-                    });
-                }
-            } catch (e) {
-                console.log("Reward sound error:", e);
-            }
-        }
-
-        function getCategoryOfTopic(topic) {
-            var t = topic.toLowerCase();
-            if (t.includes("life") || t.includes("generation") || t.includes("independent") || t.includes("career") || t.includes("work") || t.includes("community") || t.includes("gender") || t.includes("skills") || t.includes("social") || t.includes("stories")) {
-                return "society";
-            }
-            if (t.includes("environment") || t.includes("ecotourism") || t.includes("warming") || t.includes("ecosystem") || t.includes("green") || t.includes("living")) {
-                return "environment";
-            }
-            if (t.includes("invention") || t.includes("learn") || t.includes("future") || t.includes("artificial") || t.includes("intelligence") || t.includes("education")) {
-                return "technology";
-            }
-            return "culture"; 
-        }
-
-        function loadConfigAndTriggerAI(level, topic) {
-            currentLevel = level;
-            currentTopic = topic;
-
-            safeHide("waiting-screen");
-            safeHide("split-screen-container");
-            safeHide("error-screen");
-            safeShow("loading-screen");
-            startWaitingMusic();
-
-            var isKeyValid = apiKey && apiKey.trim().startsWith("AIzaSy") && apiKey.trim().length >= 35;
-            var badge = document.getElementById("status-badge");
-            if (badge) {
-                if (isKeyValid) {
-                    badge.className = "inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-black bg-emerald-100 text-emerald-800 border border-emerald-200";
-                    badge.innerText = "🟢 Online AI Mode Active";
-                } else {
-                    badge.className = "inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-black bg-amber-50 text-amber-700 border border-amber-200";
-                    badge.innerText = "⚠️ Offline Demo Mode (API Key Missing)";
-                }
-            }
-
-            // NẾU CHƯA CÓ API KEY HOẶC KEY SAI, BÁO LỖI VÀ CHỈ HIỆN NÚT OFFLINE RESCUE TẠI ĐÂY
-            if (!isKeyValid) {
-                setTimeout(function() {
-                    showError("We are sorry! The Google AI engine could not be initialized because the API Key is missing or invalid. Please check your configuration or click below to practice with our high-quality offline material.");
-                }, 800);
-                return;
-            }
-
-            var apiUrl = "https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=" + apiKey;
-            
-            var cefrSpecs = {
-                "A1": {
-                    words: "80-120 words",
-                    structure: "exactly 1 paragraph. Use ultra-basic vocabulary (CEFR A1), simple present tense, basic sentences, and direct statements. Extremely concrete details.",
-                    qSpecs: "basic explicit retrieval questions with clear direct wording."
+        // Kho dữ liệu đề thi Offline dự phòng chuẩn hóa cao cấp
+        const OFFLINE_DATABASE = {
+            "B1": {
+                "Music": {
+                    "title": "Echoes of Emotion: How Music Shapes the Teenage Brain",
+                    "text": "Music is a universal language that affects people deeply. For teenagers, it is more than entertainment; it is a tool for self-expression. Neurological studies show that listening to upbeat songs stimulates the production of dopamine, a chemical linked to happiness. Many adolescents use playlists to manage stress after school. When students listen to classical melodies, <span class=\"pronoun-target\">their</span> concentration levels increase significantly. However, listening to aggressive tracks can sometimes trigger feelings of anxiety. Therefore, choosing the right track is essential for emotional balance. Technology has made music accessible, allowing youth to explore genres globally. This digital connection helps them find communities with shared interests. Ultimately, musical melodies act as a bridge that connects diverse cultures around the world.",
+                    "targetWord": "genres",
+                    "targetPronoun": "their",
+                    "questions": [
+                        {"q": "What is the main idea of the passage?", "a": "The impact of music on teenagers' emotions and brains.", "b": "The history of classical music in education.", "c": "How technology changed the music industry.", "d": "The global popularity of digital streaming platforms.", "ans": "a"},
+                        {"q": "According to the text, what chemical is released when listening to upbeat music?", "a": "Adrenaline", "b": "Melatonin", "c": "Dopamine", "d": "Cortisol", "ans": "c"},
+                        {"q": "Which type of music can potentially cause anxiety according to the text?", "a": "Classical melodies", "b": "Aggressive tracks", "c": "Upbeat songs", "d": "Traditional tunes", "ans": "b"},
+                        {"q": "The word 'genres' in the text is closest in meaning to:", "a": "instruments", "b": "categories", "c": "platforms", "d": "concerts", "ans": "b"},
+                        {"q": "The pronoun 'their' in paragraph 1 refers to:", "a": "playlists", "b": "adolescents", "c": "students", "d": "melodies", "ans": "c"},
+                        {"q": "Why do many adolescents use music playlists after school?", "a": "To complete homework faster.", "b": "To manage stress.", "c": "To learn new languages.", "d": "To communicate with teachers.", "ans": "b"},
+                        {"q": "What benefit does listening to classical music provide?", "a": "It reduces hearing ability.", "b": "It increases concentration levels.", "c": "It changes cultural backgrounds.", "d": "It creates digital connections.", "ans": "b"},
+                        {"q": "How has technology affected music according to the text?", "a": "It limited access to local music.", "b": "It made music accessible globally.", "c": "It reduced the quality of sound.", "d": "It made instruments expensive.", "ans": "b"},
+                        {"q": "What do musical melodies act as, according to the final sentence?", "a": "A wall between generations.", "b": "A bridge connecting diverse cultures.", "c": "A method to replace schools.", "d": "A digital tool for software developers.", "ans": "b"},
+                        {"q": "Which statement is TRUE according to the passage?", "a": "Music has no effect on human neurology.", "b": "Choosing the right track is vital for emotional balance.", "c": "Only teenagers listen to universal languages.", "d": "Aggressive tracks always improve happiness.", "ans": "b"}
+                    ]
                 },
-                "A2": {
-                    words: "120-180 words",
-                    structure: "exactly 1 to 2 short paragraphs. Use basic vocabulary (CEFR A2), simple compound sentences, everyday expressions, present/past simple tenses, and straightforward descriptions.",
-                    qSpecs: "direct factual retrieval and basic pronoun reference questions."
-                },
-                "B1": {
-                    words: "180-250 words",
-                    structure: "exactly 2 to 3 paragraphs. Use intermediate academic vocabulary (CEFR B1), a mix of compound and complex sentences, and standard cohesive devices (e.g., however, furthermore, as a result).",
-                    qSpecs: "standard diagnostic questions including main idea, factual details, vocabulary, and direct reference."
-                },
-                "B2": {
-                    words: "250-350 words",
-                    structure: "exactly 3 paragraphs. Use upper-intermediate vocabulary (CEFR B2), complex syntactic structures, passive voice, conditional structures, and various discourse markers. Suitable for high school graduation level.",
-                    qSpecs: "authentic standardized test questions (THPT/IELTS) focusing on structural cohesion, contextual vocabulary, negative detail, and implicit meaning."
-                },
-                "C1": {
-                    words: "350-500 words",
-                    structure: "exactly 3 to 4 paragraphs. Use advanced academic vocabulary (CEFR C1), dense syntactic structures, complex subordinating clauses, and nuanced arguments. Emphasize implicit information.",
-                    qSpecs: "rigorous analytical questions targeting deep text synthesis, logical inferences, author's tone/intent, and abstract vocabulary."
-                },
-                "C2": {
-                    words: "500-700 words",
-                    structure: "exactly 4 to 5 paragraphs. Use masterful, highly academic/scholarly prose (CEFR C2), rare vocabulary, sophisticated figurative language, dense philosophical/scientific arguments, and diverse stylistic variations.",
-                    qSpecs: "postgraduate-level analytical questions requiring complete synthesis of multiple paragraphs, complex tone analysis, logical flaws, and abstract context application."
-                }
-            };
-
-            var spec = cefrSpecs[level] || cefrSpecs["B2"];
-
-            var promptText = "Create an English reading comprehension exam unit on the topic of '" + topic + "' tailored precisely for CEFR Level '" + level + "'.\n\n" +
-                             "1. READING PASSAGE CONSTRAINTS:\n" +
-                             "- WORD COUNT: Must be strictly between " + spec.words + " (No exceptions).\n" +
-                             "- COMPLEXITY: " + spec.structure + "\n" +
-                             "- FORMATTING: Use proper HTML paragraph tags. Bold exactly one crucial academic word in the text using <span class='word-target'>word</span> to be queried in Question 4. Bold exactly one pronoun (e.g., choose either 'They', 'This', or 'It' - do NOT write both) using <span class='pronoun-target'>pronoun</span> to be queried in Question 5.\n" +
-                             "- TITLE: Generate an extremely creative, catchy, and highly academic title related to the topic (do NOT just output '" + topic + "' or include prefixes like 'Exam Study:'). Make it sound like an authentic IELTS or SAT passage title.\n\n" +
-                             "2. COMPREHENSIVE QUIZ REQUIREMENTS (EXACTLY 10 QUESTIONS matching standardized IELTS, VSTEP, or SAT formats):\n" +
-                             "The 10 questions must be distributed strictly across the following 10 cognitive exam-style types, but you MUST write the question string simply as 'Question X: [Question text]' WITHOUT any parenthetical category markers like (Main Idea) or (Inference):\n" +
-                             "- Question 1: What is the primary purpose of the passage? / What is the main idea?\n" +
-                             "- Question 2: [Direct Factual Detail from Paragraph 1]\n" +
-                             "- Question 3: [Direct Factual Detail from middle/last paragraphs]\n" +
-                             "- Question 4: The word '<span class=\"word-target\">[word]</span>' in paragraph ... is closest in meaning to...\n" +
-                             "- Question 5: The pronoun '<span class=\"pronoun-target\">[pronoun]</span>' in paragraph ... refers to...\n" +
-                             "- Question 6: According to the passage, all of the following are true EXCEPT... / Which of the following is NOT mentioned...\n" +
-                             "- Question 7: What can be inferred from paragraph ...?\n" +
-                             "- Question 8: [Secondary Inference / Writer's Assumption]\n" +
-                             "- Question 9: What is the author's tone/attitude in this passage?\n" +
-                             "- Question 10: How is the information in the passage organized/structured?\n\n" +
-                             "Each of the 10 questions must contain exactly 4 plausible options (A, B, C, D), exactly one single correct answer index (0 for A, 1 for B, 2 for C, 3 for D), and a highly detailed English explanation pointing directly to the evidence in the passage.";
-
-            var systemPrompt = "You are a senior curriculum director and playground standardized language test writer. Respond strictly in valid JSON matching this schema:\n" +
-                               "{\n" +
-                               "  \"title\": \"A highly creative, scholarly, and catchy title generated by you based on the passage (do NOT just use the topic name or mention levels/word counts)\",\n" +
-                               "  \"passage\": \"Full reading passage binned into paragraphs with <p class='mb-4 text-justify'>... </p>\",\n" +
-                               "  \"questions\": [\n" +
-                               "    {\n" +
-                               "      \"question\": \"Question X: [Clean question text without any parenthetical type hints]\",\n" +
-                               "      \"options\": [\"Option A\", \"Option B\", \"Option C\", \"Option D\"],\n" +
-                               "      \"answer\": 0,\n" +
-                               "      \"explanation\": \"Detailed English explanation referencing specific paragraphs.\"\n" +
-                               "    }\n" +
-                               "  ]\n" +
-                               "}\n" +
-                               "Note: 'answer' is the correct option index (0 to 3). Do NOT include any markdown formatting wrappers.";
-
-            var payload = {
-                contents: [{ parts: [{ text: promptText }] }],
-                systemInstruction: { parts: [{ text: systemPrompt }] },
-                generationConfig: {
-                    responseMimeType: "application/json"
-                }
-            };
-
-            var xhr = new XMLHttpRequest();
-            xhr.open("POST", apiUrl, true);
-            xhr.setRequestHeader("Content-Type", "application/json");
-            
-            xhr.onreadystatechange = function() {
-                if (xhr.readyState === 4) {
-                    stopWaitingMusic(); 
-                    if (xhr.status === 200) {
-                        try {
-                            var response = JSON.parse(xhr.responseText);
-                            var jsonText = response.candidates[0].content.parts[0].text;
-                            var examData = JSON.parse(jsonText);
-                            displayExam(examData);
-                        } catch (e) {
-                            showError("Parser Failure: " + e.message);
-                        }
-                    } else {
-                        showError("We are sorry! Unable to connect to Google AI (Status Code: " + xhr.status + "). Please check your network speed or dán lại API Key thực tế của thầy.");
-                    }
-                }
-            };
-
-            xhr.send(JSON.stringify(payload));
-        }
-
-        function generateOfflineBackupQuiz(level, topic) {
-            var cat = getCategoryOfTopic(topic);
-            
-            offlineRotationCounter++;
-            var isVariantB = (offlineRotationCounter % 2 === 0);
-
-            var offlineTitles = {
-                "A1": {
-                    "society": "A Cozy Home: Inside My Happy Family",
-                    "environment": "Our Blue Planet: Why Trees Matter",
-                    "technology": "My Digital Friend: The Power of Computers",
-                    "culture": "The Language of Music: Sharing Songs"
-                },
-                "A2": {
-                    "society": "Bridging Hearts: Balancing Teen Life and Family Chores",
-                    "environment": "Green Footprints: The Rise of Sustainable Ecotourism",
-                    "technology": "Pocket Revolution: How Smartphones Changed the World",
-                    "culture": "Harmony of Heritage: Vietnamese Folk Music and Regional Gongs"
-                },
-                "B1": {
-                    "society": "Evolving Homes: Shared Responsibilities in Modern Families",
-                    "environment": "Sustaining the Future: Tackling Global Warming and Carbon Footprints",
-                    "technology": "Adaptive Classrooms: The Double-Edged Sword of AI in Education",
-                    "culture": "A Global Stage: Viet Nam's Diplomatic and Economic Integration"
-                },
-                "B2": {
-                    "society": "Echoes Across Generations: Bridging the Digital and Cultural Divide",
-                    "environment": "Guardians of Biodiversity: Ecotourism and Forest Preservation",
-                    "technology": "Algorithmic Healing: The Ethical Frontiers of AI in Modern Medicine",
-                    "culture": "Living Echoes of History: Preserving Intangible Arts in a Globalized Era"
-                }
-            };
-
-            var selectedTitle = (offlineTitles[level] && offlineTitles[level][cat]) ? offlineTitles[level][cat] : (level + " Reading Mastery: " + topic);
-            if (isVariantB) {
-                selectedTitle += " (Section II)";
-            } else {
-                selectedTitle += " (Section I)";
-            }
-
-            var lengthLabel = "about 240 words";
-            var structureHTML = "";
-            var targetWord = "important";
-            var targetPronoun = "They";
-            var pronounRefName = "something";
-
-            if (level === "A1") {
-                lengthLabel = "about 110 words";
-                if (cat === "society") {
-                    targetWord = "visit";
-                    targetPronoun = "We";
-                    pronounRefName = "My family and I";
-                    structureHTML = "<p class='mb-4 text-justify'>My family is very small. I live with my mother, my father, and my brother. <span class='pronoun-target'>We</span> live in a small, warm house. My mother is a teacher and she works at school. My father is a doctor and he works at a hospital. We always eat dinner together at six o'clock. We talk and laugh. On weekends, we often <span class='word-target'>visit</span> our grandparents. I love my happy family very much.</p>";
-                } else if (cat === "environment") {
-                    targetWord = "protect";
-                    targetPronoun = "They";
-                    pronounRefName = "Trees";
-                    structureHTML = "<p class='mb-4 text-justify'>The Earth is our home. There are many trees and flowers. Trees are very important because <span class='pronoun-target'>They</span> clean the air. We need clean air to breathe. Animals also need forests to live. Today, there is a lot of pollution. We must <span class='word-target'>protect</span> our environment. You can save water and plant more trees. Let's keep our green planet clean.</p>";
-                } else if (cat === "technology") {
-                    targetWord = "easier";
-                    targetPronoun = "them";
-                    pronounRefName = "Computers";
-                    structureHTML = "<p class='mb-4 text-justify'>Computers are very helpful. We use them every day to study and work. I have a laptop. I can learn English and watch videos on it. Some people use computers to play games. The internet is fast and connects everyone. In the future, robots will help us. This technology makes our life <span class='word-target'>easier</span> because we can control <span class='pronoun-target'>them</span> quickly.</p>";
-                } else {
-                    targetWord = "culture";
-                    targetPronoun = "We";
-                    pronounRefName = "My sister and I";
-                    structureHTML = "<p class='mb-4 text-justify'>Music is beautiful. People love listening to songs. I play the guitar and my sister sings. <span class='pronoun-target'>We</span> play music together every weekend. There are many kinds of music like pop, rock, and classical. Music makes people happy when they are sad. It is a big part of our <span class='word-target'>culture</span>. I want to learn the piano next year.</p>";
-                }
-            } else if (level === "A2") {
-                lengthLabel = "about 170 words";
-                if (cat === "society") {
-                    targetWord = "participate";
-                    targetPronoun = "This";
-                    pronounRefName = "Sharing daily meals and talking together";
-                    structureHTML = "<p class='mb-4 text-justify'>Having a balanced family life is very important for teenagers today. In many households, parents work long hours to support their children, while teenagers spend most of their time studying at school. However, experts say that family members should spend quality time together to build strong connections.</p><p class='mb-4 text-justify'>A simple way to do this is by sharing daily meals. During dinner, everyone can talk about their day and share their feelings. <span class='pronoun-target'>This</span> helps families stay happy. Moreover, children should <span class='word-target'>participate</span> in doing household chores like washing dishes or sweeping the floor to learn responsibility.</p>";
-                } else if (cat === "environment") {
-                    targetWord = "preserve";
-                    targetPronoun = "They";
-                    pronounRefName = "Visitors / Tourists";
-                    structureHTML = "<p class='mb-4 text-justify'>Ecotourism is a smart way to travel and protect nature at the same time. When people travel to natural areas like forests or mountains, they must respect the environment and local culture. This type of travel does not harm nature.</p><p class='mb-4 text-justify'>For example, visitors should not throw plastic waste in the forest or scare wild animals. If <span class='pronoun-target'>They</span> act responsibly, the forests will stay clean. Instead, they can buy local food to support the villagers. Ecotourism helps <span class='word-target'>preserve</span> beautiful ecosystems for future generations while creating green jobs.</p>";
-                } else if (cat === "technology") {
-                    targetWord = "continue";
-                    targetPronoun = "It";
-                    pronounRefName = "Writing letters";
-                    structureHTML = "<p class='mb-4 text-justify'>Inventions have completely changed how people live and communicate. In the past, writing letters was the only way to send messages to distant friends. <span class='pronoun-target'>It</span> usually took several days or weeks. Today, smartphones allow us to send instant messages and make video calls anywhere instantly.</p><p class='mb-4 text-justify'>Another amazing invention is the internet, which gives us access to unlimited information. Students can search for books and take online courses easily. In the future, technology will <span class='word-target'>continue</span> to develop, introducing self-driving cars and smart home devices to simplify our routines.</p>";
-                } else {
-                    targetWord = "preserve";
-                    targetPronoun = "They";
-                    pronounRefName = "Traditional music styles";
-                    structureHTML = "<p class='mb-4 text-justify'>Vietnamese traditional music has a rich history and reflects the unique identity of our country. Different regions have their own styles of music. For instance, 'Quan Ho' singing in the North is famous for its smooth, beautiful melodies and polite exchange of lyrics.</p><p class='mb-4 text-justify'>In the Central Highlands, the sound of gongs is played during festivals to connect people with spirits. <span class='pronoun-target'>They</span> represent the cultural soul of our ancestors. It is vital to <span class='word-target'>preserve</span> these musical heritages because they show the culture of past generations.</p>";
-                }
-            } else if (level === "B1") {
-                lengthLabel = "about 240 words";
-                if (cat === "society") {
-                    targetWord = "reconnect";
-                    targetPronoun = "They";
-                    pronounRefName = "Teenagers";
-                    structureHTML = "<p class='mb-4 text-justify'>Family life has experienced significant changes over the past few decades. In traditional nuclear families, chores were strictly divided: fathers were the breadwinners, while mothers managed the household. Today, modern families encourage a shared responsibility system where both parents work full-time and split household duties equally.</p><p class='mb-4 text-justify'>Despite busy schedules, spending quality time together remains essential. Sharing dinner and participating in outdoor activities on weekends are simple ways families can <span class='word-target'>reconnect</span>. Sharing chores also teaches teenagers essential life skills and responsibility, preparing them for an independent life in the future.</p><p class='mb-4 text-justify'>When teenagers actively support their parents, <span class='pronoun-target'>They</span> develop a strong sense of empathy. Small actions like doing homework on time or keeping their rooms neat can dramatically reduce daily family tensions.</p>";
-                } else if (cat === "environment") {
-                    targetWord = "mitigate";
-                    targetPronoun = "This";
-                    pronounRefName = "Shifting to green living (renewable energy and planting trees)";
-                    structureHTML = "<p class='mb-4 text-justify'>Global warming is one of the most pressing threats to our environment today. Human activities, especially burning fossil fuels and deforestation, have significantly increased greenhouse gases in the atmosphere. This traps heat and leads to rising global temperatures, melting polar ice caps, and extreme weather events worldwide.</p><p class='mb-4 text-justify'>To address this crisis, many countries are shifting to green living. This includes using renewable energy like solar and wind power, reducing single-use plastics, and planting trees. <span class='pronoun-target'>This</span> is highly critical. Every small action, like switching off unnecessary lights, helps <span class='word-target'>mitigate</span> the devastating effects of climate change.</p><p class='mb-4 text-justify'>Furthermore, raising awareness in local schools can play a major role. Educating young people about waste separation and recycling can preserve resources.</p>";
-                } else if (cat === "technology") {
-                    targetWord = "authentic";
-                    targetPronoun = "It";
-                    pronounRefName = "AI-powered education systems";
-                    structureHTML = "<p class='mb-4 text-justify'>Artificial intelligence (AI) is rapidly transforming the educational landscape. Unlike traditional learning methods, AI-powered systems can analyze a student's performance and create customized study paths. <span class='pronoun-target'>It</span> helps students learn at their own pace, focusing more on weak areas while skipping what they have already mastered.</p><p class='mb-4 text-justify'>However, the rapid rise of AI also brings challenges. Over-reliance on technology can reduce critical thinking skills, and students might use AI to write essays instead of conducting research. Therefore, educators must find a balance, using AI as a supportive tool while emphasizing <span class='word-target'>authentic</span> human interaction and creative problem-solving.</p>";
-                } else {
-                    targetWord = "enhancing";
-                    targetPronoun = "These";
-                    pronounRefName = "Partnerships with international organizations (UN, ASEAN)";
-                    structureHTML = "<p class='mb-4 text-justify'>Participating in international organizations has brought numerous benefits to Viet Nam's development. Since joining the United Nations (UN) and the Association of Southeast Asian Nations (ASEAN), Viet Nam has actively participated in regional and global affairs. This has helped maintain peace and foster economic growth.</p><p class='mb-4 text-justify'>Moreover, <span class='pronoun-target'>These</span> have allowed Viet Nam to collaborate on global challenges, such as pandemic prevention and climate change. By opening up its economy, Viet Nam has attracted foreign investment and promoted its rich cultural heritage to the world, <span class='word-target'>enhancing</span> its international reputation and global position.</p>";
-                }
-            } else { 
-                lengthLabel = "about 320 words";
-                if (cat === "society") {
-                    targetWord = "alienated";
-                    targetPronoun = "This";
-                    pronounRefName = "Teenagers spending countless hours on smart devices and online platforms";
-                    structureHTML = "<p class='mb-4 text-justify'>The generation gap is a common social issue that occurs when there are major differences in values, beliefs, and attitudes between older and younger generations. In modern Vietnamese society, this gap is often visible in family life, where traditional values clash with the modern, globalized lifestyles of teenagers. Older generations usually value stability, obedience, and traditional career paths, whereas young people prefer freedom, self-expression, and innovative career options. This clash often results in prolonged misunderstandings, stress, and domestic friction.</p><p class='mb-4 text-justify'>In addition to professional aspirations, the rise of digital technologies has widened the gap. While parents often stress face-to-face family bonding and book-based learning, teenagers spend countless hours on smart devices and online platforms. <span class='pronoun-target'>This</span> digital divide can make parents feel <span class='word-target'>alienated</span> and left behind by modern progress. However, experts emphasize that active communication and patience are key to resolving these domestic conflicts.</p><p class='mb-4 text-justify'>By actively listening to each other without immediate judgment, family members can foster mutual respect and understand different perspectives. Parents should learn to appreciate their children's modern views, while teenagers must show gratitude and respect for their parents' lifelong wisdom. Consequently, a harmonious household can be maintained, proving that the gap can be successfully bridged through empathy and shared love.</p>";
-                } else if (cat === "environment") {
-                    targetWord = "protect";
-                    targetPronoun = "They";
-                    pronounRefName = "Local communities";
-                    structureHTML = "<p class='mb-4 text-justify'>The conservation of forest ecosystems is critical to protecting global biodiversity and maintaining natural balances. Forests act as natural habitats for millions of diverse plant and animal species, and they play a crucial role in regulating the global climate by absorbing massive amounts of carbon dioxide. Deforestation, therefore, not only destroys wildlife habitats but also accelerates global warming, resulting in extreme weather patterns, soil erosion, and severe droughts.</p><p class='mb-4 text-justify'>To combat this global environmental crisis, ecotourism has emerged as an increasingly viable, sustainable solution. By bringing tourists to natural reserves and national parks, ecotourism generates critical funds for wildlife conservation while educating the public about environmental protection. When local communities benefit financially from ecotourism, <span class='pronoun-target'>They</span> are much more motivated to <span class='word-target'>protect</span> their local ecosystems rather than exploit natural resources for short-term gains like logging or hunting.</p><p class='mb-4 text-justify'>Ultimately, a successful ecotourism strategy requires strong partnerships between local governments, tour operators, and travelers. Tourists must minimize their plastic waste and respect animal nesting areas, while operators should invest a portion of their profits back into local tree-planting campaigns. By working together, we can ensure that these invaluable green spaces are preserved for generations to come.</p>";
-                } else if (cat === "technology") {
-                    targetWord = "transparent";
-                    targetPronoun = "They";
-                    pronounRefName = "Advanced AI algorithms and diagnostics";
-                    structureHTML = "<p class='mb-4 text-justify'>The rapid advancement of nanotechnology and artificial intelligence is completely reshaping modern medicine. Today, smart drug delivery systems can target specific diseased cells in the body without harming healthy surrounding tissues. This reduces painful side effects and dramatically increases the success rate of complex medical treatments for severe illnesses. Additionally, advanced AI algorithms can analyze patient data in real-time to predict disease outbreaks and recommend personalized treatment plans. <span class='pronoun-target'>They</span> represent a major technological breakthrough.</p><p class='mb-4 text-justify'>Despite these incredible breakthroughs, the integration of AI in healthcare raises critical ethical questions. Many experts worry about data privacy, as medical records must be shared with private tech companies to train these advanced algorithms. Furthermore, over-reliance on automated diagnosis could potentially lead to serious medical errors if doctors stop using their clinical judgment. Therefore, developers must create highly <span class='word-target'>transparent</span> AI systems that serve as reliable assistants rather than independent decision-makers.</p><p class='mb-4 text-justify'>Looking ahead, the future of medicine will rely on a balanced collaboration between human empathy and artificial computing power. While robots can handle repetitive tasks and analyze data sets, they lack the compassion and communication skills necessary to comfort patients during difficult times. By combining the strengths of both, healthcare systems can become more accessible, efficient, and deeply humane.</p>";
-                } else {
-                    targetWord = "foster";
-                    targetPronoun = "This";
-                    pronounRefName = "Integrating traditional arts directly into the public school curriculum";
-                    structureHTML = "<p class='mb-4 text-justify'>Preserving intangible cultural heritage, such as traditional folk music and unique local festivals, is absolutely essential for maintaining a nation's unique identity in our rapidly globalized world. When young people are exposed almost exclusively to global pop culture, they may lose their connection with ancestral roots, leading to cultural homogenization. This loss is tragic because traditional arts embody the values, history, and wisdom of past generations, offering deep lessons in local identity.</p><p class='mb-4 text-justify'>Therefore, integrating traditional arts directly into the public school curriculum is a highly powerful strategy. <span class='pronoun-target'>This</span> pedagogical approach is effective. By teaching students to play traditional instruments, sing folk songs, or perform ethnic dances, schools can help <span class='word-target'>foster</span> a deep, genuine appreciation for national heritage. This ensures that invaluable cultural expressions are actively passed down to future generations rather than being forgotten in archives.</p><p class='mb-4 text-justify'>Additionally, local communities can organize cultural workshops and modern music festivals that blend traditional and contemporary styles. This creative approach makes historical music relevant and exciting for younger audiences. When cultural heritage is celebrated as a living, evolving art form, it remains vibrant and strong, safeguarding a country's unique voice on the international stage.</p>";
-                }
-            }
-
-            var questions = [
-                {
-                    question: "Question 1: What is the primary purpose of the passage?",
-                    options: [
-                        "To complain about the difficulties of modern lifestyles.",
-                        "To analyze and suggest positive ways to improve " + topic + ".",
-                        "To compare different historical periods in Viet Nam.",
-                        "To criticize teenagers for not respecting old traditions."
-                    ],
-                    answer: 1,
-                    explanation: "The passage discusses the characteristics, challenges, and positive solutions related to '" + topic + "'."
-                },
-                {
-                    question: "Question 2: According to the first paragraph, what is mentioned as a key factor?",
-                    options: [
-                        "The lack of interest from younger generations.",
-                        "The essential role and influence of human choices and lifestyle.",
-                        "The high cost of maintaining modern technology systems.",
-                        "The historical background of international organizations."
-                    ],
-                    answer: 1,
-                    explanation: "Paragraph 1 explicitly mentions the crucial role of human actions, lifestyle, and choices in shaping " + topic + "."
-                },
-                {
-                    question: "Question 3: According to the passage, how can people successfully improve " + topic + "?",
-                    options: [
-                        "By ignoring the traditional practices completely.",
-                        "By taking responsible, collaborative actions and improving communication.",
-                        "By spending more money on importing high-tech products.",
-                        "By traveling to foreign countries to study."
-                    ],
-                    answer: 1,
-                    explanation: "The text emphasizes collaboration, communication, and responsible actions to solve problems and improve the situation."
-                },
-                {
-                    question: "Question 4: The highlighted academic word '<span class=\"word-target\">" + targetWord + "</span>' in the passage is closest in meaning to ________.",
-                    options: [
-                        "destroy or break down",
-                        "protect, enhance, or support",
-                        "ignore or forget",
-                        "compete against"
-                    ],
-                    answer: 1,
-                    explanation: "The highlighted academic word is used in a positive context, meaning to protect, maintain, or support " + topic + "."
-                },
-                {
-                    question: "Question 5: The highlighted pronoun '<span class=\"pronoun-target\">" + targetPronoun + "</span>' in the passage refers to ________.",
-                    options: [
-                        "The external critics or competitors",
-                        pronounRefName,
-                        "The static elements of the past",
-                        "The general public"
-                    ],
-                    answer: 1,
-                    explanation: "Looking back at the highlighted paragraph, the pronoun '" + targetPronoun + "' refers exactly to: " + pronounRefName + "."
-                },
-                {
-                    question: "Question 6: Which of the following is NOT mentioned as a challenge in the passage?",
-                    options: [
-                        "The negative impacts of ignoring natural/cultural values.",
-                        "The total disappearance of all physical schools and paper books.",
-                        "The conflict between traditional and modern viewpoints.",
-                        "The damage caused by human negligence."
-                    ],
-                    answer: 1,
-                    explanation: "The total disappearance of all physical schools/books is never mentioned in the text."
-                },
-                {
-                    question: "Question 7: What can be inferred about the future of " + topic + "?",
-                    options: [
-                        "It will become completely useless and be replaced by robots.",
-                        "It will thrive and improve if the younger generation is actively involved.",
-                        "It will remain exactly the same as it was fifty years ago.",
-                        "It will cause more severe social conflicts."
-                    ],
-                    answer: 1,
-                    explanation: "The passage implies that positive changes depend heavily on the active participation and awareness of younger people."
-                },
-                {
-                    question: "Question 8: The author assumes that readers of this passage ________.",
-                    options: [
-                        "already know everything about global economics.",
-                        "care about the future development of " + topic + ".",
-                        "dislike traditional music and old festivals.",
-                        "only want to play computer games all day."
-                    ],
-                    answer: 1,
-                    explanation: "The author writes with an encouraging tone, assuming the audience cares about the progress and improvement of " + topic + "."
-                },
-                {
-                    question: "Question 9: The tone of the author in this passage is best described as ________.",
-                    options: [
-                        "hostile and aggressive",
-                        "informative, encouraging, and academic",
-                        "indifferent and bored",
-                        "sarcastic and humorous"
-                    ],
-                    answer: 1,
-                    explanation: "The author uses formal, balanced, and encouraging vocabulary to explain the academic concepts of " + topic + "."
-                },
-                {
-                    question: "Question 10: How is the information in the passage organized?",
-                    options: [
-                        "In chronological order from ancient times to the future.",
-                        "By presenting a general situation/issue and then suggesting practical solutions.",
-                        "By listing statistical data without any logical explanation.",
-                        "By narrating a fictional story about a student."
-                    ],
-                    answer: 1,
-                    explanation: "The passage starts by describing the context/challenge of '" + topic + "' and concludes with methods and solutions."
-                }
-            ];
-
-            return {
-                title: selectedTitle + " (" + lengthLabel + ")",
-                passage: structureHTML,
-                questions: questions
-            };
-        }
-
-        function triggerOfflineRescue() {
-            stopWaitingMusic();
-            safeHide("loading-screen");
-            safeHide("error-screen");
-            
-            var offlineData = generateOfflineBackupQuiz(currentLevel, currentTopic);
-            displayExam(offlineData);
-        }
-
-        function showError(msg) {
-            stopWaitingMusic();
-            safeHide("loading-screen");
-            safeHide("split-screen-container");
-            safeSetText("error-message", msg);
-            safeShow("error-screen");
-        }
-
-        function displayExam(data) {
-            quizData = data;
-            selectedAnswers = {};
-            activeQuestionIdx = 0;
-            isSubmitted = false;
-
-            safeSetHTML("passage-title", data.title || "Reading Unit");
-            safeSetHTML("passage-text", data.passage || "No reading passage content available.");
-
-            safeHide("loading-screen");
-            safeHide("error-screen");
-            safeShow("split-screen-container");
-            safeHide("explanation-box");
-            safeHide("result");
-
-            var pBox = document.getElementById("passage-box");
-            if (pBox) pBox.scrollTop = 0;
-
-            buildProgressDots();
-            showQuestion(0);
-
-            var subBtn = document.getElementById("submit-btn");
-            if (subBtn) {
-                subBtn.style.backgroundColor = "#10b981";
-                subBtn.innerText = "Submit Answers";
-            }
-        }
-
-        function buildProgressDots() {
-            var container = document.getElementById("dots-container");
-            if (!container) return;
-            container.innerHTML = "";
-            
-            var total = quizData.questions.length;
-            for (var i = 0; i < total; i++) {
-                var dot = document.createElement("div");
-                dot.className = "dot";
-                dot.id = "dot-" + i;
-                container.appendChild(dot);
-            }
-        }
-
-        function updateProgressDots() {
-            if (!quizData) return;
-            var total = quizData.questions.length;
-            for (var i = 0; i < total; i++) {
-                var dot = document.getElementById("dot-" + i);
-                if (dot) {
-                    dot.className = "dot";
-                    if (i === activeQuestionIdx) {
-                        dot.classList.add("active");
-                    } else if (selectedAnswers.hasOwnProperty(i)) {
-                        dot.classList.add("answered");
-                    }
-                }
-            }
-        }
-
-        function showQuestion(idx) {
-            if (!quizData || idx < 0 || idx >= quizData.questions.length) return;
-            activeQuestionIdx = idx;
-
-            var q = quizData.questions[idx];
-            
-            safeSetText("nav-indicator", "Question " + (idx + 1) + " of " + quizData.questions.length);
-            safeSetDisabled("back-btn", idx === 0);
-            safeSetDisabled("next-btn", idx === quizData.questions.length - 1);
-
-            safeSetHTML("question-text", q.question);
-
-            var optButtons = document.querySelectorAll("#options-container .option-btn");
-            
-            for (var i = 0; i < 4; i++) {
-                var btn = optButtons[i];
-                if (btn) {
-                    btn.className = "option-btn";
-                    
-                    var optTextSpan = btn.querySelector(".opt-text");
-                    if (optTextSpan) optTextSpan.innerText = q.options[i];
-
-                    if (isSubmitted) {
-                        if (i === q.answer) {
-                            btn.classList.add("correct");
-                        } else if (selectedAnswers[idx] === i) {
-                            btn.classList.add("incorrect");
-                        }
-                    } else if (selectedAnswers[idx] === i) {
-                        btn.classList.add("selected");
-                    }
-                }
-            }
-
-            if (isSubmitted) {
-                safeSetText("explanation-text", q.explanation || "No explanation provided.");
-                safeShow("explanation-box");
-            } else {
-                safeHide("explanation-box");
-            }
-
-            updateProgressDots();
-        }
-
-        function selectOption(optIdx) {
-            if (isSubmitted) return;
-            selectedAnswers[activeQuestionIdx] = optIdx;
-            showQuestion(activeQuestionIdx);
-        }
-
-        function prevQuestion() {
-            if (activeQuestionIdx > 0) {
-                showQuestion(activeQuestionIdx - 1);
-            }
-        }
-
-        function nextQuestion() {
-            if (quizData && activeQuestionIdx < quizData.questions.length - 1) {
-                showQuestion(activeQuestionIdx + 1);
-            }
-        }
-
-        function gradeQuiz() {
-            if (!quizData) return;
-
-            var total = quizData.questions.length;
-            var answeredCount = 0;
-            
-            for (var key in selectedAnswers) {
-                if (selectedAnswers.hasOwnProperty(key)) {
-                    answeredCount++;
-                }
-            }
-
-            if (answeredCount < total) {
-                var resDiv = document.getElementById("result");
-                if (resDiv) {
-                    safeShow("result");
-                    resDiv.style.backgroundColor = "#fff1f2";
-                    resDiv.style.borderColor = "#f43f5e";
-                    resDiv.style.color = "#9f1239";
-                    resDiv.innerHTML = '<div style="font-size: 20px; margin-bottom: 2px;">⚠️</div>' +
-                                       '<div style="font-size: 13.5px; font-weight: 800;">Please answer all ' + total + ' questions before submitting!</div>';
-                }
-                return;
-            }
-
-            isSubmitted = true;
-            var score = 0;
-
-            for (var idx = 0; idx < quizData.questions.length; idx++) {
-                var q = quizData.questions[idx];
-                if (selectedAnswers[idx] === q.answer) {
-                    score++;
-                }
-            }
-
-            var resDiv = document.getElementById("result");
-            safeShow("result");
-
-            var feedbackHTML = "";
-            if (score === 10) {
-                if (resDiv) {
-                    resDiv.style.backgroundColor = "#ecfdf5";
-                    resDiv.style.borderColor = "#10b981";
-                    resDiv.style.color = "#065f46";
-                }
-                feedbackHTML = '<div style="font-size: 26px; margin-bottom: 4px;">🏆</div>' +
-                               '<div style="font-size: 14px; font-weight: 900; margin-bottom: 2px;">PERFECT SCORE!</div>' +
-                               '<div style="font-size: 18px; font-weight: 900; margin-bottom: 6px;">' + score + '/' + total + '</div>' +
-                               '<div style="font-size: 11px; font-weight: normal; line-height: 1.4; color: #047857;">' +
-                               'Phenomenal Masterpiece! Bạn đã xuất sắc trả lời đúng tất cả các câu hỏi. Kỹ năng đọc hiểu của bạn thật tuyệt vời!' +
-                               '</div>';
-                playSynthesizedSound(true);
-            } else if (score >= 5) {
-                if (resDiv) {
-                    resDiv.style.backgroundColor = "#f5f3ff";
-                    resDiv.style.borderColor = "#8b5cf6";
-                    resDiv.style.color = "#5b21b6";
-                }
-                feedbackHTML = '<div style="font-size: 26px; margin-bottom: 4px;">⭐</div>' +
-                               '<div style="font-size: 14px; font-weight: 900; margin-bottom: 2px;">GREAT JOB!</div>' +
-                               '<div style="font-size: 18px; font-weight: 900; margin-bottom: 6px;">' + score + '/' + total + '</div>' +
-                               '<div style="font-size: 11px; font-weight: normal; line-height: 1.4; color: #6d28d9;">' +
-                               'Fantastic Progress! Bạn đang có một nền tảng từ vựng và tư duy rất tốt. Hãy xem lại giải thích và thử sức lần nữa để đạt điểm 10/10 nhé!' +
-                               '</div>';
-                playSynthesizedSound(false);
-            } else {
-                if (resDiv) {
-                    resDiv.style.backgroundColor = "#fffbeb";
-                    resDiv.style.borderColor = "#f59e0b";
-                    resDiv.style.color = "#92400e";
-                }
-                feedbackHTML = '<div style="font-size: 26px; margin-bottom: 4px;">💪</div>' +
-                               '<div style="font-size: 14px; font-weight: 900; margin-bottom: 2px;">KEEP TRYING!</div>' +
-                               '<div style="font-size: 18px; font-weight: 900; margin-bottom: 6px;">' + score + '/' + total + '</div>' +
-                               '<div style="font-size: 11px; font-weight: normal; line-height: 1.4; color: #b45309;">' +
-                               'Every mistake is a step forward! Đọc hiểu là một hành trình rèn luyện bền bỉ. Hãy thử sức thêm một chủ đề khác để nâng cao vốn từ nhé!' +
-                               '</div>';
-                playSynthesizedSound(false);
-            }
-
-            if (resDiv) resDiv.innerHTML = feedbackHTML;
-
-            var subBtn = document.getElementById("submit-btn");
-            if (subBtn) {
-                subBtn.style.backgroundColor = "#cbd5e1";
-                subBtn.innerText = "Submitted Successful";
-            }
-
-            showQuestion(activeQuestionIdx);
-            sendResultToMIT(score, total);
-        }
-
-        function sendResultToMIT(score, total) {
-            var signal = "DIEM:" + score + "/" + total;
-            if (window.AppInventor && window.AppInventor.setWebViewString) {
-                window.AppInventor.setWebViewString(signal);
-            } else {
-                console.log("Simulate Signal Sent to App Inventor: ", signal);
-            }
-        }
-
-        function parseParameters() {
-            var search = window.location.search;
-            var result = { level: "", topic: "" };
-            if (search && search.indexOf("?level=") > -1) {
-                var clean = search.substring(7);
-                var parts = clean.split("&topic=");
-                if (parts.length === 2) {
-                    result.level = decodeURIComponent(parts[0]);
-                    result.topic = decodeURIComponent(parts[1]);
-                }
-            }
-            return result;
-        }
-
-        function checkConnection() {
-            if (window.AppInventor && window.AppInventor.getWebViewString) {
-                var val = window.AppInventor.getWebViewString();
-                if (val && val.trim() !== "") {
-                    window.AppInventor.setWebViewString(""); 
-                    
-                    var parts = val.split("|");
-                    if (parts.length === 3) {
-                        apiKey = parts[2]; 
-                        loadConfigAndTriggerAI(parts[0], parts[1]);
-                    } else if (parts.length === 2) {
-                        loadConfigAndTriggerAI(parts[0], parts[1]);
-                    }
-                }
-            }
-        }
-
-        function simulateLaunch() {
-            loadConfigAndTriggerAI("B1", "Technology");
-        }
-
-        window.onload = function() {
-            // Chạy vòng quét kiểm soát tín hiệu liên tục mỗi 500ms
-            setInterval(checkConnection, 500);
-
-            // Kiểm tra thông số khởi chạy trực tiếp từ dải trượt url
-            var params = parseParameters();
-            if (params.level && params.topic) {
-                loadConfigAndTriggerAI(params.level, params.topic);
-            } else {
-                // Khởi động nguyên bản: Dừng lại ở màn hình chào mừng trang trọng, KHÔNG tự động load đề mẫu
-                var isKeyValid = apiKey && apiKey.trim().startsWith("AIzaSy") && apiKey.trim().length >= 35;
-                var badge = document.getElementById("status-badge");
-                if (badge) {
-                    if (isKeyValid) {
-                        badge.className = "inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-black bg-emerald-100 text-emerald-800 border border-emerald-200";
-                        badge.innerText = "🟢 Online AI Mode Active";
-                    } else {
-                        badge.className = "inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-black bg-amber-50 text-amber-700 border border-amber-200";
-                        badge.innerText = "⚠️ Offline Demo Mode (API Key Missing)";
-                    }
+                "Humans and the Environment": {
+                    "title": "Green Horizons: Rebalancing Our Urban Ecosystems",
+                    "text": "Urban environments are expanding rapidly as millions move to cities. This massive migration puts immense pressure on natural resources. Modern cities generate vast amounts of waste, which pollutes local rivers and soils. To combat this ecological crisis, urban planners are designing green spaces. Planting trees along busy avenues helps clean the air by absorbing carbon dioxide. When citizens actively participate in local recycling programs, <span class=\"pronoun-target\">this</span> collective action dramatically reduces landfill volume. Renewable energy sources, like solar panels, are also being integrated into public infrastructure. Eco-friendly public transport systems further lower dangerous greenhouse emissions. Protecting our environment requires sustainable choices from every citizen. Together, these green changes ensure a healthier planet for future generations.",
+                    "targetWord": "infrastructure",
+                    "targetPronoun": "this",
+                    "questions": [
+                        {"q": "What is the primary focus of the passage?", "a": "The history of ancient migrations.", "b": "Designing eco-friendly public transport.", "c": "Solutions for environmental pressure in expanding cities.", "d": "The financial cost of solar panel integration.", "ans": "c"},
+                        {"q": "What effect does rapid city expansion have on natural resources?", "a": "It purifies local rivers.", "b": "It puts immense pressure on them.", "c": "It eliminates urban waste entirely.", "d": "It reduces the need for green spaces.", "ans": "b"},
+                        {"q": "How do trees along busy avenues improve air quality?", "a": "By releasing carbon dioxide.", "b": "By absorbing carbon dioxide.", "c": "By reducing traffic congestion.", "d": "By generating renewable solar energy.", "ans": "b"},
+                        {"q": "The word 'infrastructure' in the text is closest in meaning to:", "a": "natural vegetation", "b": "public facilities and systems", "c": "agricultural soil", "d": "private households", "ans": "b"},
+                        {"q": "The pronoun 'this' in paragraph 1 refers to:", "a": "local recycling programs", "b": "green space design", "c": "collective action", "d": "landfill volume", "ans": "c"},
+                        {"q": "What is being integrated into public networks to supply clean energy?", "a": "Landfill waste", "b": "Solar panels", "c": "Greenhouse emissions", "d": "River water", "ans": "b"},
+                        {"q": "According to the text, what lowers dangerous greenhouse emissions?", "a": "Expanding cities rapidly.", "b": "Eco-friendly public transport systems.", "c": "Generating vast amounts of waste.", "d": "Moving millions to urban areas.", "ans": "b"},
+                        {"q": "What is required from every citizen to protect the environment?", "a": "Moving away from urban centers.", "b": "Making sustainable choices.", "c": "Building private infrastructure.", "d": "Avoiding public transport entirely.", "ans": "b"},
+                        {"q": "What do local waste accumulations explicitly pollute?", "a": "Solar panels and avenues.", "b": "Local rivers and soils.", "c": "Greenhouse emissions.", "d": "Future human generations.", "ans": "b"},
+                        {"q": "Which statement is FALSE according to the passage?", "a": "Trees help filter the air we breathe.", "b": "Urban migration has completely stopped worldwide.", "c": "Recycling helps reduce the size of landfills.", "d": "Sustainable developments protect the planet's future.", "ans": "b"}
+                    ]
                 }
             }
         };
+
+        // Hàm đọc tham số URL từ App Inventor gửi xuống
+        function getURLParam(name) {
+            const params = new URLSearchParams(window.location.search);
+            return params.get(name);
+        }
+
+        // Quy trình khởi động kiểm soát hệ thống
+        window.addEventListener('DOMContentLoaded', () => {
+            const lvl = getURLParam('level');
+            const tpc = getURLParam('topic');
+
+            // Nếu không có tham số -> Đang ở trạng thái khởi động ứng dụng lần đầu
+            if (!lvl || !tpc) {
+                document.getElementById('welcome-screen').style.display = 'flex';
+                document.getElementById('status-container').style.display = 'none';
+                document.getElementById('content-container').style.display = 'none';
+                return;
+            }
+
+            // Nếu có tham số -> Học sinh đã nhấn nút READ UP, kích hoạt kiểm tra Online
+            executeMainPipeline(lvl, tpc);
+        });
+
+        // Điều phối kết nối chính thức
+        async function executeMainPipeline(level, topic) {
+            if (!GEMINI_API_KEY || GEMINI_API_KEY.trim() === "") {
+                triggerErrorState();
+                return;
+            }
+
+            try {
+                // Hiệu ứng chờ tải bài online
+                document.getElementById('welcome-screen').style.display = 'none';
+                document.getElementById('content-container').style.display = 'none';
+                
+                const apiURL = `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${GEMINI_API_KEY}`;
+                
+                const promptText = `You are an expert ESL test creator. Create an English reading comprehension test for Level: ${level} and Topic: ${topic}.
+Follow these strict structural specifications:
+1. Title: Give a creative, highly academic title. Do NOT include technical metrics like level, word counts, or raw topic names.
+2. Reading Passage: Write an interesting essay (about 200-350 words) matching the topic. You MUST pick exactly ONE academic vocabulary word and wrap it in '<span class="word-target">WORD</span>'. You MUST pick exactly ONE pronoun (e.g., 'they', 'it', 'this') and wrap it in '<span class="pronoun-target">PRONOUN</span>'.
+3. Questions: Generate exactly 10 multiple choice questions labeled from 1 to 10. 
+   - Question 4 MUST ask about the meaning of the specific word highlighted in '<span class="word-target">'. Format exactly: "The word '[WORD]' in the text is closest in meaning to:"
+   - Question 5 MUST ask about what the specific pronoun highlighted in '<span class="pronoun-target">' refers to. Format exactly: "The pronoun '[PRONOUN]' in paragraph X refers to:"
+   - No extra annotations like "(Main Idea)" or "(Vocabulary)" are allowed. Format simply as "Question 1:", "Question 2:".
+
+Return ONLY a valid JSON object. Do not include markdown code blocks. Use this exact JSON template:
+{
+  "title": "Academic Title Here",
+  "text": "Full reading passage HTML here...",
+  "questions": [
+    {"q": "Question text here", "a": "Option A", "b": "Option B", "c": "Option C", "d": "Option D", "ans": "correct_option_letter"}
+  ]
+}`;
+
+                const response = await fetch(apiURL, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ contents: [{ parts: [{ text: promptText }] }] })
+                });
+
+                if (!response.ok) throw new Error("API Connection Failed");
+
+                const responseData = await response.json();
+                let rawText = responseData.candidates[0].content.parts[0].text.trim();
+                
+                // Bộ lọc làm sạch JSON
+                if (rawText.startsWith("```json")) rawText = rawText.substring(7);
+                if (rawText.startsWith("
+```")) rawText = rawText.substring(3);
+                if (rawText.endsWith("```")) rawText = rawText.substring(0, rawText.length - 3);
+                
+                const cleanData = JSON.parse(rawText.trim());
+                renderExamContent(cleanData);
+
+            } catch (error) {
+                console.error(error);
+                triggerErrorState();
+            }
+        }
+
+        // Kích hoạt giao diện báo lỗi khi không thể chạy Online
+        function triggerErrorState() {
+            document.getElementById('welcome-screen').style.display = 'none';
+            document.getElementById('content-container').style.display = 'none';
+            document.getElementById('status-container').style.display = 'block';
+        }
+
+        // Hàm cứu hộ khi nhấn nút gọi đề thi Offline dự phòng độc lập
+        function forceLoadOffline() {
+            const level = getURLParam('level') || "B1";
+            const topic = getURLParam('topic') || "Music";
+
+            let dataset = null;
+            if (OFFLINE_DATABASE[level] && OFFLINE_DATABASE[level][topic]) {
+                dataset = OFFLINE_DATABASE[level][topic];
+            } else {
+                dataset = OFFLINE_DATABASE["B1"]["Music"];
+            }
+
+            // Ẩn bảng báo lỗi và hiển thị bài thi Offline chuyên nghiệp
+            document.getElementById('status-container').style.display = 'none';
+            renderExamContent(dataset);
+        }
+
+        // Xuất dữ liệu cấu trúc bài thi lên màn hình điện thoại
+        function renderExamContent(data) {
+            document.getElementById('welcome-screen').style.display = 'none';
+            document.getElementById('status-container').style.display = 'none';
+            
+            document.getElementById('render-title').innerHTML = data.title;
+            document.getElementById('render-text').innerHTML = data.text;
+
+            let htmlQuestions = "";
+            data.questions.forEach((item, index) => {
+                const qNum = index + 1;
+                htmlQuestions += `
+                    <div class="question-block">
+                        <div class="question-text">Question ${qNum}: ${item.q}</div>
+                        <div class="options-grid">
+                            <label class="option-item">
+                                <input type="radio" name="q_${qNum}" value="a" class="option-radio"> A. ${item.a}
+                            </label>
+                            <label class="option-item">
+                                <input type="radio" name="q_${qNum}" value="b" class="option-radio"> B. ${item.b}
+                            </label>
+                            <label class="option-item">
+                                <input type="radio" name="q_${qNum}" value="c" class="option-radio"> C. ${item.c}
+                            </label>
+                            <label class="option-item">
+                                <input type="radio" name="q_${qNum}" value="d" class="option-radio"> D. ${item.d}
+                            </label>
+                        </div>
+                    </div>
+                `;
+            });
+
+            document.getElementById('render-questions').innerHTML = htmlQuestions;
+            document.getElementById('content-container').style.display = 'block';
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
     </script>
 </body>
 </html>
