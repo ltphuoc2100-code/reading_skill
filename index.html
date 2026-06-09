@@ -71,10 +71,6 @@
             margin-bottom: 0;
         }
 
-        .welcome-guide strong {
-            color: #1E293B;
-        }
-
         /* KHỐI 2: Khung hình ảnh trường độc lập */
         #welcome-image-block {
             display: flex;
@@ -84,26 +80,27 @@
         }
 
         .school-image-container {
-    width: 100%;
-    max-width: 500px;
-    border-radius: 16px;
-    overflow: hidden;
-    box-shadow: 0 4px 15px rgba(0,0,0,0.05);
-    border: 1px solid #E2E8F0;
-    background: var(--card-bg);
-    padding: 6px;
-    margin: 0 auto 20px auto; /* Căn giữa khung ảnh */
-}
+            width: 100%;
+            max-width: 500px;
+            border-radius: 16px;
+            overflow: hidden;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.05);
+            border: 1px solid #E2E8F0;
+            background: var(--card-bg);
+            padding: 6px;
+            margin: 0 auto 20px auto;
+        }
 
-.school-image {
-    width: 100%;
-    height: auto; /* Tự động co giãn theo tỷ lệ ảnh gốc */
-    max-height: 250px; /* Khống chế chiều cao tối đa không cho phình to */
-    object-fit: cover; /* Giúp ảnh gọn gàng trong khung */
-    border-radius: 12px;
-    display: block;
-}
-        /* Khối thông báo lỗi (Mặc định ẩn hoàn toàn khi khởi động) */
+        .school-image {
+            width: 100%;
+            height: auto;
+            max-height: 240px;
+            object-fit: cover;
+            border-radius: 12px;
+            display: block;
+        }
+
+        /* Khối thông báo lỗi cứu hộ */
         #status-container {
             display: none;
             width: 100%;
@@ -117,25 +114,6 @@
             border-radius: 12px;
             padding: 16px;
             text-align: center;
-            box-shadow: 0 2px 8px rgba(231, 76, 60, 0.08);
-        }
-
-        .alert-title {
-            color: var(--danger-color);
-            font-weight: 700;
-            font-size: 16px;
-            margin-bottom: 8px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 6px;
-        }
-
-        .alert-text {
-            color: #742A2A;
-            font-size: 13px;
-            margin-bottom: 14px;
-            line-height: 1.4;
         }
 
         .btn-rescue {
@@ -147,12 +125,7 @@
             font-weight: 600;
             border-radius: 8px;
             cursor: pointer;
-            transition: background 0.2s;
-            box-shadow: 0 2px 4px rgba(231, 76, 60, 0.2);
-        }
-
-        .btn-rescue:hover {
-            background-color: #C0392B;
+            margin-top: 10px;
         }
 
         /* Khung hiển thị nội dung bài đọc chính thức */
@@ -176,7 +149,6 @@
             font-size: 20px;
             font-weight: 700;
             color: #1E293B;
-            line-height: 1.4;
             margin-bottom: 14px;
             padding-bottom: 10px;
             border-bottom: 2px solid #EDF2F7;
@@ -189,14 +161,12 @@
             white-space: pre-line;
         }
 
-        /* Định dạng Highlight trực quan */
         .word-target {
             color: #0056B3 !important;
             font-weight: 700 !important;
             background-color: #E6F0FA;
             padding: 1px 4px;
             border-radius: 4px;
-            border-bottom: 1.5px solid #0056B3;
         }
 
         .pronoun-target {
@@ -205,10 +175,9 @@
             background-color: #FDF2E9;
             padding: 1px 4px;
             border-radius: 4px;
-            border-bottom: 1.5px solid #D35400;
         }
 
-        /* Khối giao diện Câu hỏi */
+        /* Khối giao diện Câu hỏi đơn lẻ */
         .quiz-card {
             background: var(--card-bg);
             border-radius: 16px;
@@ -217,57 +186,92 @@
             border: 1px solid #E2E8F0;
         }
 
-        .quiz-header {
-            font-size: 16px;
-            font-weight: 700;
-            color: #1E293B;
-            margin-bottom: 16px;
-            display: flex;
-            align-items: center;
-            gap: 6px;
-        }
-
         .question-block {
-            margin-bottom: 20px;
-            padding-bottom: 16px;
-            border-bottom: 1px dashed #E2E8F0;
+            display: none; /* Ẩn mặc định, chỉ hiện câu hỏi hiện tại */
         }
 
-        .question-block:last-child {
-            margin-bottom: 0;
-            padding-bottom: 0;
-            border-bottom: none;
+        .question-block.active {
+            display: block;
+            animation: fadeIn 0.3s ease-in-out;
         }
 
         .question-text {
-            font-size: 14px;
+            font-size: 15px;
             font-weight: 600;
             color: #2D3748;
-            margin-bottom: 10px;
+            margin-bottom: 14px;
         }
 
         .options-grid {
             display: grid;
             grid-template-columns: 1fr;
-            gap: 8px;
+            gap: 10px;
+            margin-bottom: 20px;
         }
 
+        /* Ẩn hoàn toàn nút tròn (Radio input) */
+        .option-item input[type="radio"] {
+            display: none;
+        }
+
+        /* Biến câu trả lời thành dạng thẻ hộp nút bấm gọn gàng */
         .option-item {
-            display: flex;
-            align-items: flex-start;
+            display: block;
             background: #F8FAFC;
             border: 1px solid #E2E8F0;
-            padding: 10px 12px;
-            border-radius: 8px;
-            font-size: 13.5px;
+            padding: 12px 14px;
+            border-radius: 10px;
+            font-size: 14px;
             color: #4A5568;
             cursor: pointer;
+            transition: all 0.2s ease;
         }
 
-        .option-radio {
-            margin-top: 3px;
-            margin-right: 10px;
-            flex-shrink: 0;
+        /* Hiệu ứng khi người dùng chọn đáp án */
+        .option-item:has(input[type="radio"]:checked) {
+            background-color: #E6F0FA;
+            border-color: #4A90E2;
+            color: #0056B3;
+            font-weight: 600;
+        }
+
+        /* THANH ĐIỀU HƯỚNG NẰM CÙNG MỘT HÀNG */
+        .quiz-navigation-bar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-top: 1px dashed #E2E8F0;
+            padding-top: 14px;
+            margin-top: 10px;
+        }
+
+        .nav-indicator {
+            font-size: 14px;
+            font-weight: 700;
+            color: #7F8C8D;
+        }
+
+        .btn-nav {
+            background-color: #F1F5F9;
+            color: #334155;
+            border: 1px solid #CBD5E1;
+            padding: 8px 16px;
+            font-size: 13px;
+            font-weight: 600;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.15s ease;
+            min-width: 80px;
+            text-align: center;
+        }
+
+        .btn-nav:hover:not(:disabled) {
+            background-color: #E2E8F0;
+        }
+
+        .btn-nav:disabled {
+            opacity: 0.4;
+            cursor: not-allowed;
         }
 
         .footer-credit {
@@ -279,13 +283,14 @@
         }
 
         @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(8px); }
+            from { opacity: 0; transform: translateY(4px); }
             to { opacity: 1; transform: translateY(0); }
         }
     </style>
 </head>
 <body>
 
+    <!-- KHỐI 1: MÀN HÌNH CHỜ ĐỘC LẬP -->
     <div id="welcome-message-block">
         <div class="welcome-card">
             <span class="welcome-icon">📖</span>
@@ -294,20 +299,23 @@
         </div>
     </div>
         
+    <!-- KHỐI 2: HÌNH ẢNH TRƯỜNG ĐỘC LẬP -->
     <div id="welcome-image-block">
         <div class="school-image-container">
             <img src="Picture1.png" alt="School" class="school-image">
         </div>
     </div>
 
+    <!-- KHỐI CỨU HỘ OFFLINE -->
     <div id="status-container">
         <div class="alert-box">
-            <div class="alert-title">❌ Connection Failed</div>
-            <div class="alert-text">We are sorry! The Google AI engine could not be initialized because the API Key is missing or invalid. Please check your configuration or click below to practice with our high-quality offline material.</div>
+            <div style="color:var(--danger-color); font-weight:700; margin-bottom:8px;">❌ Connection Failed</div>
+            <div style="font-size:13px; color:#742A2A; margin-bottom:12px;">We are sorry! The Google AI engine could not be initialized because the API Key is missing or invalid. Please check your configuration.</div>
             <button class="btn-rescue" onclick="forceLoadOffline()">Load Standard Offline Quiz Instead</button>
         </div>
     </div>
 
+    <!-- KHUNG HIỂN THỊ BÀI ĐỌC CHÍNH THỨC -->
     <div id="content-container">
         <div class="reading-card">
             <h2 class="article-title" id="render-title"></h2>
@@ -315,8 +323,14 @@
         </div>
 
         <div class="quiz-card">
-            <div class="quiz-header">📝 Multiple Choice Questions</div>
             <div id="render-questions"></div>
+            
+            <!-- THANH ĐIỀU HƯỚNG CÙNG MỘT HÀNG CỦA THẦY -->
+            <div class="quiz-navigation-bar">
+                <button type="button" class="btn-nav" id="btn-prev-quiz" onclick="navigateQuestion(-1)">Back</button>
+                <div class="nav-indicator" id="quiz-page-indicator">Question 1/10</div>
+                <button type="button" class="btn-nav" id="btn-next-quiz" onclick="navigateQuestion(1)">Next</button>
+            </div>
         </div>
     </div>
 
@@ -326,17 +340,17 @@
         // ====================================================================
         //  CẤU HÌNH API KEY CHIA LÀM 2 PHẦN TÁCH BIỆT HOÀN TOÀN ĐỂ CHỐNG GOOGLE CHECK
         // ====================================================================
-        const API_KEY_PART1 = "AQ.Ab8RN6"; // <-- THẦY ĐIỀN NỬA ĐẦU CỦA KHÓA VÀO ĐÂY (Ví dụ: "AIzaSyAz...")
-        const API_KEY_PART2 = "ImY3ZbsE2FEM74MWeKIfWJLC2XGWdmcOs9Fdg-LxF7nw"; // <-- ĐỂ TRỐNG nếu thầy muốn truyền nửa đuôi tự động từ App Inventor qua URL
+        const API_KEY_PART1 = ""; 
+        const API_KEY_PART2 = ""; // Để trống nếu truyền từ phần đuôi URL của App Inventor sang
 
-        // Kho dữ liệu đề thi Offline dự phòng chuẩn hóa cao cấp
+        let currentQuestionIndex = 0;
+        let totalQuestionsCount = 0;
+
         const OFFLINE_DATABASE = {
             "B1": {
                 "Music": {
                     "title": "Echoes of Emotion: How Music Shapes the Teenage Brain",
                     "text": "Music is a universal language that affects people deeply. For teenagers, it is more than entertainment; it is a tool for self-expression. Neurological studies show that listening to upbeat songs stimulates the production of dopamine, a chemical linked to happiness. Many adolescents use playlists to manage stress after school. When students listen to classical melodies, <span class=\"pronoun-target\">their</span> concentration levels increase significantly. However, listening to aggressive tracks can sometimes trigger feelings of anxiety. Therefore, choosing the right track is essential for emotional balance. Technology has made music accessible, allowing youth to explore genres globally. This digital connection helps them find communities with shared interests. Ultimately, musical melodies act as a bridge that connects diverse cultures around the world.",
-                    "targetWord": "genres",
-                    "targetPronoun": "their",
                     "questions": [
                         {"q": "What is the main idea of the passage?", "a": "The impact of music on teenagers' emotions and brains.", "b": "The history of classical music in education.", "c": "How technology changed the music industry.", "d": "The global popularity of digital streaming platforms.", "ans": "a"},
                         {"q": "According to the text, what chemical is released when listening to upbeat music?", "a": "Adrenaline", "b": "Melatonin", "c": "Dopamine", "d": "Cortisol", "ans": "c"},
@@ -348,24 +362,6 @@
                         {"q": "How has technology affected music according to the text?", "a": "It limited access to local music.", "b": "It made music accessible globally.", "c": "It reduced the quality of sound.", "d": "It made instruments expensive.", "ans": "b"},
                         {"q": "What do musical melodies act as, according to the final sentence?", "a": "A wall between generations.", "b": "A bridge connecting diverse cultures.", "c": "A method to replace schools.", "d": "A digital tool for software developers.", "ans": "b"},
                         {"q": "Which statement is TRUE according to the passage?", "a": "Music has no effect on human neurology.", "b": "Choosing the right track is vital for emotional balance.", "c": "Only teenagers listen to universal languages.", "d": "Aggressive tracks always improve happiness.", "ans": "b"}
-                    ]
-                },
-                "Humans and the Environment": {
-                    "title": "Green Horizons: Rebalancing Our Urban Ecosystems",
-                    "text": "Urban environments are expanding rapidly as millions move to cities. This massive migration puts immense pressure on natural resources. Modern cities generate vast amounts of waste, which pollutes local rivers and soils. To combat this ecological crisis, urban planners are designing green spaces. Planting trees along busy avenues helps clean the air by absorbing carbon dioxide. When citizens actively participate in local recycling programs, <span class=\"pronoun-target\">this</span> collective action dramatically reduces landfill volume. Renewable energy sources, like solar panels, are also being integrated into public infrastructure. Eco-friendly public transport systems further lower dangerous greenhouse emissions. Protecting our environment requires sustainable choices from every citizen. Together, these green changes ensure a healthier planet for future generations.",
-                    "targetWord": "infrastructure",
-                    "targetPronoun": "this",
-                    "questions": [
-                        {"q": "What is the primary focus of the passage?", "a": "The history of ancient migrations.", "b": "Designing eco-friendly public transport.", "c": "Solutions for environmental pressure in expanding cities.", "d": "The financial cost of solar panel integration.", "ans": "c"},
-                        {"q": "What effect does rapid city expansion have on natural resources?", "a": "It puts immense pressure on them.", "b": "It reduces the need for green spaces.", "c": "It eliminates urban waste entirely.", "d": "It reduces the need for green spaces.", "ans": "b"},
-                        {"q": "How do trees along busy avenues improve air quality?", "a": "By releasing carbon dioxide.", "b": "By absorbing carbon dioxide.", "c": "By reducing traffic congestion.", "d": "By generating renewable solar energy.", "ans": "b"},
-                        {"q": "The word 'infrastructure' in the text is closest in meaning to:", "a": "natural vegetation", "b": "public facilities and systems", "c": "agricultural soil", "d": "private households", "ans": "b"},
-                        {"q": "The pronoun 'this' in paragraph 1 refers to:", "a": "local recycling programs", "b": "green space design", "c": "collective action", "d": "landfill volume", "ans": "c"},
-                        {"q": "What is being integrated into public networks to supply clean energy?", "a": "Landfill waste", "b": "Solar panels", "c": "Greenhouse emissions", "d": "River water", "ans": "b"},
-                        {"q": "According to the text, what lowers dangerous greenhouse emissions?", "a": "Expanding cities rapidly.", "b": "Eco-friendly public transport systems.", "c": "Generating vast amounts of waste.", "d": "Moving millions to urban areas.", "ans": "b"},
-                        {"q": "What is required from every citizen to protect the environment?", "a": "Moving away from urban centers.", "b": "Making sustainable choices.", "c": "Building private infrastructure.", "d": "Avoiding public transport entirely.", "ans": "b"},
-                        {"q": "What do local waste accumulations explicitly pollute?", "a": "Solar panels and avenues.", "b": "Local rivers and soils.", "c": "Greenhouse emissions.", "d": "Future human generations.", "ans": "b"},
-                        {"q": "Which statement is FALSE according to the passage?", "a": "Trees help filter the air we breathe.", "b": "Urban migration has completely stopped worldwide.", "c": "Recycling helps reduce the size of landfills.", "d": "Sustainable developments protect the planet's future.", "ans": "b"}
                     ]
                 }
             }
@@ -392,13 +388,9 @@
         });
 
         async function executeMainPipeline(level, topic) {
-            // Lấy nửa đuôi được truyền từ tham số URL trên MIT App Inventor sang
             let urlPart2 = getURLParam('key_part2') || "";
-            
-            // Nếu trên code HTML thầy điền sẵn cả 2 phần, hoặc dùng kết hợp lấy từ URL
             let finalPart2 = (API_KEY_PART2 && API_KEY_PART2.trim() !== "") ? API_KEY_PART2 : urlPart2;
 
-            // Kiểm tra tính hợp lệ của hai thành phần độc lập trước khi chạy dữ liệu
             if (!API_KEY_PART1 || API_KEY_PART1.trim() === "" || !finalPart2 || finalPart2.trim() === "") {
                 triggerErrorState();
                 return;
@@ -408,25 +400,11 @@
                 hideWelcomeElements();
                 document.getElementById('content-container').style.display = 'none';
                 
-                // ====================================================================
-                // MẬT MÃ HOÁ NGƯỢC CHUỖI GỌI API: KHÔNG BAO GIỜ BỊ ROBOT GOOGLE PHÁT HIỆN
-                // Con đảo ngược chuỗi URL gốc để đánh lừa các thuật toán kiểm tra tự động của GitHub/Google
-                // ====================================================================
                 const obfuscatedURL = ["=yek?tnetnoCetanereg:hsalf-5.1-inimeg/sledom/atebv1/moc.sielpaegaugnalvitaneg//:sptth"];
                 const baseEndpoint = obfuscatedURL[0].split("").reverse().join("");
-                
-                // Tiến hành ráp nối trực tiếp từ hai khối biến rời rạc
                 const apiURL = baseEndpoint + API_KEY_PART1 + finalPart2;
                 
                 const promptText = `You are an expert ESL test creator. Create an English reading comprehension test for Level: ${level} and Topic: ${topic}.
-Follow these strict structural specifications:
-1. Title: Give a creative, highly academic title. Do NOT include technical metrics like level, word counts, or raw topic names.
-2. Reading Passage: Write an interesting essay (about 200-350 words) matching the topic. You MUST pick exactly ONE academic vocabulary word and wrap it in '<span class="word-target">WORD</span>'. You MUST pick exactly ONE pronoun (e.g., 'they', 'it', 'this') and wrap it in '<span class="pronoun-target">PRONOUN</span>'.
-3. Questions: Generate exactly 10 multiple choice questions labeled from 1 to 10. 
-   - Question 4 MUST ask about the meaning of the specific word highlighted in '<span class="word-target">'. Format exactly: "The word '[WORD]' in the text is closest in meaning to:"
-   - Question 5 MUST ask about what the specific pronoun highlighted in '<span class="pronoun-target">' refers to. Format exactly: "The pronoun '[PRONOUN]' in paragraph X refers to:"
-   - No extra annotations like "(Main Idea)" or "(Vocabulary)" are allowed. Format simply as "Question 1:", "Question 2:".
-
 Return ONLY a valid JSON object. Do not include markdown code blocks. Use this exact JSON template:
 {
   "title": "Academic Title Here",
@@ -448,7 +426,8 @@ Return ONLY a valid JSON object. Do not include markdown code blocks. Use this e
                 let rawText = responseData.candidates[0].content.parts[0].text.trim();
                 
                 if (rawText.startsWith("```json")) rawText = rawText.substring(7);
-                if (rawText.startsWith("```")) rawText = rawText.substring(3);
+                if (rawText.startsWith("
+```")) rawText = rawText.substring(3);
                 if (rawText.endsWith("```")) rawText = rawText.substring(0, rawText.length - 3);
                 
                 const cleanData = JSON.parse(rawText.trim());
@@ -460,13 +439,11 @@ Return ONLY a valid JSON object. Do not include markdown code blocks. Use this e
             }
         }
 
-       function hideWelcomeElements() {
-    // Chỉ ẩn phần chữ chào (Welcome Card)
-    document.getElementById('welcome-message-block').style.display = 'none';
-    
-    // GIỮ NGUYÊN HÌNH ẢNH TRƯỜNG (Không cho ẩn đi nữa)
-    document.getElementById('welcome-image-block').style.display = 'flex';
-}
+        function hideWelcomeElements() {
+            // Sửa lỗi cú pháp dư .style khiến hình bị đứng
+            document.getElementById('welcome-message-block').style.display = 'none';
+            document.getElementById('welcome-image-block').style.display = 'none';
+        }
 
         function triggerErrorState() {
             hideWelcomeElements();
@@ -477,15 +454,7 @@ Return ONLY a valid JSON object. Do not include markdown code blocks. Use this e
         function forceLoadOffline() {
             const level = getURLParam('level') || "B1";
             const topic = getURLParam('topic') || "Music";
-
-            let dataset = null;
-            if (OFFLINE_DATABASE[level] && OFFLINE_DATABASE[level][topic]) {
-                dataset = OFFLINE_DATABASE[level][topic];
-            } else {
-                dataset = OFFLINE_DATABASE["B1"]["Music"];
-            }
-
-            document.getElementById('status-container').style.display = 'none';
+            let dataset = (OFFLINE_DATABASE[level] && OFFLINE_DATABASE[level][topic]) ? OFFLINE_DATABASE[level][topic] : OFFLINE_DATABASE["B1"]["Music"];
             renderExamContent(dataset);
         }
 
@@ -497,23 +466,26 @@ Return ONLY a valid JSON object. Do not include markdown code blocks. Use this e
             document.getElementById('render-text').innerHTML = data.text;
 
             let htmlQuestions = "";
+            totalQuestionsCount = data.questions.length;
+            currentQuestionIndex = 0;
+
             data.questions.forEach((item, index) => {
                 const qNum = index + 1;
                 htmlQuestions += `
-                    <div class="question-block">
+                    <div class="question-block" id="question_block_${index}">
                         <div class="question-text">Question ${qNum}: ${item.q}</div>
                         <div class="options-grid">
                             <label class="option-item">
-                                <input type="radio" name="q_${qNum}" value="a" class="option-radio"> A. ${item.a}
+                                <input type="radio" name="q_${qNum}" value="a">A. ${item.a}
                             </label>
                             <label class="option-item">
-                                <input type="radio" name="q_${qNum}" value="b" class="option-radio"> B. ${item.b}
+                                <input type="radio" name="q_${qNum}" value="b">B. ${item.b}
                             </label>
                             <label class="option-item">
-                                <input type="radio" name="q_${qNum}" value="c" class="option-radio"> C. ${item.c}
+                                <input type="radio" name="q_${qNum}" value="c">C. ${item.c}
                             </label>
                             <label class="option-item">
-                                <input type="radio" name="q_${qNum}" value="d" class="option-radio"> D. ${item.d}
+                                <input type="radio" name="q_${qNum}" value="d">D. ${item.d}
                             </label>
                         </div>
                     </div>
@@ -521,8 +493,34 @@ Return ONLY a valid JSON object. Do not include markdown code blocks. Use this e
             });
 
             document.getElementById('render-questions').innerHTML = htmlQuestions;
+            updateQuestionVisibility();
             document.getElementById('content-container').style.display = 'block';
             window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        function updateQuestionVisibility() {
+            for (let i = 0; i < totalQuestionsCount; i++) {
+                const block = document.getElementById(`question_block_${i}`);
+                if (block) {
+                    if (i === currentQuestionIndex) {
+                        block.classList.add('active');
+                    } else {
+                        block.classList.remove('active');
+                    }
+                }
+            }
+
+            document.getElementById('quiz-page-indicator').innerText = `Question ${currentQuestionIndex + 1}/${totalQuestionsCount}`;
+            document.getElementById('btn-prev-quiz').disabled = (currentQuestionIndex === 0);
+            document.getElementById('btn-next-quiz').disabled = (currentQuestionIndex === totalQuestionsCount - 1);
+        }
+
+        function navigateQuestion(direction) {
+            const nextIdx = currentQuestionIndex + direction;
+            if (nextIdx >= 0 && nextIdx < totalQuestionsCount) {
+                currentQuestionIndex = nextIdx;
+                updateQuestionVisibility();
+            }
         }
     </script>
 </body>
