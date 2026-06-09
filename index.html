@@ -29,9 +29,9 @@
             padding: 12px;
         }
 
-        /* KHỐI MÀN HÌNH CHỜ BAN ĐẦU (Gốc chuẩn của thầy) */
+        /* KHỐI MÀN HÌNH CHỜ BAN ĐẦU */
         #welcome-container {
-            display: none; /* Mặc định ẩn, điều khiển bằng JS */
+            display: flex; /* Hiện sẵn sàng ngay từ đầu */
             flex-direction: column;
             align-items: center;
             width: 100%;
@@ -76,7 +76,7 @@
             display: block;
         }
 
-        /* KHUNG HIỂN THỊ NỘI DUNG CHÍNH (ĐÚNG Y HỆT HÌNH THẦY THÍCH image_5e51e4.png) */
+        /* KHUNG HIỂN THỊ NỘI DUNG CHÍNH (Chuẩn 100% theo hình image_5e51e4.png) */
         #content-container {
             display: none;
             max-width: 600px;
@@ -216,7 +216,7 @@
 </head>
 <body>
 
-    <!-- MÀN HÌNH CHỜ BAN ĐẦU (Đầy đủ tiêu đề quyển sách, lời chào và hình ngôi trường) -->
+    <!-- MÀN HÌNH CHỜ BAN ĐẦU (Hiện ngay lập tức, đầy đủ chữ, sách và hình trường) -->
     <div id="welcome-container">
         <div class="welcome-card">
             <h1 class="welcome-title">Welcome to Reading Comprehension 📚</h1>
@@ -264,7 +264,7 @@
         let currentQuestionIndex = 0;
         let totalQuestionsCount = 0;
 
-        // BÀI ĐỌC DEMO CHỈ HIỂN THỊ KHI ĐÃ BẤM NÚT "READ UP" MÀ LỖI MẠNG HOẶC CHƯA NHẬP KEY KHÔNG HIỆN MÀN HÌNH HỒNG LỖI
+        // BÀI ĐỌC DEMO KHI LỖI MẠNG HOẶC CHƯA CÓ KEY ĐỂ KHÔNG BỊ HIỆN MÀN HÌNH HỒNG LỖI
         const BACKUP_DATABASE = {
             "text": "In conclusion, Family Life offers great benefits to modern society. It saves us time and energy, allowing us to focus on other important activities. Therefore, learning how to make the best use of this field is a useful skill for everyone.",
             "questions": [
@@ -278,19 +278,19 @@
             return params.get(name);
         }
 
-        // KIỂM TRA TRẠNG THÁI NGAY KHI TẢI TRANG ĐỂ TRÁNH TRANH CHẤP GIAO DIỆN
+        // KIỂM TRA TRẠNG THÁI KHỞI ĐỘNG TRANG
         window.addEventListener('DOMContentLoaded', () => {
             const lvl = getURLParam('level');
             const tpc = getURLParam('topic');
 
-            // Kiểm tra nghiêm ngặt: Nếu KHÔNG CÓ tham số URL (tức là trang đầu tiên vừa mở)
+            // Nếu chưa có tham số (vừa mở ứng dụng) -> Giữ nguyên màn hình ngôi trường chào đón
             if (!lvl || !tpc) {
-                document.getElementById('welcome-container').style.style.display = 'flex';
+                document.getElementById('welcome-container').style.display = 'flex';
                 document.getElementById('content-container').style.display = 'none';
                 return;
             }
             
-            // Nếu CÓ tham số (tức là học sinh đã bấm nút Read up trên App)
+            // Nếu có tham số (học sinh vừa nhấn nút trên App Inventor) -> Ẩn ngay ngôi trường và gọi AI
             document.getElementById('welcome-container').style.display = 'none';
             executeMainPipeline(lvl, tpc);
         });
@@ -299,7 +299,7 @@
             let urlPart2 = getURLParam('key_part2') || "";
             let finalPart2 = (API_KEY_PART2 && API_KEY_PART2.trim() !== "") ? API_KEY_PART2 : urlPart2;
 
-            // Nếu chưa dán key vào code, tự động kích hoạt bài đọc demo để học sinh trải nghiệm giao diện đẹp
+            // Nếu không tìm thấy Key, tự kích hoạt bài demo để bảo vệ giao diện
             if (!API_KEY_PART1 || API_KEY_PART1.trim() === "" || API_KEY_PART1.includes("THẦY_DÁN_PHẦN_1") || !finalPart2 || finalPart2.trim() === "") {
                 renderExamContent(BACKUP_DATABASE);
                 return;
@@ -337,7 +337,7 @@ Return ONLY a valid JSON object. Do not include markdown code blocks. Use this e
                 renderExamContent(cleanData);
 
             } catch (error) {
-                // Nếu gọi AI lỗi, dùng luôn bài demo, đảm bảo không sập
+                // Gặp bất cứ lỗi gì, hiển thị ngay dữ liệu cứu hộ để giữ bộ khung giao diện đẹp
                 renderExamContent(BACKUP_DATABASE);
             }
         }
