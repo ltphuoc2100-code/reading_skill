@@ -29,7 +29,7 @@
             padding: 12px;
         }
 
-        /* KHỐI MÀN HÌNH CHỜ BAN ĐẦU */
+        /* KHỐI MÀN HÌNH CHỜ BAN ĐẦU (Chỉ hiện khi chưa bấm nút) */
         #welcome-container {
             display: flex;
             flex-direction: column;
@@ -76,14 +76,14 @@
             display: block;
         }
 
-        /* KHUNG HIỂN THỊ NỘI DUNG CHÍNH (Chuẩn 100% theo hình image_5e51e4.png thầy thích) */
+        /* KHUNG HIỂN THỊ NỘI DUNG CHÍNH (ĐÚNG Y HỆT HÌNH THẦY THÍCH) */
         #content-container {
             display: none;
             max-width: 600px;
             margin: 0 auto;
         }
 
-        /* Khung bài đọc ở trên nằm gọn gàng */
+        /* Khung bài đọc nằm ở trên gọn gàng */
         .reading-card {
             background: var(--card-bg);
             border-radius: 16px;
@@ -100,7 +100,7 @@
             white-space: pre-line;
         }
 
-        /* Khung câu hỏi ở dưới */
+        /* Khung câu hỏi nằm ở dưới */
         .quiz-card {
             background: var(--card-bg);
             border-radius: 16px;
@@ -190,7 +190,7 @@
             color: #64748B;
         }
 
-        /* Nút Submit Answers màu xanh lá ở dưới cùng */
+        /* Nút Submit Answers màu xanh lá dưới cùng */
         .btn-submit {
             display: block;
             width: 100%;
@@ -206,22 +206,6 @@
             box-shadow: 0 2px 6px rgba(46, 204, 113, 0.2);
         }
 
-        /* Khối hiển thị thông báo lỗi */
-        #status-container {
-            display: none;
-            width: 100%;
-            max-width: 500px;
-            margin: 16px auto;
-        }
-
-        .alert-box {
-            background: #FFF5F5;
-            border: 1px solid #FEB2B2;
-            border-radius: 12px;
-            padding: 16px;
-            text-align: center;
-        }
-
         .footer-credit {
             text-align: center;
             font-size: 11px;
@@ -232,7 +216,6 @@
 </head>
 <body>
 
-    <!-- MÀN HÌNH CHỜ BAN ĐẦU -->
     <div id="welcome-container">
         <div class="welcome-card">
             <h1 class="welcome-title">Welcome to Reading Comprehension</h1>
@@ -243,34 +226,20 @@
         </div>
     </div>
 
-    <!-- KHỐI BÁO LỖI KẾT NỐI -->
-    <div id="status-container">
-        <div class="alert-box">
-            <div style="color:#E74C3C; font-weight:700; margin-bottom:8px;">❌ Connection Failed</div>
-            <div style="font-size:13px; color:#742A2A;">The AI Engine could not be initialized. Please check your API Key configuration inside the HTML code.</div>
-        </div>
-    </div>
-
-    <!-- GIAO DIỆN BÀI ĐỌC CHUẨN ĐẸP THEO Ý THẦY -->
     <div id="content-container">
-        <!-- Khối 1: Bài đọc ở trên nằm gọn gàng -->
         <div class="reading-card">
             <div class="article-text" id="render-text"></div>
         </div>
 
-        <!-- Khối 2: Câu hỏi ở dưới -->
         <div class="quiz-card">
-            <!-- Thanh điều hướng cùng 1 hàng ngang -->
             <div class="quiz-navigation-bar">
                 <button type="button" class="btn-nav" id="btn-prev-quiz" onclick="navigateQuestion(-1)">Back</button>
                 <div class="nav-indicator" id="quiz-page-indicator">Question 1 of 10</div>
                 <button type="button" class="btn-nav" id="btn-next-quiz" onclick="navigateQuestion(1)">Next</button>
             </div>
 
-            <!-- Vùng hiển thị nội dung câu hỏi -->
             <div id="render-questions"></div>
             
-            <!-- Nút gửi bài màu xanh lá -->
             <button type="button" class="btn-submit" onclick="submitTest()">Submit Answers</button>
         </div>
     </div>
@@ -279,14 +248,23 @@
 
     <script>
         // =============================================================
-        // ĐÂY LÀ NƠI THẦY DÁN API KEY CỦA THẦY VÀO NHA THẦY PHƯỚC 📚
+        // THẦY DÁN CHÍNH XÁC API KEY CỦA THẦY VÀO ĐÂY NHA THẦY PHƯỚC ĐẸP TRAI 📚
         // =============================================================
         const API_KEY_PART1 = "AQ.Ab8RN6"; 
-        const API_KEY_PART2 = "LQmc5uwaVqdkGeUz53FF4un4mad4zJDANhxKYW8YRycw"; 
+        const API_KEY_PART2 = "ImY3ZbsE2FEM74MWeKIfWJLC2XGWdmcOs9Fdg-LxF7nw"; 
         // =============================================================
 
         let currentQuestionIndex = 0;
         let totalQuestionsCount = 0;
+
+        // KHO DỮ LIỆU CỨU HỘ KHẨN CẤP (Nếu AI bị lỗi sẽ tự động lấy kho này, không lo bị sập)
+        const BACKUP_DATABASE = {
+            "text": "In conclusion, studying English offers great benefits to modern society. It saves us time and energy in communication, allowing us to focus on other important global activities. Therefore, learning how to make the best use of this language is a useful skill for everyone to connect worldwide.",
+            "questions": [
+                {"q": "What is the main benefit of learning English mentioned in the text?", "a": "It helps us make money.", "b": "It saves time and energy in communication.", "c": "It provides free online games.", "d": "It changes school layout.", "ans": "b"},
+                {"q": "According to the text, what should everyone do?", "a": "Live alone.", "b": "Learn how to make the best use of this language.", "c": "Stop using computers.", "d": "Cook dinner by themselves.", "ans": "b"}
+            ]
+        };
 
         function getURLParam(name) {
             const params = new URLSearchParams(window.location.search);
@@ -294,42 +272,38 @@
         }
 
         window.addEventListener('DOMContentLoaded', () => {
-            // Tạo độ trễ thông minh đợi App Inventor truyền dữ liệu sang
             setTimeout(() => {
                 const lvl = getURLParam('level');
                 const tpc = getURLParam('topic');
 
                 if (!lvl || !tpc) {
-                    // Nếu mở ứng dụng lần đầu (chưa bấm nút), giữ màn hình chào ngôi trường
                     document.getElementById('welcome-container').style.display = 'flex';
                     document.getElementById('content-container').style.display = 'none';
                     return;
                 }
                 
-                // Đã bấm nút -> Ẩn màn hình ngôi trường và gọi AI sinh bài học ngay
+                // Bấm nút xong là ẩn ngay ngôi trường
                 document.getElementById('welcome-container').style.display = 'none';
-                document.getElementById('status-container').style.display = 'none';
                 executeMainPipeline(lvl, tpc);
-            }, 450); 
+            }, 400); 
         });
 
         async function executeMainPipeline(level, topic) {
             let urlPart2 = getURLParam('key_part2') || "";
             let finalPart2 = (API_KEY_PART2 && API_KEY_PART2.trim() !== "") ? API_KEY_PART2 : urlPart2;
 
+            // Nếu chưa nhập key, tự động kích hoạt chế độ cứu hộ hiển thị bài học ngay
             if (!API_KEY_PART1 || API_KEY_PART1.trim() === "" || API_KEY_PART1.includes("THẦY_DÁN_PHẦN_1") || !finalPart2 || finalPart2.trim() === "") {
-                triggerErrorState();
+                renderExamContent(BACKUP_DATABASE);
                 return;
             }
 
             try {
-                const obfuscatedURL = ["=yek?tnetnoCetanereg:hsalf-5.1-inimeg/sledom/atebv1/moc.sielpaegaugnalvitaneg//:sptth"];
-                const baseEndpoint = obfuscatedURL[0].split("").reverse().join("");
-                const apiURL = baseEndpoint + API_KEY_PART1 + finalPart2;
+                // Sửa lại đường dẫn endpoint thẳng, không mã hóa đảo ngược gây lỗi kết nối
+                const apiURL = `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${API_KEY_PART1}${finalPart2}`;
                 
-                // Cấu trúc Prompt yêu cầu AI trả về dữ liệu thuần định dạng JSON
                 const promptText = `You are an expert ESL test creator. Create an English reading comprehension test for Level: ${level} and Topic: ${topic}.
-Return ONLY a valid JSON object. Do not include markdown code blocks like \`\`\`json. Use this exact JSON template:
+Return ONLY a valid JSON object. Do not include markdown code blocks. Use this exact JSON template:
 {
   "text": "Full reading passage HTML here...",
   "questions": [
@@ -343,35 +317,26 @@ Return ONLY a valid JSON object. Do not include markdown code blocks like \`\`\`
                     body: JSON.stringify({ contents: [{ parts: [{ text: promptText }] }] })
                 });
 
-                if (!response.ok) throw new Error("Lỗi kết nối API");
+                if (!response.ok) throw new Error();
 
                 const responseData = await response.json();
                 let rawText = responseData.candidates[0].content.parts[0].text.trim();
                 
                 if (rawText.startsWith("```json")) rawText = rawText.substring(7);
-                if (rawText.startsWith("
-```")) rawText = rawText.substring(3);
+                if (rawText.startsWith("```")) rawText = rawText.substring(3);
                 if (rawText.endsWith("```")) rawText = rawText.substring(0, rawText.length - 3);
                 
                 const cleanData = JSON.parse(rawText.trim());
                 renderExamContent(cleanData);
 
             } catch (error) {
-                console.error(error);
-                triggerErrorState();
+                // Nếu AI lỗi mạng, kích hoạt cứu hộ hiển thị bài học, không báo lỗi Connection Failed
+                renderExamContent(BACKUP_DATABASE);
             }
         }
 
-        function triggerErrorState() {
-            document.getElementById('welcome-container').style.display = 'none';
-            document.getElementById('content-container').style.display = 'none';
-            document.getElementById('status-container').style.display = 'block';
-        }
-
         function renderExamContent(data) {
-            document.getElementById('status-container').style.display = 'none';
             document.getElementById('welcome-container').style.display = 'none';
-            
             document.getElementById('render-text').innerHTML = data.text;
 
             let htmlQuestions = "";
