@@ -24,7 +24,19 @@
             min-height: 520px;
             overflow-y: auto;
         }
-
+/* --- ĐOẠN CHÈN THÊM: CSS CHO HÌNH ẢNH TRƯỜNG --- */
+        .school-logo-container {
+            text-align: center;
+            margin-bottom: 10px;
+            flex-shrink: 0;
+        }
+        .school-logo-img {
+            max-width: 100%;
+            height: auto;
+            max-height: 80px; /* Thầy có thể tăng giảm số này để chỉnh độ cao của hình */
+            border-radius: 8px;
+            object-fit: contain;
+        }
         /* Information and Reading Cards */
         .card {
             background-color: #f8fafc;
@@ -285,6 +297,10 @@
         <button onclick="simulateLaunch()" style="background-color: #4f46e5; color: white; border: none; padding: 12px 20px; border-radius: 8px; font-size: 13px; font-weight: bold; cursor: pointer; box-shadow: 0 2px 4px rgba(79, 70, 229, 0.2);">
             Try Demo Offline Practice
         </button>
+        <!-- CHÈN HÌNH TRƯỜNG Ở MÀN HÌNH CHỜ -->
+        <div class="school-logo-container">
+            <img src="Picture1.png" class="school-logo-img" alt="School Logo">
+        </div>
     </div>
 
     <div id="loading-screen" class="card hidden" style="text-align: center; padding: 30px 15px;">
@@ -483,10 +499,17 @@
 
             var apiUrl = "https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=" + apiKey;
             
-            var promptText = "Create a reading comprehension study unit in English on the topic of '" + topic + "' tailored for CEFR level '" + level + "'. " +
-                             "Generate a title (do NOT include prefix labels like 'Exam Study:'), a reading passage (around 150-250 words), and exactly 10 multiple-choice questions. " +
-                             "Each question must have exactly 4 choices (A, B, C, D), exactly one single-letter answer (A, B, C, or D), and a short explanation in English.";
+            // --- THAY THẾ BIẾN PROMPTTEXT ĐỂ ÉP SỐ TỪ THEO CHUẨN CEFR ---
+var wordCountLimit = "around 180-250 words"; // Mặc định cho B1-B2
+if (level === "A1" || level === "A2") {
+    wordCountLimit = "exactly 100-150 words using simple sentence structures";
+} else if (level === "C1" || level === "C2") {
+    wordCountLimit = "exactly 300-400 words with advanced vocabulary and complex sentences";
+}
 
+var promptText = "Create a reading comprehension study unit in English on the topic of '" + topic + "' tailored for CEFR level '" + level + "'. " +
+                 "Generate a title (do NOT include prefix labels like 'Exam Study:'), a reading passage (" + wordCountLimit + "), and exactly 10 multiple-choice questions. " +
+                 "Each question must have exactly 4 choices (A, B, C, D), exactly one single-letter answer (A, B, C, or D), and a short explanation in English.";
             var payload = {
                 contents: [{ parts: [{ text: promptText }] }],
                 generationConfig: {
