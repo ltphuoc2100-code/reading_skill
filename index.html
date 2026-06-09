@@ -130,12 +130,10 @@
             margin-bottom: 16px;
         }
 
-        /* Ẩn hoàn toàn nút chấm tròn radio mặc định */
         .option-item input[type="radio"] {
             display: none !important;
         }
 
-        /* Thiết kế dạng hộp nút bấm bo góc sạch sẽ */
         .option-item {
             display: block;
             background: #FFFFFF;
@@ -148,7 +146,6 @@
             transition: all 0.2s ease;
         }
 
-        /* Hiệu ứng khi học sinh chọn đáp án */
         .option-item:has(input[type="radio"]:checked) {
             background-color: #F0F7FF;
             border-color: var(--primary-color);
@@ -156,7 +153,6 @@
             font-weight: 600;
         }
 
-        /* Trạng thái hiển thị Đúng/Sai sau khi học sinh Submit bấm nộp bài */
         .option-item.correct-ans {
             background-color: #E8F8F5 !important;
             border-color: var(--success-color) !important;
@@ -170,7 +166,6 @@
             color: #78281F !important;
         }
 
-        /* THANH ĐIỀU HƯỚNG CÂU HỎI */
         .quiz-navigation-bar {
             display: flex;
             flex-direction: row;
@@ -203,7 +198,6 @@
             color: #64748B;
         }
 
-        /* Nút nộp bài màu xanh lá */
         .btn-submit {
             display: block;
             width: 100%;
@@ -219,7 +213,6 @@
             box-shadow: 0 2px 6px rgba(46, 204, 113, 0.2);
         }
 
-        /* Khung hiển thị tổng điểm nổi bật */
         #score-summary-box {
             display: none;
             background: #EBF5FB;
@@ -233,7 +226,6 @@
             margin-bottom: 16px;
         }
 
-        /* Khung vòng xoay tải trang (Loading) */
         #loading-spinner {
             display: none;
             text-align: center;
@@ -253,6 +245,7 @@
 </head>
 <body>
 
+    <!-- MÀN HÌNH CHỜ BAN ĐẦU -->
     <div id="welcome-container">
         <div class="welcome-card">
             <h1 class="welcome-title">Welcome to Reading Comprehension 📚</h1>
@@ -263,8 +256,10 @@
         </div>
     </div>
 
+    <!-- KHỐI ĐANG TẢI DỮ LIỆU TỪ AI -->
     <div id="loading-spinner">🔄 Generating your reading test from AI, please wait a moment...</div>
 
+    <!-- GIAO DIỆN HIỂN THỊ NỘI DUNG CHÍNH -->
     <div id="content-container">
         <div class="reading-card">
             <div class="article-text" id="render-text"></div>
@@ -288,7 +283,7 @@
 
     <script>
         // =============================================================
-        // GIỮ NGUYÊN HOÀN TOÀN CẤU TRÚC KEY HIỆN TẠI CỦA THẦY PHƯỚC
+        // GIỮ NGUYÊN HOÀN TOÀN HỆ THỐNG PHÂN TÁCH KEY CỦA THẦY
         // =============================================================
         const API_KEY_PART1 = "AQ.Ab8RN6"; 
         const API_KEY_PART2 = "ImY3ZbsE2FEM74MWeKIfWJLC2XGWdmcOs9Fdg-LxF7nw"; 
@@ -298,12 +293,20 @@
         let totalQuestionsCount = 0;
         let globalQuestionsData = []; 
 
-        // BÀI ĐỌC DỰ PHÒNG CHỈ BẬT KHI MẤT MẠNG HOÀN TOÀN HOẶC KEY CHẾT hẳn ĐỂ BẢO VỆ GIAO DIỆN
+        // KHO DỮ LIỆU DỰ PHÒNG HOÀN CHỈNH ĐÚNG ĐỦ 10 CÂU HỎI TRẮC NGHIỆM
         const BACKUP_DATABASE = {
-            "text": "In conclusion, Family Life offers great benefits to modern society. It saves us time and energy, allowing us to focus on other important activities. Therefore, learning how to make the best use of this field is a useful skill for everyone.",
+            "text": "Family life plays a fundamental role in shaping an individual's future and well-being. Spending quality time with family members promotes strong emotional bonds, builds mutual trust, and enhances communication skills among children. In modern society, many families struggle to balance work commitments and household responsibilities, which can lead to stress. However, when family members share chores and support each other, it creates a harmonious environment. Eating meals together and discussing daily activities are simple yet powerful ways to stay connected. Ultimately, a supportive family serves as a safe haven and a strong foundation for a person's lifelong journey.",
             "questions": [
-                {"q": "What is the main benefit of Family Life mentioned in the text?", "a": "It helps us make money.", "b": "It saves us time and energy.", "c": "It provides free entertainment.", "d": "It changes modern technology.", "ans": "b"},
-                {"q": "The word 'democratized' in paragraph 2 is closest in meaning to:", "a": "voted for by people", "b": "made widely available to all", "c": "strictly controlled by laws", "d": "limited to official members", "ans": "b"}
+                {"q": "What is the main idea of the passage?", "a": "The difficulties of modern working parents.", "b": "The importance of family life and strong bonds.", "c": "How to cook family meals efficiently.", "d": "The impact of technological changes on families.", "ans": "b"},
+                {"q": "According to the text, what does spending quality time promote?", "a": "Financial independence.", "b": "Academic success exclusively.", "c": "Strong emotional bonds and mutual trust.", "d": "Advanced career skills.", "ans": "c"},
+                {"q": "What can cause stress in modern families?", "a": "Having too many shared hobbies.", "b": "Balancing work commitments and household duties.", "c": "Spending too much time eating together.", "d": "Learning communication skills.", "ans": "b"},
+                {"q": "The word 'harmonious' in the passage is closest in meaning to:", "a": "Peaceful and friendly.", "b": "Loud and noisy.", "c": "Difficult and strict.", "d": "Expensive and luxurious.", "ans": "a"},
+                {"q": "Which activity is mentioned as a simple way to stay connected?", "a": "Going on expensive vacations.", "b": "Eating meals together and talking.", "c": "Watching television in separate rooms.", "d": "Buying luxury household appliances.", "ans": "b"},
+                {"q": "How does sharing chores affect the family environment?", "a": "It causes more arguments.", "b": "It creates a friendly, supportive atmosphere.", "c": "It decreases children's responsibility.", "d": "It leaves less time for work.", "ans": "b"},
+                {"q": "The word 'haven' in the last paragraph can be best replaced by:", "a": "Marketplace.", "b": "Safe place.", "c": "Office building.", "d": "School yard.", "ans": "b"},
+                {"q": "What role does a supportive family serve for a person's life?", "a": "A temporary financial source.", "b": "A safe haven and strong foundation.", "c": "A strict governing institution.", "d": "A place solely for child entertainment.", "ans": "b"},
+                {"q": "It can be inferred from the text that effective communication:", "a": "Is not necessary for children.", "b": "Is enhanced through family interaction.", "c": "Is only taught at public schools.", "d": "Always leads to family stress.", "ans": "b"},
+                {"q": "Which of the following statements is TRUE according to the passage?", "a": "Modern families have no duties.", "b": "Sharing responsibilities reduces family harmony.", "c": "Family support acts as a lifelong foundation.", "d": "Working commitments never cause stress.", "ans": "c"}
             ]
         };
 
@@ -312,7 +315,6 @@
             return params.get(name);
         }
 
-        // KIỂM TRA TRẠNG THÁI KHỞI ĐỘNG
         window.addEventListener('DOMContentLoaded', () => {
             const lvl = getURLParam('level');
             const tpc = getURLParam('topic');
@@ -324,7 +326,6 @@
                 return;
             }
             
-            // Chuyển sang giao diện tải trang
             document.getElementById('welcome-container').style.display = 'none';
             document.getElementById('loading-spinner').style.display = 'block';
             executeMainPipeline(lvl, tpc);
@@ -340,18 +341,15 @@
             }
 
             try {
-                // Khởi tạo đường dẫn API chuẩn kết nối đến mô hình Gemini 1.5 Flash
                 const apiURL = `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${API_KEY_PART1}${finalPart2}`;
                 
-                // Prompt tối ưu hóa bắt buộc AI sinh ra cấu trúc 10 câu hỏi đọc hiểu chuẩn hóa hoàn chỉnh
-                const promptText = `You are an expert ESL test creator. Create an English reading comprehension test with a long comprehensive passage for Level: ${level} and Topic: ${topic}.
+                const promptText = `You are an expert ESL test creator. Create an English reading comprehension test with a comprehensive passage for Level: ${level} and Topic: ${topic}.
 The test must contain EXACTLY 10 multiple-choice questions.
-Return ONLY a valid JSON object. Do not include markdown code blocks like \`\`\`json. Use this exact JSON structural format:
+Return ONLY a valid JSON object. Do not include markdown formatting. Use this structural format:
 {
   "text": "Full long reading passage content here...",
   "questions": [
-    {"q": "Question 1 text here?", "a": "Option A", "b": "Option B", "c": "Option C", "d": "Option D", "ans": "correct_option_letter_lowercase"},
-    {"q": "Question 2 text here?", "a": "Option A", "b": "Option B", "c": "Option C", "d": "Option D", "ans": "correct_option_letter_lowercase"}
+    {"q": "Question text here?", "a": "Option A", "b": "Option B", "c": "Option C", "d": "Option D", "ans": "correct_option_letter_lowercase"}
   ]
 }`;
 
@@ -366,22 +364,21 @@ Return ONLY a valid JSON object. Do not include markdown code blocks like \`\`\`
                 const responseData = await response.json();
                 let rawText = responseData.candidates[0].content.parts[0].text.trim();
                 
-                // Bộ lọc bóc tách làm sạch chuỗi JSON cực kỳ an toàn
                 if (rawText.startsWith("```json")) rawText = rawText.substring(7);
-                if (rawText.startsWith("```")) rawText = rawText.substring(3);
+                if (rawText.startsWith("
+```")) rawText = rawText.substring(3);
                 if (rawText.endsWith("```")) rawText = rawText.substring(0, rawText.length - 3);
                 
                 const cleanData = JSON.parse(rawText.trim());
                 renderExamContent(cleanData);
 
             } catch (error) {
-                // Đảm bảo có lỗi xảy ra thì vẫn hiện bài văn dự phòng chứ không bị đứng hình treo app
+                // NẾU CÓ LỖI XẢY RA, LẬP TỨC HIỂN THỊ BÀI ĐỌC DỰ PHÒNG 10 CÂU HỎI
                 renderExamContent(BACKUP_DATABASE);
             }
         }
 
         function renderExamContent(data) {
-            // Ẩn màn hình chờ và hiệu ứng loading đi
             document.getElementById('welcome-container').style.display = 'none';
             document.getElementById('loading-spinner').style.display = 'none';
             
@@ -437,7 +434,6 @@ Return ONLY a valid JSON object. Do not include markdown code blocks like \`\`\`
             }
         }
 
-        // HÀM CHẤM ĐIỂM + TÔ MÀU ĐÁP ÁN + GỬI KẾT QUẢ VỀ APP INVENTOR
         function submitTest() {
             let correctCount = 0;
 
@@ -453,30 +449,35 @@ Return ONLY a valid JSON object. Do not include markdown code blocks like \`\`\`
                     }
                 }
 
-                // Khóa lựa chọn, không cho học sinh bấm đổi đáp án sau khi nộp bài
                 for (const radio of radios) { radio.disabled = true; }
 
                 const correctLetter = question.ans.toLowerCase().trim();
-                
-                // Luôn tô màu Xanh Lá cho nhãn chứa đáp án ĐÚNG chuẩn
                 const correctLabel = document.getElementById(`label_${qNum}_${correctLetter}`);
                 if (correctLabel) correctLabel.classList.add('correct-ans');
 
                 if (selectedValue === correctLetter) {
                     correctCount++;
                 } else if (selectedValue !== "") {
-                    // Nếu học sinh chọn SAI, tô màu Đỏ nhãn học sinh đã chọn
                     const wrongLabel = document.getElementById(`label_${qNum}_${selectedValue}`);
                     if (wrongLabel) wrongLabel.classList.add('wrong-ans');
                 }
             });
 
-            // 1. Hiển thị bảng tổng điểm trực quan lên màn hình Web
             const summaryBox = document.getElementById('score-summary-box');
             summaryBox.innerHTML = `🎉 Your Score: ${correctCount} / ${totalQuestionsCount} Correct Answers!`;
             summaryBox.style.display = 'block';
 
-            // Ẩn nút Submit đi để tránh học sinh bấm nộp lại nhiều lần
             document.getElementById('submit-main-btn').style.display = 'none';
 
-            // 2. L
+            const finalResultString = `${correctCount}/${totalQuestionsCount}`;
+            if (window.AppInventor) {
+                window.AppInventor.setWebViewString(finalResultString);
+            } else {
+                window.location.hash = "result=" + finalResultString;
+            }
+
+            alert(`You finished the test! Result: ${correctCount}/${totalQuestionsCount} correct answers.`);
+        }
+    </script>
+</body>
+</html>
