@@ -155,7 +155,7 @@
         }
 
         .question-block {
-            display: none; /* Ẩn các câu hỏi khác, chỉ hiện câu active */
+            display: none;
         }
 
         .question-block.active {
@@ -176,12 +176,12 @@
             margin-bottom: 20px;
         }
 
-        /* XÓA BỎ DẤU CHẤM TRÒN (RADIO BUTTON) THEO Ý THẦY */
+        /* ẨN NÚT TRÒN THEO Ý THẦY */
         .option-item input[type="radio"] {
             display: none !important;
         }
 
-        /* Biến câu trả lời thành dạng hộp nút bấm sạch sẽ */
+        /* Biến câu trả lời thành dạng thẻ hộp nút bấm */
         .option-item {
             display: block;
             background: #F8FAFC;
@@ -194,7 +194,7 @@
             transition: all 0.2s ease;
         }
 
-        /* Khi người dùng chọn đáp án sẽ đổi màu xanh đổi chữ đậm */
+        /* Khi chọn đáp án */
         .option-item:has(input[type="radio"]:checked) {
             background-color: #E6F0FA;
             border-color: #4A90E2;
@@ -202,7 +202,7 @@
             font-weight: 600;
         }
 
-        /* THANH ĐIỀU HƯỚNG BẮT BUỘC NẰM CÙNG MỘT HÀNG NGANG CỦA THẦY */
+        /* THANH ĐIỀU HƯỚNG CÙNG MỘT HÀNG NGANG CỦA THẦY */
         .quiz-navigation-bar {
             display: flex !important;
             flex-direction: row !important;
@@ -283,7 +283,7 @@
         <div class="quiz-card">
             <div id="render-questions"></div>
             
-            <!-- THANH ĐIỀU HƯỚNG NẰM CÙNG MỘT HÀNG NGANG -->
+            <!-- THANH ĐIỀU HƯỚNG CÙNG MỘT HÀNG NGANG -->
             <div class="quiz-navigation-bar">
                 <button type="button" class="btn-nav" id="btn-prev-quiz" onclick="navigateQuestion(-1)">Back</button>
                 <div class="nav-indicator" id="quiz-page-indicator">Question 1/10</div>
@@ -320,6 +320,7 @@
             return params.get(name);
         }
 
+        // ĐẢM BẢO ẨN NGAY KHI CÓ THAM SỐ NHẤN NÚT
         window.addEventListener('DOMContentLoaded', () => {
             const lvl = getURLParam('level');
             const tpc = getURLParam('topic');
@@ -327,18 +328,23 @@
             if (!lvl || !tpc) {
                 document.getElementById('welcome-message-block').style.display = 'flex';
                 document.getElementById('welcome-image-block').style.display = 'flex';
+                document.getElementById('content-container').style.display = 'none';
                 return;
             }
+            
+            // Nếu có tham số tức là đã nhấn Read up -> Ẩn lập tức màn hình chờ
+            hideWelcomeElements();
             executeMainPipeline(lvl, tpc);
         });
 
         function hideWelcomeElements() {
-            // ẨN TOÀN BỘ cả chữ chào và hình ảnh ngôi trường, không cho xuất hiện ở trang sau nữa
             document.getElementById('welcome-message-block').style.display = 'none';
             document.getElementById('welcome-image-block').style.display = 'none';
         }
 
         async function executeMainPipeline(level, topic) {
+            hideWelcomeElements(); // Khóa chặt màn hình chờ
+
             let urlPart2 = getURLParam('key_part2') || "";
             let finalPart2 = (API_KEY_PART2 && API_KEY_PART2.trim() !== "") ? API_KEY_PART2 : urlPart2;
 
@@ -348,8 +354,6 @@
             }
 
             try {
-                hideWelcomeElements();
-                
                 const obfuscatedURL = ["=yek?tnetnoCetanereg:hsalf-5.1-inimeg/sledom/atebv1/moc.sielpaegaugnalvitaneg//:sptth"];
                 const baseEndpoint = obfuscatedURL[0].split("").reverse().join("");
                 const apiURL = baseEndpoint + API_KEY_PART1 + finalPart2;
@@ -389,7 +393,7 @@
         }
 
         function renderExamContent(data) {
-            hideWelcomeElements(); // Ép buộc ẩn hình ngôi trường lần nữa cho chắc chắn
+            hideWelcomeElements(); 
             document.getElementById('status-container').style.display = 'none';
             
             document.getElementById('render-title').innerHTML = data.title;
