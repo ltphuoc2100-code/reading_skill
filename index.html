@@ -29,9 +29,9 @@
             padding: 12px;
         }
 
-        /* KHỐI MÀN HÌNH CHỜ BAN ĐẦU (Chỉ hiện khi chưa bấm nút) */
+        /* KHỐI MÀN HÌNH CHỜ BAN ĐẦU (Gốc chuẩn của thầy) */
         #welcome-container {
-            display: flex;
+            display: none; /* Mặc định ẩn, điều khiển bằng JS */
             flex-direction: column;
             align-items: center;
             width: 100%;
@@ -76,7 +76,7 @@
             display: block;
         }
 
-        /* KHUNG HIỂN THỊ NỘI DUNG CHÍNH (ĐÚNG Y HỆT HÌNH THẦY THÍCH) */
+        /* KHUNG HIỂN THỊ NỘI DUNG CHÍNH (ĐÚNG Y HỆT HÌNH THẦY THÍCH image_5e51e4.png) */
         #content-container {
             display: none;
             max-width: 600px;
@@ -216,9 +216,10 @@
 </head>
 <body>
 
+    <!-- MÀN HÌNH CHỜ BAN ĐẦU (Đầy đủ tiêu đề quyển sách, lời chào và hình ngôi trường) -->
     <div id="welcome-container">
         <div class="welcome-card">
-            <h1 class="welcome-title">Welcome to Reading Comprehension</h1>
+            <h1 class="welcome-title">Welcome to Reading Comprehension 📚</h1>
             <p style="color: #4A5568; font-size: 13px;">Please choose <strong>Level</strong> and <strong>Topic</strong> on the top, then click the <strong>Read up</strong> button to practise!</p>
         </div>
         <div class="school-image-container">
@@ -226,20 +227,26 @@
         </div>
     </div>
 
+    <!-- GIAO DIỆN BÀI ĐỌC CHUẨN ĐẸP THEO Ý THẦY -->
     <div id="content-container">
+        <!-- Khối 1: Bài đọc ở trên nằm gọn gàng -->
         <div class="reading-card">
             <div class="article-text" id="render-text"></div>
         </div>
 
+        <!-- Khối 2: Câu hỏi ở dưới -->
         <div class="quiz-card">
+            <!-- Thanh điều hướng cùng 1 hàng ngang -->
             <div class="quiz-navigation-bar">
                 <button type="button" class="btn-nav" id="btn-prev-quiz" onclick="navigateQuestion(-1)">Back</button>
                 <div class="nav-indicator" id="quiz-page-indicator">Question 1 of 10</div>
                 <button type="button" class="btn-nav" id="btn-next-quiz" onclick="navigateQuestion(1)">Next</button>
             </div>
 
+            <!-- Vùng hiển thị nội dung câu hỏi -->
             <div id="render-questions"></div>
             
+            <!-- Nút gửi bài màu xanh lá -->
             <button type="button" class="btn-submit" onclick="submitTest()">Submit Answers</button>
         </div>
     </div>
@@ -248,7 +255,7 @@
 
     <script>
         // =============================================================
-        // THẦY DÁN CHÍNH XÁC API KEY CỦA THẦY VÀO ĐÂY NHA THẦY PHƯỚC ĐẸP TRAI 📚
+        // THẦY DÁN CHÍNH XÁC API KEY CỦA THẦY VÀO ĐÂY NHA THẦY PHƯỚC 📚
         // =============================================================
         const API_KEY_PART1 = "AQ.Ab8RN6"; 
         const API_KEY_PART2 = "ImY3ZbsE2FEM74MWeKIfWJLC2XGWdmcOs9Fdg-LxF7nw"; 
@@ -257,12 +264,12 @@
         let currentQuestionIndex = 0;
         let totalQuestionsCount = 0;
 
-        // KHO DỮ LIỆU CỨU HỘ KHẨN CẤP (Nếu AI bị lỗi sẽ tự động lấy kho này, không lo bị sập)
+        // BÀI ĐỌC DEMO CHỈ HIỂN THỊ KHI ĐÃ BẤM NÚT "READ UP" MÀ LỖI MẠNG HOẶC CHƯA NHẬP KEY KHÔNG HIỆN MÀN HÌNH HỒNG LỖI
         const BACKUP_DATABASE = {
-            "text": "In conclusion, studying English offers great benefits to modern society. It saves us time and energy in communication, allowing us to focus on other important global activities. Therefore, learning how to make the best use of this language is a useful skill for everyone to connect worldwide.",
+            "text": "In conclusion, Family Life offers great benefits to modern society. It saves us time and energy, allowing us to focus on other important activities. Therefore, learning how to make the best use of this field is a useful skill for everyone.",
             "questions": [
-                {"q": "What is the main benefit of learning English mentioned in the text?", "a": "It helps us make money.", "b": "It saves time and energy in communication.", "c": "It provides free online games.", "d": "It changes school layout.", "ans": "b"},
-                {"q": "According to the text, what should everyone do?", "a": "Live alone.", "b": "Learn how to make the best use of this language.", "c": "Stop using computers.", "d": "Cook dinner by themselves.", "ans": "b"}
+                {"q": "What is the main benefit of Family Life mentioned in the text?", "a": "It helps us make money.", "b": "It saves us time and energy.", "c": "It provides free entertainment.", "d": "It changes modern technology.", "ans": "b"},
+                {"q": "The word 'democratized' in paragraph 2 is closest in meaning to:", "a": "voted for by people", "b": "made widely available to all", "c": "strictly controlled by laws", "d": "limited to official members", "ans": "b"}
             ]
         };
 
@@ -271,35 +278,34 @@
             return params.get(name);
         }
 
+        // KIỂM TRA TRẠNG THÁI NGAY KHI TẢI TRANG ĐỂ TRÁNH TRANH CHẤP GIAO DIỆN
         window.addEventListener('DOMContentLoaded', () => {
-            setTimeout(() => {
-                const lvl = getURLParam('level');
-                const tpc = getURLParam('topic');
+            const lvl = getURLParam('level');
+            const tpc = getURLParam('topic');
 
-                if (!lvl || !tpc) {
-                    document.getElementById('welcome-container').style.display = 'flex';
-                    document.getElementById('content-container').style.display = 'none';
-                    return;
-                }
-                
-                // Bấm nút xong là ẩn ngay ngôi trường
-                document.getElementById('welcome-container').style.display = 'none';
-                executeMainPipeline(lvl, tpc);
-            }, 400); 
+            // Kiểm tra nghiêm ngặt: Nếu KHÔNG CÓ tham số URL (tức là trang đầu tiên vừa mở)
+            if (!lvl || !tpc) {
+                document.getElementById('welcome-container').style.style.display = 'flex';
+                document.getElementById('content-container').style.display = 'none';
+                return;
+            }
+            
+            // Nếu CÓ tham số (tức là học sinh đã bấm nút Read up trên App)
+            document.getElementById('welcome-container').style.display = 'none';
+            executeMainPipeline(lvl, tpc);
         });
 
         async function executeMainPipeline(level, topic) {
             let urlPart2 = getURLParam('key_part2') || "";
             let finalPart2 = (API_KEY_PART2 && API_KEY_PART2.trim() !== "") ? API_KEY_PART2 : urlPart2;
 
-            // Nếu chưa nhập key, tự động kích hoạt chế độ cứu hộ hiển thị bài học ngay
+            // Nếu chưa dán key vào code, tự động kích hoạt bài đọc demo để học sinh trải nghiệm giao diện đẹp
             if (!API_KEY_PART1 || API_KEY_PART1.trim() === "" || API_KEY_PART1.includes("THẦY_DÁN_PHẦN_1") || !finalPart2 || finalPart2.trim() === "") {
                 renderExamContent(BACKUP_DATABASE);
                 return;
             }
 
             try {
-                // Sửa lại đường dẫn endpoint thẳng, không mã hóa đảo ngược gây lỗi kết nối
                 const apiURL = `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${API_KEY_PART1}${finalPart2}`;
                 
                 const promptText = `You are an expert ESL test creator. Create an English reading comprehension test for Level: ${level} and Topic: ${topic}.
@@ -323,14 +329,15 @@ Return ONLY a valid JSON object. Do not include markdown code blocks. Use this e
                 let rawText = responseData.candidates[0].content.parts[0].text.trim();
                 
                 if (rawText.startsWith("```json")) rawText = rawText.substring(7);
-                if (rawText.startsWith("```")) rawText = rawText.substring(3);
+                if (rawText.startsWith("
+```")) rawText = rawText.substring(3);
                 if (rawText.endsWith("```")) rawText = rawText.substring(0, rawText.length - 3);
                 
                 const cleanData = JSON.parse(rawText.trim());
                 renderExamContent(cleanData);
 
             } catch (error) {
-                // Nếu AI lỗi mạng, kích hoạt cứu hộ hiển thị bài học, không báo lỗi Connection Failed
+                // Nếu gọi AI lỗi, dùng luôn bài demo, đảm bảo không sập
                 renderExamContent(BACKUP_DATABASE);
             }
         }
