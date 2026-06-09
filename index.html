@@ -176,12 +176,12 @@
             margin-bottom: 20px;
         }
 
-        /* ẨN NÚT TRÒN THEO Ý THẦY */
+        /* ẨN NÚT TRÒN */
         .option-item input[type="radio"] {
             display: none !important;
         }
 
-        /* Biến câu trả lời thành dạng thẻ hộp nút bấm */
+        /* Biến câu trả lời thành dạng thẻ hộp nút bấm sạch sẽ */
         .option-item {
             display: block;
             background: #F8FAFC;
@@ -202,7 +202,7 @@
             font-weight: 600;
         }
 
-        /* THANH ĐIỀU HƯỚNG CÙNG MỘT HÀNG NGANG CỦA THẦY */
+        /* THANH ĐIỀU HƯỚNG CÙNG MỘT HÀNG NGANG CHUẨN Ý THẦY */
         .quiz-navigation-bar {
             display: flex !important;
             flex-direction: row !important;
@@ -295,8 +295,8 @@
     <div class="footer-credit">Enhancing Reading Comprehension by Le Thien Phuoc</div>
 
     <script>
-        const API_KEY_PART1 = ""; 
-        const API_KEY_PART2 = ""; 
+        const API_KEY_PART1 = "AQ.Ab8RN6"; 
+        const API_KEY_PART2 = "ImY3ZbsE2FEM74MWeKIfWJLC2XGWdmcOs9Fdg-LxF7nw"; 
 
         let currentQuestionIndex = 0;
         let totalQuestionsCount = 0;
@@ -320,21 +320,24 @@
             return params.get(name);
         }
 
-        // ĐẢM BẢO ẨN NGAY KHI CÓ THAM SỐ NHẤN NÚT
         window.addEventListener('DOMContentLoaded', () => {
-            const lvl = getURLParam('level');
-            const tpc = getURLParam('topic');
+            // TẠO ĐỘ TRỄ 0.5 GIÂY ĐỂ ĐỢI APP INVENTOR TRUYỀN LINK SANG 
+            setTimeout(() => {
+                const lvl = getURLParam('level');
+                const tpc = getURLParam('topic');
 
-            if (!lvl || !tpc) {
-                document.getElementById('welcome-message-block').style.display = 'flex';
-                document.getElementById('welcome-image-block').style.display = 'flex';
-                document.getElementById('content-container').style.display = 'none';
-                return;
-            }
-            
-            // Nếu có tham số tức là đã nhấn Read up -> Ẩn lập tức màn hình chờ
-            hideWelcomeElements();
-            executeMainPipeline(lvl, tpc);
+                if (!lvl || !tpc) {
+                    // Nếu thực sự không bấm nút gì, giữ nguyên màn hình chờ
+                    document.getElementById('welcome-message-block').style.display = 'flex';
+                    document.getElementById('welcome-image-block').style.display = 'flex';
+                    document.getElementById('content-container').style.display = 'none';
+                    return;
+                }
+                
+                // Nếu có bấm Read up -> Ẩn ngay lập tức màn hình chờ và chạy ứng dụng
+                hideWelcomeElements();
+                executeMainPipeline(lvl, tpc);
+            }, 500); 
         });
 
         function hideWelcomeElements() {
@@ -343,7 +346,7 @@
         }
 
         async function executeMainPipeline(level, topic) {
-            hideWelcomeElements(); // Khóa chặt màn hình chờ
+            hideWelcomeElements();
 
             let urlPart2 = getURLParam('key_part2') || "";
             let finalPart2 = (API_KEY_PART2 && API_KEY_PART2.trim() !== "") ? API_KEY_PART2 : urlPart2;
