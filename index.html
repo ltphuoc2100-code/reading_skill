@@ -78,30 +78,6 @@
             box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
         }
 
-        /* Level and Topic Badges */
-        .badge-container {
-            display: flex;
-            justify-content: space-between;
-            margin-bottom: 10px;
-        }
-        .badge {
-            font-size: 11px;
-            font-weight: bold;
-            padding: 4px 10px;
-            border-radius: 6px;
-            text-transform: uppercase;
-        }
-        .badge-level {
-            background-color: #e0e7ff;
-            color: #4338ca;
-            border: 1px solid #c7d2fe;
-        }
-        .badge-topic {
-            background-color: #e2e8f0;
-            color: #334155;
-            border: 1px solid #cbd5e1;
-        }
-
         /* Reading Passage Styles */
         .reading-title {
             font-size: 15px;
@@ -117,9 +93,9 @@
             padding: 12px;
             border-radius: 10px;
             border: 2px solid #cbd5e1;
-            max-height: 160px; /* Khóa chiều cao cố định để scroll nội bộ */
+            max-height: 220px; /* Nới rộng chiều cao để chứa nhiều dòng hơn */
             overflow-y: auto;  
-            text-align: justify;
+            text-align: justify; /* Căn đều hai bên thẳng tắp cực kỳ trang trọng đúng sở thích của thầy */
             font-family: Georgia, serif;
         }
 
@@ -301,15 +277,14 @@
         };
     </script>
 
-    <!-- Welcome screen -->
-    <!-- MÀN HÌNH CHÀO MÀU PHỐI VÀNG: CHỮ CHỜ ĐỎ, DESCRIPTION XÁM SLATE ẤM ÁP, KHUNG TRƯỜNG CHỨA ẢNH TRÀN VIỀN -->
+    <!-- MÀN HÌNH CHÀO PHỐI MÀU HOÀN HẢO: TIÊU ĐỀ ĐỎ NỔI BẬT, CHỮ CHỜ XÁM SLATE ẤM ÁP, KHUNG TRƯỜNG CHỨA ẢNH TRÀN VIỀN -->
     <div id="waiting-screen" class="card" style="text-align: center; padding: 25px 15px; display: flex; flex-direction: column; flex: 1; min-height: 0; box-sizing: border-box;">
         <div style="font-size: 56px; margin-bottom: 12px;">📖</div>
         
         <!-- Welcome in Red (#ef4444) -->
         <h3 style="font-size: 22px; margin: 0 0 8px 0; color: #ef4444; font-weight: 800;">Welcome to Reading comprehension</h3>
         
-        <!-- Description in Grey Slate (#334155) -->
+        <!-- Description in Grey Slate (#334155) - Bôi đậm Level, Topic và Read up chuẩn xác -->
         <p style="font-size: 15px; color: #334155; line-height: 1.5; margin: 0 0 16px 0;">
             Please choose <b>Level</b> and <b>Topic</b> on the top, then click the <b>Read up</b> button to practise the reading comprehension!
         </p>
@@ -327,7 +302,7 @@
     <!-- LOADING SCREEN DURING API CONNECTION -->
     <div id="loading-screen" class="card hidden" style="text-align: center; padding: 30px 15px;">
         <div class="spinner"></div>
-        <h3 style="font-size: 15px; margin: 10px 0 6px 0; color: #0f172a; font-weight: 800;">Connecting to Google AI</h3>
+        <h3 style="font-size: 15px; margin: 10px 0 6px 0; color: #0f172a; font-weight: 800;">Connecting to Reading Comprehesion</h3>
         <p style="font-size: 12px; color: #64748b; line-height: 1.5; margin: 0;">
             A customized reading passage with 10 comprehension questions for you is coming soon...
         </p>
@@ -339,7 +314,7 @@
         <p id="error-message" style="margin-bottom: 12px; font-weight: bold; font-family: monospace;"></p>
         <div style="border-top: 1px solid #fca5a5; padding-top: 10px; font-size:11px; color:#b91c1c;">
             <b>Troubleshooting Checklist:</b><br>
-            • Please ensure you have pasted a new, active Gemini API Key into the html source code at line 377.<br>
+            • Please ensure you have pasted a new Key into the html source code at line 377.<br>
             • Ensure your mobile device has a stable Internet connection.
         </div>
         <button onclick="retryOffline()" style="margin-top: 14px; background-color: #ef4444; color: white; border: none; padding: 8px 14px; border-radius: 6px; font-size: 11px; font-weight: bold; cursor: pointer; display: block; width: 100%;">
@@ -350,12 +325,8 @@
     <!-- SPLIT SCREEN DUAL CONTAINER -->
     <div id="split-screen-container" class="hidden" style="display: flex; flex-direction: column; flex: 1; overflow: hidden;">
         
-        <!-- TOP ZONE: COMPACT AUTO-EXPANDING PASSAGE BOX -->
+        <!-- TOP ZONE: COMPACT AUTO-EXPANDING PASSAGE BOX (ĐÃ XÓA SẠCH BADGE DƯ THỪA ĐÚNG Ý THẦY!) -->
         <div class="card" style="flex-shrink: 0; margin-bottom: 8px; padding: 10px;">
-            <div class="badge-container">
-                <span id="badge-level" class="badge badge-level">LEVEL --</span>
-                <span id="badge-topic" class="badge badge-topic">TOPIC --</span>
-            </div>
             <h3 id="reading-title" class="reading-title">Loading...</h3>
             <div id="reading-passage" class="passage-box">
                 Loading study material...
@@ -372,12 +343,8 @@
                 <button onclick="nextQuestion()" id="btn-next" class="nav-bar-btn">Next</button>
             </div>
 
-            <!-- KHU VỰC HIỂN THỊ CÂU HỎI VÀ LỰA CHỌN CÓ THỂ CUỘN DỌC ĐỘC LẬP -->
+            <!-- KHU VỰC HIỂN THỊ CÂU HỎI VÀ LỰA CHỌN CÓ THỂ CUỘN DỌC ĐỘC LẬP (ĐÃ XÓA TRIỆT ĐỂ READING UNIT!) -->
             <div style="overflow-y: auto; flex: 1; margin-bottom: 8px;" id="question-box-scroll">
-                <div style="display: flex; justify-content: flex-end; margin-bottom: 6px;">
-                 <!--   <span class="badge badge-level" style="font-size: 9px; padding: 2px 6px;">READING UNIT</span>
-                </div>
-
                 <p id="question-text" class="question-text">Loading...</p>
                 
                 <!-- Multiple Choice Radio Options Grid -->
@@ -420,12 +387,11 @@
         Enhancing Reading Comprehension by Le Thien Phuoc
     </footer>
 
-    <!-- -->
     <!-- JAVASCRIPT ENGINE WITH ROBUST "ANTI-NULL" GRAPHIC WRAPPERS -->
     <script>
         // Hộp khóa API Key bảo mật
-        var keyPart1 = "AQ.Ab"; 
-        var keyPart2 = "8RN6ImY3ZbsE2FEM74MWeKIfWJLC2XGWdmcOs9Fdg-LxF7nw"; 
+        var keyPart1 = "AQ.Ab8RN6"; 
+        var keyPart2 = "ImY3ZbsE2FEM74MWeKIfWJLC2XGWdmcOs9Fdg-LxF7nw"; 
 
         var apiKey = keyPart1 + keyPart2;
         if (keyPart2.indexOf("AIza") === 0) {
@@ -821,9 +787,6 @@
             safeHide("waiting-screen");
             safeHide("error-screen");
             safeShow("split-screen-container");
-            
-            safeSetText("badge-level", "LEVEL: " + currentLevel);
-            safeSetText("badge-topic", "TOPIC: " + currentTopic);
 
             selectedAnswers = {};
             isSubmitted = false;
@@ -1040,7 +1003,7 @@
                                '</div>';
                 playSynthesizedSound(true);
             } else if (score >= 5) {
-                // Đạt từ 5-9 câu: Thưởng sao vàng lấp lánh khích lệ tiến bộ vượt bậc
+                // Đạt sao vàng từ 5-9 câu: Bíp kép ấm áp, tinh khôi
                 if (resDiv) {
                     resDiv.style.backgroundColor = "#f5f3ff";
                     resDiv.style.borderColor = "#8b5cf6";
