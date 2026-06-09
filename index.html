@@ -30,8 +30,8 @@
             padding: 12px;
         }
 
-        /* Giao diện màn hình chờ ban đầu */
-        #welcome-screen {
+        /* KHỐI 1: Màn hình chào độc lập */
+        #welcome-message-block {
             display: flex;
             flex-direction: column;
             align-items: center;
@@ -75,6 +75,14 @@
             color: #1E293B;
         }
 
+        /* KHỐI 2: Khung hình ảnh trường độc lập */
+        #welcome-image-block {
+            display: flex;
+            justify-content: center;
+            width: 100%;
+            animation: fadeIn 0.6s ease-in-out;
+        }
+
         .school-image-container {
             width: 100%;
             max-width: 500px;
@@ -84,6 +92,7 @@
             border: 1px solid #E2E8F0;
             background: var(--card-bg);
             padding: 6px;
+            margin-bottom: 20px;
         }
 
         .school-image {
@@ -93,7 +102,7 @@
             display: block;
         }
 
-        /* Khối thông báo lỗi & Trạng thái (Mặc định ẩn khi khởi động) */
+        /* Khối thông báo lỗi (Mặc định ẩn khi khởi động) */
         #status-container {
             display: none;
             width: 100%;
@@ -179,7 +188,7 @@
             white-space: pre-line;
         }
 
-        /* Cấu trúc thiết kế Highlight */
+        /* Định dạng Highlight trực quan */
         .word-target {
             color: #0056B3 !important;
             font-weight: 700 !important;
@@ -276,14 +285,17 @@
 </head>
 <body>
 
-    <!-- MÀN HÌNH CHỜ BAN ĐẦU (SẠCH SẼ, TÁCH BIỆT HÌNH ẢNH) -->
-    <div id="welcome-screen">
+    <!-- KHỐI 1: MÀN HÌNH CHỜ ĐỘC LẬP -->
+    <div id="welcome-message-block">
         <div class="welcome-card">
             <span class="welcome-icon">📖</span>
             <h1 class="welcome-title">Welcome to Reading Comprehension</h1>
             <p class="welcome-guide">Please choose <strong>Level</strong> and <strong>Topic</strong> on the top, then click the <strong>Read up</strong> button to practise the reading comprehension!</p>
         </div>
+    </div>
         
+    <!-- KHỐI 2: HÌNH ẢNH TRƯỜNG ĐỘC LẬP -->
+    <div id="welcome-image-block">
         <div class="school-image-container">
             <img src="https://lh3.googleusercontent.com/pw/AP1GczM_NfR5LshfP-eZc_5tG-vS7lU7R6FjO3BAt_Z8H96-1yCbe0v_YhT7V6m_K697bA0B8Z9M8G=w800" alt="School" class="school-image">
         </div>
@@ -314,8 +326,8 @@
     <div class="footer-credit">Enhancing Reading Comprehension by Le Thien Phuoc</div>
 
     <script>
-        // Cấu hình mã khóa API Key của thầy (Thay thế chuỗi rỗng bằng Key thật khi chạy Online)
-        const GEMINI_API_KEY = ""; 
+        // BẢO MẬT: Điền nửa đầu đoạn API Key của thầy vào đây (Ví dụ: "AIzaSyAz...")
+        const API_KEY_PART1 = ""; 
 
         // Kho dữ liệu đề thi Offline dự phòng chuẩn hóa cao cấp
         const OFFLINE_DATABASE = {
@@ -345,7 +357,7 @@
                     "targetPronoun": "this",
                     "questions": [
                         {"q": "What is the primary focus of the passage?", "a": "The history of ancient migrations.", "b": "Designing eco-friendly public transport.", "c": "Solutions for environmental pressure in expanding cities.", "d": "The financial cost of solar panel integration.", "ans": "c"},
-                        {"q": "What effect does rapid city expansion have on natural resources?", "a": "It purifies local rivers.", "b": "It puts immense pressure on them.", "c": "It eliminates urban waste entirely.", "d": "It reduces the need for green spaces.", "ans": "b"},
+                        {"q": "What effect does rapid city expansion have on natural resources?", "a": "It puts immense pressure on them.", "b": "It reduces the need for green spaces.", "c": "It eliminates urban waste entirely.", "d": "It reduces the need for green spaces.", "ans": "b"},
                         {"q": "How do trees along busy avenues improve air quality?", "a": "By releasing carbon dioxide.", "b": "By absorbing carbon dioxide.", "c": "By reducing traffic congestion.", "d": "By generating renewable solar energy.", "ans": "b"},
                         {"q": "The word 'infrastructure' in the text is closest in meaning to:", "a": "natural vegetation", "b": "public facilities and systems", "c": "agricultural soil", "d": "private households", "ans": "b"},
                         {"q": "The pronoun 'this' in paragraph 1 refers to:", "a": "local recycling programs", "b": "green space design", "c": "collective action", "d": "landfill volume", "ans": "c"},
@@ -359,42 +371,41 @@
             }
         };
 
-        // Hàm đọc tham số URL từ App Inventor gửi xuống
         function getURLParam(name) {
             const params = new URLSearchParams(window.location.search);
             return params.get(name);
         }
 
-        // Quy trình khởi động kiểm soát hệ thống
         window.addEventListener('DOMContentLoaded', () => {
             const lvl = getURLParam('level');
             const tpc = getURLParam('topic');
 
-            // Nếu không có tham số -> Đang ở trạng thái khởi động ứng dụng lần đầu
             if (!lvl || !tpc) {
-                document.getElementById('welcome-screen').style.display = 'flex';
+                document.getElementById('welcome-message-block').style.display = 'flex';
+                document.getElementById('welcome-image-block').style.display = 'flex';
                 document.getElementById('status-container').style.display = 'none';
                 document.getElementById('content-container').style.display = 'none';
                 return;
             }
 
-            // Nếu có tham số -> Học sinh đã nhấn nút READ UP, kích hoạt kiểm tra Online
             executeMainPipeline(lvl, tpc);
         });
 
-        // Điều phối kết nối chính thức
         async function executeMainPipeline(level, topic) {
-            if (!GEMINI_API_KEY || GEMINI_API_KEY.trim() === "") {
+            // Lấy nửa đuôi API Key được truyền từ khối gọi URL trên App Inventor
+            const keyPart2 = getURLParam('key_part2') || "";
+            const FULL_API_KEY = (API_KEY_PART1 + keyPart2).trim();
+
+            if (!FULL_API_KEY || FULL_API_KEY === "" || API_KEY_PART1.trim() === "") {
                 triggerErrorState();
                 return;
             }
 
             try {
-                // Hiệu ứng chờ tải bài online
-                document.getElementById('welcome-screen').style.display = 'none';
+                hideWelcomeElements();
                 document.getElementById('content-container').style.display = 'none';
                 
-                const apiURL = `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${GEMINI_API_KEY}`;
+                const apiURL = `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${FULL_API_KEY}`;
                 
                 const promptText = `You are an expert ESL test creator. Create an English reading comprehension test for Level: ${level} and Topic: ${topic}.
 Follow these strict structural specifications:
@@ -425,7 +436,6 @@ Return ONLY a valid JSON object. Do not include markdown code blocks. Use this e
                 const responseData = await response.json();
                 let rawText = responseData.candidates[0].content.parts[0].text.trim();
                 
-                // Bộ lọc làm sạch JSON
                 if (rawText.startsWith("```json")) rawText = rawText.substring(7);
                 if (rawText.startsWith("
 ```")) rawText = rawText.substring(3);
@@ -440,14 +450,17 @@ Return ONLY a valid JSON object. Do not include markdown code blocks. Use this e
             }
         }
 
-        // Kích hoạt giao diện báo lỗi khi không thể chạy Online
+        function hideWelcomeElements() {
+            document.getElementById('welcome-message-block').style.display = 'none';
+            document.getElementById('welcome-image-block').style.display = 'none';
+        }
+
         function triggerErrorState() {
-            document.getElementById('welcome-screen').style.display = 'none';
+            hideWelcomeElements();
             document.getElementById('content-container').style.display = 'none';
             document.getElementById('status-container').style.display = 'block';
         }
 
-        // Hàm cứu hộ khi nhấn nút gọi đề thi Offline dự phòng độc lập
         function forceLoadOffline() {
             const level = getURLParam('level') || "B1";
             const topic = getURLParam('topic') || "Music";
@@ -459,14 +472,12 @@ Return ONLY a valid JSON object. Do not include markdown code blocks. Use this e
                 dataset = OFFLINE_DATABASE["B1"]["Music"];
             }
 
-            // Ẩn bảng báo lỗi và hiển thị bài thi Offline chuyên nghiệp
             document.getElementById('status-container').style.display = 'none';
             renderExamContent(dataset);
         }
 
-        // Xuất dữ liệu cấu trúc bài thi lên màn hình điện thoại
         function renderExamContent(data) {
-            document.getElementById('welcome-screen').style.display = 'none';
+            hideWelcomeElements();
             document.getElementById('status-container').style.display = 'none';
             
             document.getElementById('render-title').innerHTML = data.title;
