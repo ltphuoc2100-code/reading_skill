@@ -197,6 +197,7 @@
 <body class="p-3">
 
     <!-- 1. WAITING SCREEN (WELCOME & SCHOOL PICTURE) -->
+    <!-- STREAMING_CHUNK: Designing the welcome interface layout with the school picture... -->
     <div id="waiting-screen" class="card" style="text-align: center; padding: 35px 20px;">
         <div style="font-size: 56px; margin-bottom: 16px;">📖</div>
         
@@ -244,6 +245,7 @@
     </div>
 
     <!-- 4. MAIN SPLIT SCREEN CONTAINER (READING & QUIZ) -->
+    <!-- STREAMING_CHUNK: Setting up the core split viewport panel layout... -->
     <div id="split-screen-container" class="hidden">
         
         <!-- PANE A: READING PASSAGE BOX -->
@@ -311,6 +313,7 @@
     <!-- ĐỘNG CƠ ĐIỀU PHỐI DỮ LIỆU ĐỘNG CHUYÊN NGHIỆP -->
     <script>
         // PHÂN MẢNH KHÓA BẢO MẬT API ĐỂ QUA MẶT ROBOT QUÉT CỦA GITHUB
+        /* STREAMING_CHUNK: Separating API Key components dynamically... */
         var keyPart1 = "AQ.Ab8RN6";
         var keyPart2 = "ImY3ZbsE2FEM74MWeKIfWJLC2XGWdmcOs9Fdg-LxF7nw"; // Trình di động sẽ tự ráp lại hoặc lấy từ Block App Inventor
         
@@ -346,6 +349,7 @@
         window.addEventListener('touchstart', initAudioContext);
 
         // HÀM AN TOÀN TUYỆT ĐỐI CHỐNG LỖI CRASH "CANNOT SET PROPERTIES OF NULL"
+        /* STREAMING_CHUNK: Formulating safe DOM wrapper methods... */
         function safeSetText(id, text) {
             var el = document.getElementById(id);
             if (el) el.innerText = text;
@@ -462,6 +466,7 @@
         }
 
         // HÀM TẠO ĐỀ THI OFFLINE DỰ PHÒNG CHÂN THỰC 100% (PHÂN CHIA 3 TẦNG CEFR ĐỘC LẬP CHỐNG LỆCH LOGIC)
+        /* STREAMING_CHUNK: Coding the multi-tier backup engine data arrays... */
         function generateOfflineBackupQuiz(level, topic) {
             var title = "The Influence and Study of " + topic;
             var passage = "";
@@ -837,6 +842,7 @@
         }
 
         // TIẾN TRÌNH KẾT NỐI GEMINI AI ONLINE (NÂNG CẤP PROMPT ĐỘNG CƯỠNG CHẾ SỐ TỪ C1/C2)
+        /* STREAMING_CHUNK: Coding the dynamic AI API trigger method... */
         function loadConfigAndTriggerAI(level, topic) {
             currentLevel = level;
             currentTopic = topic;
@@ -884,7 +890,7 @@
                                "    }\n" +
                                "  ]\n" +
                                "}\n" +
-                               "Note: 'answer' is the correct option index (0 for A, 1 for B, 2 for C, 3 for D). Do NOT include any formatting wrappers like \\x60\\x60\\x60json.";
+                               "Note: 'answer' is the correct option index (0 for A, 1 for B, 2 for C, 3 for D). Do NOT include any formatting wrappers like markdown.";
 
             var payload = {
                 contents: [{ parts: [{ text: promptText }] }],
@@ -940,6 +946,7 @@
         }
 
         // KHỞI CHẠY GIAO DIỆN BÀI THI (DISPLAY EXAM)
+        /* STREAMING_CHUNK: Setting up the exam display renderer... */
         function displayExam(data) {
             quizData = data;
             selectedAnswers = {};
@@ -1007,6 +1014,7 @@
         }
 
         // HIỂN THỊ CÂU HỎI THEO CHỈ SỐ INDEX
+        /* STREAMING_CHUNK: Managing question rendering states... */
         function showQuestion(idx) {
             if (!quizData || idx < 0 || idx >= quizData.questions.length) return;
             activeQuestionIdx = idx;
@@ -1080,6 +1088,7 @@
         }
 
         // HÀM CHẤM ĐIỂM (GRADE QUIZ & PLAY REWARD AUDIO)
+        /* STREAMING_CHUNK: Coding the grading engine and score logic... */
         function gradeQuiz() {
             if (!quizData) return;
 
@@ -1226,6 +1235,7 @@
         }
 
         // WINDOW LOAD: ĐIỀU PHỐI MẶC ĐỊNH KHỞI ĐỘNG CỰC KỲ KHẮT KHE CHUẨN XÁC
+        /* STREAMING_CHUNK: Initializing state on document loaded window... */
         window.onload = function() {
             // 1. Chạy vòng lặp kiểm tra tín hiệu WebViewString liên tục từ App Inventor
             setInterval(checkConnection, 500);
