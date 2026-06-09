@@ -1,9 +1,11 @@
 <!DOCTYPE html>
-<html lang="en" style="background-color: #ffffff;">
+<html lang="vi" style="background-color: #ffffff;">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>AI Reading Practice</title>
+    <title>ACE Reading Skills</title>
+    <!-- Tải Tailwind CSS để cấu hình giao diện nhanh và đẹp -->
+    <script src="https://cdn.tailwindcss.com"></script>
     <style>
         /* CSS LIGHT THEME - EXTRA LARGE FONTS - ZERO INTERNET LIBRARIES */
         html, body {
@@ -21,11 +23,11 @@
             display: flex;
             flex-direction: column;
             justify-content: flex-start;
-            min-height: 520px; /* Locked height to prevent collapse in old Android systems */
+            min-height: 520px; /* Khóa cứng chiều cao tối thiểu chống vỡ layout trên máy cũ */
             overflow-y: auto;
         }
 
-        /* THANH TIÊU ĐỀ CHUYỂN CÂU HỎI NGANG SIÊU MỎNG (image_a615df.png) */
+        /* THANH ĐIỀU HƯỚNG CÂU HỎI NGANG SIÊU MỎNG CHUẨN IMAGE_A615DF.PNG */
         .nav-row-container {
             display: flex;
             align-items: center;
@@ -66,7 +68,7 @@
             white-space: nowrap;
         }
 
-        /* Information and Reading Cards */
+        /* Khung Card thông tin */
         .card {
             background-color: #f8fafc;
             border: 2px solid #e2e8f0;
@@ -108,36 +110,22 @@
             margin: 0 0 8px 0;
         }
         .passage-box {
-            font-size: 17px; /* Extra Large Reading Font */
+            font-size: 17px; /* Phóng to chữ bài đọc */
             line-height: 1.6;
             color: #1e293b;
             background-color: #ffffff;
             padding: 12px;
             border-radius: 10px;
             border: 2px solid #cbd5e1;
-            max-height: 160px; /* Locked reading height */
-            overflow-y: auto;  /* Only scrollable reading box */
+            max-height: 160px; /* Khóa chiều cao cố định để scroll nội bộ */
+            overflow-y: auto;  
             text-align: justify;
             font-family: Georgia, serif;
         }
 
-        /* Question and Options Area */
-        .question-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            border-bottom: 2px solid #e2e8f0;
-            padding-bottom: 8px;
-            margin-bottom: 12px;
-        }
-        .question-num {
-            font-size: 13px;
-            font-weight: 800;
-            color: #475569;
-            text-transform: uppercase;
-        }
+        /* Question Text Styles */
         .question-text {
-            font-size: 18px; /* Extra Large Question Font */
+            font-size: 18px; /* Phóng to câu hỏi */
             font-weight: 700;
             color: #0f172a;
             margin: 0 0 12px 0;
@@ -153,7 +141,7 @@
             border: 2px solid #cbd5e1;
             border-radius: 10px;
             color: #1e293b;
-            font-size: 16px; /* Extra Large Options Font */
+            font-size: 16px; /* Phóng to lựa chọn */
             margin-bottom: 8px;
             cursor: pointer;
             box-sizing: border-box;
@@ -216,6 +204,10 @@
             font-weight: bold;
             cursor: pointer;
             box-shadow: 0 4px 6px -1px rgba(16, 185, 129, 0.3);
+            transition: all 0.2s ease;
+        }
+        .submit-btn:active {
+            transform: scale(0.97);
         }
 
         /* Score & Diagnostic Cards */
@@ -267,7 +259,6 @@
             background-color: #f43f5e;
         }
 
-        /* Helpers & Loading States */
         .hidden {
             display: none !important;
         }
@@ -310,19 +301,24 @@
         };
     </script>
 
-    <!-- -->
-    <!-- WAITING SCREEN FOR SIGNAL (100% ENGLISH) -->
-    <div id="waiting-screen" class="card" style="text-align: center; padding: 20px 15px; display: flex; flex-direction: column; flex: 1; min-height: 0; box-sizing: border-box;">
-        <div style="font-size: 32px; margin-bottom: 12px;">📖</div>
-        <h3 style="font-size: 18px; margin: 0 0 8px 0; color: #ef4444; font-weight: 800;">Welcome to Reading comprehension</h3>
-        <p style="font-size: 14px; color: #475569; line-height: 1.5; margin: 0 0 16px 0;">
-            Please choose <b>Level</b> and <b>Topic</b> on the top, then click the <b>Read up</b>  button to practise the reading comprehension!
+    <!-- Welcome screen -->
+    <!-- MÀN HÌNH CHÀO MÀU PHỐI VÀNG: CHỮ CHỜ ĐỎ, DESCRIPTION XÁM SLATE ẤM ÁP, KHUNG TRƯỜNG CHỨA ẢNH TRÀN VIỀN -->
+    <div id="waiting-screen" class="card" style="text-align: center; padding: 25px 15px; display: flex; flex-direction: column; flex: 1; min-height: 0; box-sizing: border-box;">
+        <div style="font-size: 56px; margin-bottom: 12px;">📖</div>
+        
+        <!-- Welcome in Red (#ef4444) -->
+        <h3 style="font-size: 22px; margin: 0 0 8px 0; color: #ef4444; font-weight: 800;">Welcome to Reading comprehension</h3>
+        
+        <!-- Description in Grey Slate (#334155) -->
+        <p style="font-size: 15px; color: #334155; line-height: 1.5; margin: 0 0 16px 0;">
+            Please choose <b>Level</b> and <b>Topic</b> on the top, then click the <b>Read up</b> button to practise the reading comprehension!
         </p>
+        
         <button onclick="simulateLaunch()" style="background-color: #4f46e5; color: white; border: none; padding: 12px 20px; border-radius: 8px; font-size: 13px; font-weight: bold; cursor: pointer; box-shadow: 0 2px 4px rgba(79, 70, 229, 0.2); margin-bottom: 16px; align-self: center;">
             Try Demo Offline Practice
         </button>
 
-        <!-- Khung ảnh trường lấp đầy khoảng trống bên dưới, bo cong khít sát 4 cạnh -->
+        <!-- Khung ảnh trường Chu Văn An tràn viền mềm mại, tự động lấp đầy phần chân trang màu xám -->
         <div style="flex: 1; min-height: 0; padding: 0 !important; overflow: hidden; border: 2px solid #e2e8f0; border-radius: 14px; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.05); display: flex; flex-direction: column;">
             <img src="Picture1.png" alt="Chu Van An School" style="width: 100% !important; height: 100% !important; object-fit: cover; display: block; flex: 1;" onerror="this.src='https://placehold.co/600x400/e2e8f0/475569?text=Chu+Van+An+School'">
         </div>
@@ -331,7 +327,7 @@
     <!-- LOADING SCREEN DURING API CONNECTION -->
     <div id="loading-screen" class="card hidden" style="text-align: center; padding: 30px 15px;">
         <div class="spinner"></div>
-        <h3 style="font-size: 15px; margin: 10px 0 6px 0; color: #0f172a; font-weight: 800;">Connecting to Reading Comprehension</h3>
+        <h3 style="font-size: 15px; margin: 10px 0 6px 0; color: #0f172a; font-weight: 800;">Connecting to Google AI</h3>
         <p style="font-size: 12px; color: #64748b; line-height: 1.5; margin: 0;">
             A customized reading passage with 10 comprehension questions for you is coming soon...
         </p>
@@ -343,7 +339,8 @@
         <p id="error-message" style="margin-bottom: 12px; font-weight: bold; font-family: monospace;"></p>
         <div style="border-top: 1px solid #fca5a5; padding-top: 10px; font-size:11px; color:#b91c1c;">
             <b>Troubleshooting Checklist:</b><br>
-            Ensure your mobile device has a stable Internet connection.
+            • Please ensure you have pasted a new, active Gemini API Key into the html source code at line 377.<br>
+            • Ensure your mobile device has a stable Internet connection.
         </div>
         <button onclick="retryOffline()" style="margin-top: 14px; background-color: #ef4444; color: white; border: none; padding: 8px 14px; border-radius: 6px; font-size: 11px; font-weight: bold; cursor: pointer; display: block; width: 100%;">
             Load Standard Offline Quiz Instead
@@ -356,8 +353,8 @@
         <!-- TOP ZONE: COMPACT AUTO-EXPANDING PASSAGE BOX -->
         <div class="card" style="flex-shrink: 0; margin-bottom: 8px; padding: 10px;">
             <div class="badge-container">
-               <!--  <span id="badge-level" class="badge badge-level">LEVEL --</span>
-               <!--  <span id="badge-topic" class="badge badge-topic">TOPIC --</span>
+                <span id="badge-level" class="badge badge-level">LEVEL --</span>
+                <span id="badge-topic" class="badge badge-topic">TOPIC --</span>
             </div>
             <h3 id="reading-title" class="reading-title">Loading...</h3>
             <div id="reading-passage" class="passage-box">
@@ -368,7 +365,7 @@
         <!-- BOTTOM ZONE: LOCKED TALL QUESTION BOX -->
         <div class="card" style="flex: 1; display: flex; flex-direction: column; justify-content: space-between; overflow: hidden; margin-bottom: 0; padding: 10px;">
             
-            <!-- ĐƯA THANH TIÊU ĐỀ CHUYỂN CÂU HỎI NGANG SIÊU MỎNG LÊN ĐẦU KHUNG -->
+            <!-- THANH TIÊU ĐỀ CHUYỂN CÂU HỎI NGANG SIÊU MỎNG LÊN ĐẦU KHUNG -->
             <div class="nav-row-container">
                 <button onclick="prevQuestion()" id="btn-prev" class="nav-bar-btn">Back</button>
                 <span id="current-question-num" class="nav-indicator">Question 1 of 10</span>
@@ -378,7 +375,7 @@
             <!-- KHU VỰC HIỂN THỊ CÂU HỎI VÀ LỰA CHỌN CÓ THỂ CUỘN DỌC ĐỘC LẬP -->
             <div style="overflow-y: auto; flex: 1; margin-bottom: 8px;" id="question-box-scroll">
                 <div style="display: flex; justify-content: flex-end; margin-bottom: 6px;">
-                   <!--  <span class="badge badge-level" style="font-size: 9px; padding: 2px 6px;">READING UNIT</span>
+                 <!--   <span class="badge badge-level" style="font-size: 9px; padding: 2px 6px;">READING UNIT</span>
                 </div>
 
                 <p id="question-text" class="question-text">Loading...</p>
@@ -424,8 +421,9 @@
     </footer>
 
     <!-- -->
-    <!-- JAVASCRIPT LEGACY ENGINE (ES5 COMPLIANT FOR OLD WEBVIEWS) -->
+    <!-- JAVASCRIPT ENGINE WITH ROBUST "ANTI-NULL" GRAPHIC WRAPPERS -->
     <script>
+        // Hộp khóa API Key bảo mật
         var keyPart1 = "AQ.Ab"; 
         var keyPart2 = "8RN6ImY3ZbsE2FEM74MWeKIfWJLC2XGWdmcOs9Fdg-LxF7nw"; 
 
@@ -445,30 +443,67 @@
         var isSubmitted = false;   
         var waitingMusicInterval = null;
 
-        // Classic Array helper
-        function arrayIndexOf(arr, val) {
-            for (var i = 0; i < arr.length; i++) {
-                if (arr[i] === val) return i;
-            }
-            return -1;
+        // BỘ HÀM PHÒNG NGỰ PHÒNG CHỐNG LỖI "Cannot set properties of null" (INNERTEXT / INNERHTML)
+        function safeGet(id) {
+            return document.getElementById(id);
         }
 
-        // ES5 Safe Layout control
-        function showElement(id) {
-            var el = document.getElementById(id);
+        function safeSetText(id, text) {
+            var el = safeGet(id);
+            if (el) {
+                el.innerText = text;
+            }
+        }
+
+        function safeSetHTML(id, html) {
+            var el = safeGet(id);
+            if (el) {
+                el.innerHTML = html;
+            }
+        }
+
+        function safeSetStyleProperty(id, property, value) {
+            var el = safeGet(id);
+            if (el) {
+                el.style.setProperty(property, value, "important");
+            }
+        }
+
+        function safeRemoveStyleProperty(id, property) {
+            var el = safeGet(id);
+            if (el) {
+                el.style.removeProperty(property);
+            }
+        }
+
+        function safeShow(id) {
+            var el = safeGet(id);
             if (el) {
                 el.className = el.className.replace(/\bhidden\b/g, "").trim();
+                if (id === "split-screen-container") {
+                    el.style.setProperty("display", "flex", "important");
+                } else {
+                    el.style.removeProperty("display");
+                }
             }
         }
 
-        function hideElement(id) {
-            var el = document.getElementById(id);
+        function safeHide(id) {
+            var el = safeGet(id);
             if (el) {
                 var classes = el.className.split(" ");
-                if (arrayIndexOf(classes, "hidden") === -1) {
+                if (classes.indexOf("hidden") === -1) {
                     classes.push("hidden");
                     el.className = classes.join(" ");
                 }
+                el.style.setProperty("display", "none", "important");
+            }
+        }
+
+        function safeSetButtonDisabled(id, isDisabled) {
+            var el = safeGet(id);
+            if (el) {
+                el.disabled = isDisabled;
             }
         }
 
@@ -520,16 +555,63 @@
             }
         }
 
+        // PHÁT NHẠC REO MỪNG CHẤM ĐIỂM THÀNH CÔNG (WEB AUDIO API)
+        function playSynthesizedSound(isPerfect) {
+            try {
+                var AudioContext = window.AudioContext || window.webkitAudioContext;
+                if (!AudioContext) return;
+                var ctx = new AudioContext();
+                
+                if (ctx.state === 'suspended') {
+                    ctx.resume();
+                }
+                
+                if (isPerfect) {
+                    // Đúng hoàn toàn 10/10: Reo nhạc vui vẻ rực rỡ
+                    var notes = [261.63, 329.63, 392.00, 523.25];
+                    notes.forEach(function(freq, index) {
+                        var osc = ctx.createOscillator();
+                        var gain = ctx.createGain();
+                        osc.connect(gain);
+                        gain.connect(ctx.destination);
+                        osc.type = 'triangle';
+                        osc.frequency.setValueAtTime(freq, ctx.currentTime + index * 0.1);
+                        gain.gain.setValueAtTime(0.25, ctx.currentTime + index * 0.1);
+                        gain.gain.exponentialRampToValueAtTime(0.01, ctx.currentTime + index * 0.1 + 0.45);
+                        osc.start(ctx.currentTime + index * 0.1);
+                        osc.stop(ctx.currentTime + index * 0.1 + 0.5);
+                    });
+                } else {
+                    // Đạt sao vàng từ 5-9 câu: Bíp kép ấm áp, tinh khôi
+                    var notes = [392.00, 523.25];
+                    notes.forEach(function(freq, index) {
+                        var osc = ctx.createOscillator();
+                        var gain = ctx.createGain();
+                        osc.connect(gain);
+                        gain.connect(ctx.destination);
+                        osc.type = 'sine';
+                        osc.frequency.setValueAtTime(freq, ctx.currentTime + index * 0.12);
+                        gain.gain.setValueAtTime(0.2, ctx.currentTime + index * 0.12);
+                        gain.gain.exponentialRampToValueAtTime(0.01, ctx.currentTime + index * 0.12 + 0.3);
+                        osc.start(ctx.currentTime + index * 0.12);
+                        osc.stop(ctx.currentTime + index * 0.12 + 0.35);
+                    });
+                }
+            } catch (e) {
+                console.log("Audio Error:", e);
+            }
+        }
+
         function simulateLaunch() {
             loadConfigAndTriggerAI("B2", "Artificial Intelligence");
         }
 
         function retryOffline() {
-            hideElement("error-screen");
+            safeHide("error-screen");
             generateOfflineBackupQuiz(currentLevel || "B2", currentTopic || "Artificial Intelligence");
         }
 
-        // Parse query Parameters safely
+        // Trích xuất tham số an toàn từ link URL
         function getQueryParam(name) {
             var query = window.location.search.substring(1);
             if (!query) return "";
@@ -560,9 +642,11 @@
                         if (queryString) {
                             var vars = queryString.split("&");
                             for (var i = 0; i < vars.length; i++) {
-                                var pair = vars[i].split("=");
-                                if (pair[0] === "level") level = pair[1] ? decodeURIComponent(pair[1]).trim() : "";
-                                if (pair[0] === "topic") topic = pair[1] ? decodeURIComponent(pair[1]).trim() : "";
+                                if (vars[i].indexOf("=") !== -1) {
+                                    var pair = vars[i].split("=");
+                                    if (pair[0] === "level") level = pair[1] ? decodeURIComponent(pair[1]).trim() : "";
+                                    if (pair[0] === "topic") topic = pair[1] ? decodeURIComponent(pair[1]).trim() : "";
+                                }
                             }
                         }
                     } else if (wvs.indexOf("|") !== -1) {
@@ -576,30 +660,28 @@
             return { level: level, topic: topic };
         }
 
-        // DYNAMIC GEMINI API CONNECT ENGINE
+        // TIẾN TRÌNH KẾT NỐI GEMINI AI ONLINE
         function loadConfigAndTriggerAI(level, topic) {
             currentLevel = level;
             currentTopic = topic;
 
-            hideElement("waiting-screen");
-            hideElement("split-screen-container");
-            hideElement("error-screen");
-            showElement("loading-screen");
-            startWaitingMusic(); // Khởi chạy âm nhạc chờ
+            safeHide("waiting-screen");
+            safeHide("split-screen-container");
+            safeHide("error-screen");
+            safeShow("loading-screen");
+            startWaitingMusic(); // Bật nhạc chờ thư giãn
 
-            // Fallback immediately if API Key is empty
+            // Tự động kích hoạt Offline ngay nếu mã API trống
             if (!apiKey || apiKey === "AIza" || apiKey.trim() === "") {
                 setTimeout(function() {
                     stopWaitingMusic();
-                    hideElement("loading-screen");
-                    var errEl = document.getElementById("error-message");
-                    errEl.innerText = "API Key not configured in HTML file. Please paste your Gemini Key into line 407.";
-                    showElement("error-screen");
+                    safeHide("loading-screen");
+                    showError("API Key not configured in HTML file. Loaded standard offline material instead.");
+                    generateOfflineBackupQuiz(level, topic);
                 }, 800);
                 return;
             }
 
-            // Target correct Gemini model
             var apiUrl = "https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=" + apiKey;
             
             var promptText = "Create a reading comprehension study unit in English on the topic of '" + topic + "' tailored for CEFR level '" + level + "'. " +
@@ -643,8 +725,8 @@
             
             xhr.onreadystatechange = function () {
                 if (xhr.readyState === 4) {
-                    stopWaitingMusic(); // Tắt nhạc chờ khi nhận được tín hiệu phản hồi
-                    hideElement("loading-screen");
+                    stopWaitingMusic(); // Tắt nhạc chờ khi hoàn tất kết nối
+                    safeHide("loading-screen");
                     if (xhr.status === 200) {
                         try {
                             var response = JSON.parse(xhr.responseText);
@@ -660,6 +742,7 @@
                             }
                         } catch (e) {
                             showError("Parser Failure: " + e.message);
+                            generateOfflineBackupQuiz(level, topic);
                         }
                     } else {
                         var errorMsg = "HTTP Status " + xhr.status;
@@ -670,6 +753,7 @@
                             }
                         } catch(e) {}
                         showError(errorMsg);
+                        generateOfflineBackupQuiz(level, topic);
                     }
                 }
             };
@@ -679,12 +763,11 @@
 
         function showError(msg) {
             stopWaitingMusic();
-            var errEl = document.getElementById("error-message");
-            errEl.innerText = msg;
-            showElement("error-screen");
+            safeSetText("error-message", msg);
+            safeShow("error-screen");
         }
 
-        // STANDARD OFFLINE MOCK SYSTEM (Backup system for offline testing)
+        // HÀM TẠO ĐỀ THI OFFLINE DỰ PHÒNG CHỐNG CRASH CHO THẦY PHƯỚC
         function generateOfflineBackupQuiz(level, topic) {
             var simulatedTitle = "The Evolution of " + topic;
             var simulatedPassage = "This backup offline reading unit has been compiled for CEFR scale <b>" + level + "</b> focusing on the topic of <b>" + topic + "</b>. Modern innovations have changed the landscape of <b>" + topic + "</b>. Historically, progress was constrained due to lack of technology. However, educational methods are adapting to help students master basic terminology of <b>" + topic + "</b>. By practicing this offline lesson, answering all 10 questions, and calculating your scores, you confirm that the dual-pane viewport interface is fully responsive!";
@@ -734,95 +817,102 @@
         }
 
         function initQuizUI() {
-            showElement("split-screen-container");
-            document.getElementById("badge-level").innerText = "LEVEL: " + currentLevel;
-            document.getElementById("badge-topic").innerText = "TOPIC: " + currentTopic;
+            safeHide("loading-screen");
+            safeHide("waiting-screen");
+            safeHide("error-screen");
+            safeShow("split-screen-container");
+            
+            safeSetText("badge-level", "LEVEL: " + currentLevel);
+            safeSetText("badge-topic", "TOPIC: " + currentTopic);
 
             selectedAnswers = {};
             isSubmitted = false;
             activeQuestionIdx = 0;
-            hideElement("result");
+            safeHide("result");
 
-            document.getElementById("reading-title").innerHTML = quizData.title;
-            document.getElementById("reading-passage").innerHTML = quizData.passage;
+            if (quizData) {
+                safeSetHTML("reading-title", quizData.title || "Loading Title...");
+                safeSetHTML("reading-passage", quizData.passage || "Loading Passage...");
+            }
 
             showQuestion(0);
         }
 
-        // RENDER SPECIFIC QUESTION SLIDE
+        // HIỂN THỊ CHI TIẾT TRẮNG TRƠN CHO TỪNG SLIDE CÂU HỎI (DEFENSIVE GRAPHICS WRAPPED)
         function showQuestion(idx) {
-            if (!quizData || idx < 0 || idx >= quizData.questions.length) return;
+            if (!quizData || !quizData.questions || idx < 0 || idx >= quizData.questions.length) return;
             activeQuestionIdx = idx;
 
             var q = quizData.questions[idx];
 
-            document.getElementById("current-question-num").innerText = "Question " + (idx + 1) + " of 10";
-            document.getElementById("question-text").innerText = q.question;
+            safeSetText("current-question-num", "Question " + (idx + 1) + " of " + quizData.questions.length);
+            safeSetText("question-text", q.question);
 
-            var optionsGrid = document.getElementById("options-grid");
-            optionsGrid.innerHTML = "";
-
-            var optKeys = ["A", "B", "C", "D"];
-            for (var i = 0; i < optKeys.length; i++) {
-                var key = optKeys[i];
-                var isChosen = selectedAnswers[idx] === key;
-                
-                var label = document.createElement("label");
-                var labelClass = "option-label ";
-
-                var radio = document.createElement("input");
-                radio.type = "radio";
-                radio.name = "q" + idx;
-                radio.value = key;
-                if (isChosen) radio.checked = true;
-
-                if (isSubmitted) {
-                    radio.disabled = true;
-                    var correctAns = q.answer;
-                    if (key === correctAns) {
-                        labelClass += "option-correct";
-                    } else if (isChosen && key !== correctAns) {
-                        labelClass += "option-wrong";
-                    }
-                } else {
-                    if (isChosen) {
-                        labelClass += "option-selected";
-                    }
+            var optionsGrid = safeGet("options-grid");
+            if (optionsGrid) {
+                optionsGrid.innerHTML = "";
+                var optKeys = ["A", "B", "C", "D"];
+                for (var i = 0; i < optKeys.length; i++) {
+                    var key = optKeys[i];
+                    var isChosen = selectedAnswers[idx] === key;
                     
-                    (function(currentKey) {
-                        label.onclick = function() {
-                            selectOption(currentKey);
-                        };
-                    })(key);
+                    var label = document.createElement("label");
+                    var labelClass = "option-label ";
+
+                    var radio = document.createElement("input");
+                    radio.type = "radio";
+                    radio.name = "q" + idx;
+                    radio.value = key;
+                    if (isChosen) radio.checked = true;
+
+                    if (isSubmitted) {
+                        radio.disabled = true;
+                        var correctAns = q.answer;
+                        if (key === correctAns) {
+                            labelClass += "option-correct";
+                        } else if (isChosen && key !== correctAns) {
+                            labelClass += "option-wrong";
+                        }
+                    } else {
+                        if (isChosen) {
+                            labelClass += "option-selected";
+                        }
+                        
+                        (function(currentKey) {
+                            label.onclick = function() {
+                                selectOption(currentKey);
+                            };
+                        })(key);
+                    }
+
+                    label.className = labelClass;
+                    label.appendChild(radio);
+                    
+                    var spanText = document.createElement("span");
+                    spanText.innerText = key + ". " + (q[key] || "");
+                    label.appendChild(spanText);
+
+                    optionsGrid.appendChild(label);
                 }
-
-                label.className = labelClass;
-                label.appendChild(radio);
-                
-                var spanText = document.createElement("span");
-                spanText.innerText = key + ". " + q[key];
-                label.appendChild(spanText);
-
-                optionsGrid.appendChild(label);
             }
 
-            var expBox = document.getElementById("question-explanation");
-            if (isSubmitted) {
-                showElement("question-explanation");
-                expBox.innerHTML = "<strong>Explanation (Q" + (idx + 1) + "):</strong> " + q.explanation;
-            } else {
-                hideElement("question-explanation");
+            var expBox = safeGet("question-explanation");
+            if (expBox) {
+                if (isSubmitted) {
+                    safeShow("question-explanation");
+                    safeSetHTML("question-explanation", "<strong>Explanation (Q" + (idx + 1) + "):</strong> " + (q.explanation || ""));
+                } else {
+                    safeHide("question-explanation");
+                }
             }
 
-            var btnPrev = document.getElementById("btn-prev");
-            var btnNext = document.getElementById("btn-next");
-            if (btnPrev) btnPrev.disabled = (idx === 0);
-            if (btnNext) btnNext.disabled = (idx === quizData.questions.length - 1);
+            safeSetButtonDisabled("btn-prev", idx === 0);
+            safeSetButtonDisabled("btn-next", idx === (quizData.questions.length - 1));
 
             updateProgressBubbles();
             updateSubmitButton();
 
-            var qBox = document.getElementById("question-box-scroll");
+            var qBox = safeGet("question-box-scroll");
             if (qBox) qBox.scrollTop = 0;
         }
 
@@ -833,12 +923,11 @@
         }
 
         function nextQuestion() {
-            if (activeQuestionIdx < quizData.questions.length - 1) {
+            if (quizData && activeQuestionIdx < quizData.questions.length - 1) {
                 showQuestion(activeQuestionIdx + 1);
             }
         }
 
-        // Back action
         function prevQuestion() {
             if (activeQuestionIdx > 0) {
                 showQuestion(activeQuestionIdx - 1);
@@ -846,8 +935,9 @@
         }
 
         function updateProgressBubbles() {
+            if (!quizData) return;
             for (var i = 0; i < 10; i++) {
-                var bubble = document.getElementById("bubble-" + i);
+                var bubble = safeGet("bubble-" + i);
                 if (!bubble) continue;
 
                 bubble.className = "dot";
@@ -860,7 +950,7 @@
                 } else if (isAnswered) {
                     if (isSubmitted) {
                         var q = quizData.questions[i];
-                        if (selectedAnswers[i] === q.answer) {
+                        if (q && selectedAnswers[i] === q.answer) {
                             bubble.className += " dot-correct";
                         } else {
                             bubble.className += " dot-wrong";
@@ -873,7 +963,6 @@
         }
 
         function updateSubmitButton() {
-            var btnSubmit = document.getElementById("btn-submit");
             var total = quizData ? quizData.questions.length : 10;
             var answeredCount = 0;
             
@@ -884,66 +973,19 @@
             }
 
             if (isSubmitted) {
-                if (btnSubmit) hideElement("btn-submit");
+                safeHide("btn-submit");
                 return;
             }
 
             if (answeredCount >= 7 || activeQuestionIdx >= 8) {
-                if (btnSubmit) showElement("btn-submit");
-                btnSubmit.innerText = "Submit Answers (" + answeredCount + "/" + total + ")";
+                safeShow("btn-submit");
+                safeSetText("btn-submit", "Submit Answers (" + answeredCount + "/" + total + ")");
             } else {
-                if (btnSubmit) hideElement("btn-submit");
+                safeHide("btn-submit");
             }
         }
 
-        // BỘ PHÁT SÓNG ÂM THANH OFFLINE WEB AUDIO API TỰ SINH (3 PHÂN CẤP NHẠC)
-        function playSynthesizedSound(isPerfect) {
-            try {
-                var AudioContext = window.AudioContext || window.webkitAudioContext;
-                if (!AudioContext) return;
-                var ctx = new AudioContext();
-                
-                if (ctx.state === 'suspended') {
-                    ctx.resume();
-                }
-                
-                if (isPerfect) {
-                    // Hợp âm chiến thắng rạng rỡ ngân vang rộn rã: Đô -> Mi -> Sol -> Đô (Thế bấm vui tươi)
-                    var notes = [261.63, 329.63, 392.00, 523.25];
-                    notes.forEach(function(freq, index) {
-                        var osc = ctx.createOscillator();
-                        var gain = ctx.createGain();
-                        osc.connect(gain);
-                        gain.connect(ctx.destination);
-                        osc.type = 'triangle';
-                        osc.frequency.setValueAtTime(freq, ctx.currentTime + index * 0.1);
-                        gain.gain.setValueAtTime(0.25, ctx.currentTime + index * 0.1);
-                        gain.gain.exponentialRampToValueAtTime(0.01, ctx.currentTime + index * 0.1 + 0.45);
-                        osc.start(ctx.currentTime + index * 0.1);
-                        osc.stop(ctx.currentTime + index * 0.1 + 0.5);
-                    });
-                } else {
-                    // Tiếng chuông bíp kép khích lệ ấm áp, thanh tao để thúc đẩy học tập
-                    var notes = [392.00, 523.25];
-                    notes.forEach(function(freq, index) {
-                        var osc = ctx.createOscillator();
-                        var gain = ctx.createGain();
-                        osc.connect(gain);
-                        gain.connect(ctx.destination);
-                        osc.type = 'sine';
-                        osc.frequency.setValueAtTime(freq, ctx.currentTime + index * 0.12);
-                        gain.gain.setValueAtTime(0.2, ctx.currentTime + index * 0.12);
-                        gain.gain.exponentialRampToValueAtTime(0.01, ctx.currentTime + index * 0.12 + 0.3);
-                        osc.start(ctx.currentTime + index * 0.12);
-                        osc.stop(ctx.currentTime + index * 0.12 + 0.35);
-                    });
-                }
-            } catch (e) {
-                console.log("Audio Error:", e);
-            }
-        }
-
-        // PHẦN CHẤM ĐIỂM HOÀN THIỆN ĐA CẤP ĐỘ KHEN THƯỞNG KÈM ÂM THANH
+        // TIẾN TRÌNH CHẤM ĐIỂM HOÀN THIỆN ĐA CẤP ĐỘ KHEN THƯỞNG KÈM ÂM THANH
         function gradeQuiz() {
             if (!quizData) return;
 
@@ -957,13 +999,15 @@
             }
 
             if (answeredCount < total) {
-                var resDiv = document.getElementById("result");
-                showElement("result");
-                resDiv.style.backgroundColor = "#fff1f2";
-                resDiv.style.borderColor = "#f43f5e";
-                resDiv.style.color = "#9f1239";
-                resDiv.innerHTML = '<div style="font-size: 20px; margin-bottom: 2px;">⚠️</div>' +
-                                   '<div style="font-size: 13px; font-weight: 800;">Please answer all ' + total + ' questions before submitting!</div>';
+                safeShow("result");
+                var resDiv = safeGet("result");
+                if (resDiv) {
+                    resDiv.style.backgroundColor = "#fff1f2";
+                    resDiv.style.borderColor = "#f43f5e";
+                    resDiv.style.color = "#9f1239";
+                }
+                safeSetHTML("result", '<div style="font-size: 20px; margin-bottom: 2px;">⚠️</div>' +
+                                      '<div style="font-size: 13px; font-weight: 800;">Please answer all ' + total + ' questions before submitting!</div>');
                 return;
             }
 
@@ -972,20 +1016,22 @@
 
             for (var idx = 0; idx < quizData.questions.length; idx++) {
                 var q = quizData.questions[idx];
-                if (selectedAnswers[idx] === q.answer) {
+                if (q && selectedAnswers[idx] === q.answer) {
                     score++;
                 }
             }
 
-            var resDiv = document.getElementById("result");
-            showElement("result");
+            safeShow("result");
+            var resDiv = safeGet("result");
 
             var feedbackHTML = "";
             if (score === 10) {
                 // Đúng hoàn toàn 10/10: Nhận cúp vàng lộng lẫy và âm thanh chiến thắng rộn rã
-                resDiv.style.backgroundColor = "#ecfdf5";
-                resDiv.style.borderColor = "#10b981";
-                resDiv.style.color = "#065f46";
+                if (resDiv) {
+                    resDiv.style.backgroundColor = "#ecfdf5";
+                    resDiv.style.borderColor = "#10b981";
+                    resDiv.style.color = "#065f46";
+                }
                 feedbackHTML = '<div style="font-size: 24px; margin-bottom: 4px;">🏆</div>' +
                                '<div style="font-size: 14px; font-weight: 900; margin-bottom: 2px;">PERFECT SCORE!</div>' +
                                '<div style="font-size: 18px; font-weight: 900; margin-bottom: 6px;">' + score + '/' + total + '</div>' +
@@ -995,9 +1041,11 @@
                 playSynthesizedSound(true);
             } else if (score >= 5) {
                 // Đạt từ 5-9 câu: Thưởng sao vàng lấp lánh khích lệ tiến bộ vượt bậc
-                resDiv.style.backgroundColor = "#f5f3ff";
-                resDiv.style.borderColor = "#8b5cf6";
-                resDiv.style.color = "#5b21b6";
+                if (resDiv) {
+                    resDiv.style.backgroundColor = "#f5f3ff";
+                    resDiv.style.borderColor = "#8b5cf6";
+                    resDiv.style.color = "#5b21b6";
+                }
                 feedbackHTML = '<div style="font-size: 24px; margin-bottom: 4px;">⭐</div>' +
                                '<div style="font-size: 14px; font-weight: 900; margin-bottom: 2px;">GREAT JOB!</div>' +
                                '<div style="font-size: 18px; font-weight: 900; margin-bottom: 6px;">' + score + '/' + total + '</div>' +
@@ -1007,9 +1055,11 @@
                 playSynthesizedSound(false);
             } else {
                 // Đạt dưới 5 câu: Thưởng biểu tượng cơ bắp quyết tâm luyện tập bền bỉ
-                resDiv.style.backgroundColor = "#fffbeb";
-                resDiv.style.borderColor = "#f59e0b";
-                resDiv.style.color = "#92400e";
+                if (resDiv) {
+                    resDiv.style.backgroundColor = "#fffbeb";
+                    resDiv.style.borderColor = "#f59e0b";
+                    resDiv.style.color = "#92400e";
+                }
                 feedbackHTML = '<div style="font-size: 24px; margin-bottom: 4px;">💪</div>' +
                                '<div style="font-size: 14px; font-weight: 900; margin-bottom: 2px;">KEEP TRYING!</div>' +
                                '<div style="font-size: 18px; font-weight: 900; margin-bottom: 6px;">' + score + '/' + total + '</div>' +
@@ -1019,7 +1069,9 @@
                 playSynthesizedSound(false);
             }
 
-            resDiv.innerHTML = feedbackHTML;
+            if (resDiv) {
+                resDiv.innerHTML = feedbackHTML;
+            }
 
             sendResultToMIT(score, total);
             showQuestion(activeQuestionIdx);
@@ -1047,6 +1099,7 @@
             }
         }
 
+        // KHỞI ĐỘNG VÒNG LẶP SỐNG TRÊN WEBVIEW CHO PHÉP NHẬN SÓNG 0.5S LIÊN TỤC
         window.onload = function() {
             setInterval(checkConnection, 500);
             checkConnection();
