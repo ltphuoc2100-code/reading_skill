@@ -833,26 +833,43 @@ function playQuizSound(isVictory) {
         gain.connect(ctx.destination);
         
         // --- ĐOẠN THAY THẾ CHO KHỐI LỆNH TRONG ẢNH ---
+        // --- ĐOẠN CODE SỬA LỖI MẤT ÂM THANH Ở CÁC LẦN LÀM BÀI TIẾP THEO ---
         var audioUrl = '';
 
         if (isVictory) {
-            // Thay thế cho phần âm thanh chiến thắng cũ
             audioUrl = './victory.mp3'; 
         } else {
-            // Thay thế cho phần âm thanh làm bài chưa tốt cũ
             audioUrl = './wrong.mp3';
         }
 
-        // Kích hoạt phát file âm thanh riêng của thầy với mức âm lượng lớn nhất
         if (audioUrl) {
+            // Tạo đối tượng âm thanh mới hoàn toàn cho mỗi lần bấm
             var audio = new Audio(audioUrl);
-            audio.volume = 1.0; // Ép âm lượng to hết cỡ 100%
+            audio.volume = 1.0; 
             
-            audio.addEventListener('canplaythrough', function() {
-                audio.play().catch(function(e) {
-                    console.log("Trình duyệt chặn phát âm thanh: ", e);
+            // --- 2 DÒNG LỆNH QUAN TRỌNG ĐỂ RESET ÂM THANH KHÔNG BỊ KẸT BỘ NHỚ ---
+            audio.currentTime = 0; // Tua về giây đầu tiên
+            audio.load();          // Ép trình duyệt tải lại file hoàn toàn mới
+
+            // Tiến hành phát âm thanh
+            var playPromise = audio.play();
+
+            if (playPromise !== undefined) {
+                playPromise.catch(function(error) {
+                    console.log("Chờ học sinh tương tác để kích hoạt âm thanh...");
+                    
+                    // Mẹo phá băng bảo mật WebView nếu bị chặn
+                    var unlockAudio = function() {
+                        audio.currentTime = 0;
+                        audio.load();
+                        audio.play();
+                        document.removeEventListener('click', unlockAudio);
+                        document.removeEventListener('touchstart', unlockAudio);
+                    };
+                    document.addEventListener('click', unlockAudio);
+                    document.addEventListener('touchstart', unlockAudio);
                 });
-            }, false);
+            }
         }
     } catch (e) { console.log("Sound error context", e); }
 }
