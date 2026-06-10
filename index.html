@@ -514,7 +514,9 @@ if (level === "A1" || level === "A2") {
 
 var promptText = "Create a reading comprehension study unit in English on the topic of '" + topic + "' tailored for CEFR level '" + level + "'. " +
                  "Generate a title (do NOT include prefix labels like 'Exam Study:'), a reading passage (" + wordCountLimit + "), and exactly 10 multiple-choice questions. " +
-                 "Each question must have exactly 4 choices (A, B, C, D), exactly one single-letter answer (A, B, C, or D), and a short explanation in English.";
+                 "Each question must have exactly 4 choices (A, B, C, D), exactly one single-letter answer (A, B, C, or D), and a short explanation in English." +
+    "CRITICAL: DO NOT use exact words from the passage in the correct answer. The correct answer MUST be paraphrased using synonyms or different sentence structures." +
+"WORD MATCHING TRAPS: Put exact words or phrases from the passage into the WRONG answers (distractors) to trap students who only look for matching words without understanding.";
             var payload = {
                 contents: [{ parts: [{ text: promptText }] }],
                 generationConfig: {
