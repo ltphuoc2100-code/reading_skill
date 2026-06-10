@@ -830,23 +830,27 @@ function playQuizSound(isVictory) {
         osc.connect(gain);
         gain.connect(ctx.destination);
         
+        // --- ĐOẠN THAY THẾ CHO KHỐI LỆNH TRONG ẢNH ---
+        var audioUrl = '';
+
         if (isVictory) {
-            // Âm thanh chiến thắng (Nhạc âm cao vui tươi)
-            osc.type = 'sine';
-            osc.frequency.setValueAtTime(523.25, ctx.currentTime); // Nốt C5
-            osc.frequency.setValueAtTime(659.25, ctx.currentTime + 0.1); // Nốt E5
-            osc.frequency.setValueAtTime(783.99, ctx.currentTime + 0.2); // Nốt G5
-            gain.gain.setValueAtTime(0.2, ctx.currentTime);
-            gain.gain.exponentialRampToValueAtTime(0.01, ctx.currentTime + 0.4);
-            osc.start(); osc.stop(ctx.currentTime + 0.4);
+            // Thay thế cho phần âm thanh chiến thắng cũ
+            audioUrl = './victory.mp3'; 
         } else {
-            // Âm thanh làm bài chưa tốt (Tiếng buzz trầm buồn)
-            osc.type = 'sawtooth';
-            osc.frequency.setValueAtTime(180, ctx.currentTime);
-            osc.frequency.setValueAtTime(120, ctx.currentTime + 0.15);
-            gain.gain.setValueAtTime(0.2, ctx.currentTime);
-            gain.gain.exponentialRampToValueAtTime(0.01, ctx.currentTime + 0.35);
-            osc.start(); osc.stop(ctx.currentTime + 0.35);
+            // Thay thế cho phần âm thanh làm bài chưa tốt cũ
+            audioUrl = './wrong.mp3';
+        }
+
+        // Kích hoạt phát file âm thanh riêng của thầy với mức âm lượng lớn nhất
+        if (audioUrl) {
+            var audio = new Audio(audioUrl);
+            audio.volume = 1.0; // Ép âm lượng to hết cỡ 100%
+            
+            audio.addEventListener('canplaythrough', function() {
+                audio.play().catch(function(e) {
+                    console.log("Trình duyệt chặn phát âm thanh: ", e);
+                });
+            }, false);
         }
     } catch (e) { console.log("Sound error context", e); }
 }
