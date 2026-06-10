@@ -934,6 +934,39 @@ function playQuizSound(isVictory) {
             setInterval(checkConnection, 500);
             checkConnection();
         };
+        // --- ĐOẠN CODE TỰ ĐỘNG BỎ QUA MÀN HÌNH TRƯỜNG KHI CÓ BÀI ĐỌC MỚI ---
+window.addEventListener("DOMContentLoaded", function() {
+    // 1. Kiểm tra xem trên đường link URL có chứa dữ liệu bài đọc từ MIT truyền sang không
+    var urlParams = new URLSearchParams(window.location.search);
+    var dataParam = urlParams.get('data') || urlParams.get('passage'); 
+    
+    // Nếu không tìm thấy trên URL, thử kiểm tra biến window.AppInventor xem MIT có truyền trực tiếp không
+    if (!dataParam && typeof window.AppInventor !== "undefined") {
+        try {
+            dataParam = window.AppInventor.getWebViewString();
+        } catch(e) {}
+    }
+
+    // 2. NẾU CÓ DỮ LIỆU BÀI ĐỌC: Xóa ngay màn hình trường và mở bài đọc luôn!
+    if (dataParam) {
+        // Ẩn ngay lập tức màn hình chờ hình ngôi trường
+        var waitingScreen = document.getElementById("waiting-screen");
+        if (waitingScreen) {
+            waitingScreen.style.display = "none"; 
+        }
+        
+        // Nếu dữ liệu dạng chữ mã hóa mã Code, giải mã nó ra và chạy bài làm
+        try {
+            var decodedData = decodeURIComponent(dataParam);
+            quizData = JSON.parse(decodedData);
+            
+            // Nhảy thẳng vào giao diện làm bài, bỏ qua màn hình chào
+            initQuizUI(); 
+        } catch (err) {
+            console.log("Đang đợi dữ liệu chuẩn...");
+        }
+    }
+});
     </script>
 </body>
 </html>
