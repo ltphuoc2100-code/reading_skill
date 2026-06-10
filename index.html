@@ -296,9 +296,9 @@
         </div>
 
         <div class="card" style="padding: 16px; display: flex; flex-direction: column; justify-content: center; text-align: center; margin-bottom: 0;">
-            <div style="font-size: 28px; margin-bottom: 6px;">📡</div>
+            <div style="font-size: 48px; margin-bottom: 6px;">📖</div>
             <h3 style="font-size: 15px; margin: 0 0 6px 0; color: #0f172a; font-weight: 800;">Waiting for the passage</h3>
-            <p style="font-size: 12px; color: #475569; line-height: 1.5; margin: 0 0 12px 0;">
+            <p style="font-size: 12px; color: #475569; line-height: 1.5; margin: 0 0 12px 0;text-align: justify;">
                 Please choose <b>Level</b> and <b>Topic</b> on your mobile app, then click the trigger button to compile the AI reading unit!
             </p>
             
@@ -585,12 +585,16 @@ var promptText = "Create a reading comprehension study unit in English on the to
             xhr.send(JSON.stringify(payload));
         }
 
-        function showError(msg) {
-            var errEl = document.getElementById("error-message");
-            errEl.innerText = msg;
-            showElement("error-screen");
-        }
-
+       
+function showError(msg) {
+    var errEl = document.getElementById("error-message");
+    errEl.innerText = msg;
+    showElement("error-screen");
+    
+    // NẾU LỖI KHÔNG LẤY ĐƯỢC BÀI, HIỂN THỊ NÚT DEMO RA CHO HỌC SINH BẤM
+    var btnDemo = document.getElementById("btn-demo-offline");
+    if (btnDemo) { btnDemo.style.display = "block"; }
+}
         function generateOfflineBackupQuiz(level, topic) {
             var simulatedTitle = "The Evolution of " + topic;
             var simulatedPassage = "This backup offline reading unit has been compiled for CEFR scale <b>" + level + "</b> focusing on the topic of <b>" + topic + "</b>. Modern innovations have changed the landscape of <b>" + topic + "</b>. Historically, progress was constrained due to lack of technology. However, educational methods are adapting to help students master basic terminology of <b>" + topic + "</b>. By practicing this offline lesson, answering all 10 questions, and calculating your scores, you confirm that the dual-pane viewport interface is fully responsive!";
