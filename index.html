@@ -664,8 +664,27 @@ function showError(msg) {
             var q = quizData.questions[idx];
 
             document.getElementById("current-question-num").innerText = "QUESTION " + (idx + 1) + "/10";
-            document.getElementById("question-text").innerText = q.question;
+            //document.getElementById("question-text").innerText = q.question;
+// --- ĐOẠN 1: THAY THẾ DÒNG HIỂN THỊ CÂU HỎI ĐỂ TỰ ĐỘNG TÔ ĐỎ ĐỐI CHIẾU ---
+            var originalQuestion = q.question;
+            var originalPassage = quizData.passage;
 
+            // Tìm từ nằm trong dấu nháy đơn '' hoặc nháy kép "" ở câu hỏi để làm từ khóa đối chiếu
+            var match = originalQuestion.match(/['"]([^'"]+)['"]/);
+            if (match && match[1]) {
+                var keyword = match[1];
+                var regex = new RegExp("\\b(" + keyword + ")\\b", "gi");
+                
+                // Tô đỏ từ đó trong câu hỏi
+                originalQuestion = originalQuestion.replace(regex, "<span style='color: #ef4444; font-weight: bold;'>$1</span>");
+                
+                // Tô đỏ luôn từ đó trong đoạn văn bài đọc
+                originalPassage = originalPassage.replace(regex, "<span style='color: #ef4444; font-weight: bold;'>$1</span>");
+            }
+            
+            // Cập nhật nội dung đã tô màu lên màn hình câu hỏi và đoạn văn
+            document.getElementById("question-text").innerHTML = originalQuestion;
+            document.getElementById("reading-passage").innerHTML = originalPassage;
             var optionsGrid = document.getElementById("options-grid");
             optionsGrid.innerHTML = "";
 
