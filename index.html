@@ -950,26 +950,50 @@ function playQuizSound(isVictory) {
         }
 
 
-        function checkConnection() {
+        var isAiLoading = false; // Biến cờ chặn đứng spam gọi AI liên tục
+
+function checkConnection() {
     var params = parseParameters();
     
-    // Nếu App Inventor thực sự truyền Level và Topic sang
+    // 1. Nếu đang trong quá trình tải AI, chặn hoàn toàn không cho quét tiếp
+    if (isAiLoading) return; 
+
     if (params.level && params.topic) {
         var currentConfigStr = params.level + "|" + params.topic;
         
-        // Chỉ kích hoạt khi cấu hình thay đổi HOẶC khi chưa có dữ liệu bài đọc
         if (currentConfigStr !== lastReceivedConfig || !quizData) {
             lastReceivedConfig = currentConfigStr;
             currentLevel = params.level;
             currentTopic = params.topic;
             
-            // Lập tức gọi Gemini AI tạo bài đọc mới
+            isAiLoading = true; // Khóa đầu vào ngay khi bắt đầu gọi AI
             loadConfigAndTriggerAI(currentLevel, currentTopic);
         }
     }
 }
+
+// Sửa lại hàm initQuizUI để mở khóa khi thành công
+var originalInitQuizUI = initQuizUI;
+initQuizUI = function() {
+    isAiLoading = false; // Mở khóa cờ chặn
+    var waitingScr = document.getElementById("waiting-screen");
+    if (waitingScr) { waitingScr.style.display = "none"; } // Ẩn triệt để màn hình trường
+    hideElement("loading-screen");
+    originalInitQuizUI();
+};
+
+// Sửa lại hàm showError để mở khóa và ẩn màn hình chờ khi thất bại
+var originalShowError = showError;
+showError = function(msg) {
+    isAiLoading = false; // Mở khóa cờ chặn để có thể bấm thử lại sau
+    var waitingScr = document.getElementById("waiting-screen");
+    if (waitingScr) { waitingScr.style.display = "none"; } // Ẩn triệt để màn hình trường, không cho dồn cục
+    hideElement("loading-screen");
+    originalShowError(msg);
+};
+
 window.onload = function() {
-    // Khởi tạo nhạc nền vui nhộn
+    // Khởi tạo nhạc nền
     bgAudio = new Audio('https://github.com/ltphuoc2100-code/reading_skill/raw/refs/heads/main/nhacnen.mp3');
     bgAudio.volume = 0.5; 
     bgAudio.loop = true;  
@@ -987,8 +1011,8 @@ window.onload = function() {
         });
     }
 
-    // Chỉ chạy bộ quét ngầm, không gọi trực tiếp hàm checkConnection
-    setInterval(checkConnection, 500);
+    // Tăng thời gian quét lên 1.5 giây để điện thoại chạy nhẹ nhàng hơn, không bị lag
+    setInterval(checkConnection, 1500); 
 };
 </script>
 </body>
