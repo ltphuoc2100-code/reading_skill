@@ -24,19 +24,6 @@
             min-height: 520px;
             overflow-y: auto;
         }
-/* --- ĐOẠN CHÈN THÊM: CSS CHO HÌNH ẢNH TRƯỜNG --- */
-        .school-logo-container {
-            text-align: center;
-            margin-bottom: 10px;
-            flex-shrink: 0;
-        }
-        .school-logo-img {
-            max-width: 100%;
-            height: auto;
-            max-height: 80px; /* Thầy có thể tăng giảm số này để chỉnh độ cao của hình */
-            border-radius: 8px;
-            object-fit: contain;
-        }
         /* Information and Reading Cards */
         .card {
             background-color: #f8fafc;
@@ -111,11 +98,10 @@
             line-height: 1.5;
         }
 
-        /* GIAO DIỆN CÁC ĐÁP ÁN THIẾT KẾ DẠNG THANH MENU WEB */
         .options-container {
             display: flex;
             flex-direction: column;
-            gap: 10px; /* Khoảng cách giữa các mục menu */
+            gap: 10px;
             margin-bottom: 14px;
         }
         
@@ -124,8 +110,8 @@
             width: 100%;
             background-color: #ffffff;
             border: 2px solid #cbd5e1;
-            border-radius: 10px; /* Bo góc khối menu */
-            padding: 14px 16px;  /* Tạo độ dày, to cho nút bấm menu */
+            border-radius: 10px;
+            padding: 14px 16px;
             color: #1e293b;
             font-size: 16px;
             font-weight: 500;
@@ -135,29 +121,26 @@
             text-align: left;
         }
 
-        /* Ẩn hoàn toàn nút chấm tròn Radio mặc định bên trong menu */
         .option-menu-item input[type="radio"] {
             display: none !important;
         }
         
-        /* Trạng thái khi học sinh BẤM CHỌN một mục menu đáp án */
         .option-menu-item.option-selected {
-            background-color: #f0f7ff !important; /* Màu nền xanh dương nhạt phong cách menu web */
-            border-color: #3b82f6 !important;     /* Viền màu xanh nổi bật */
-            color: #1d4ed8 !important;            /* Chữ đổi màu xanh đậm */
+            background-color: #f0f7ff !important;
+            border-color: #3b82f6 !important;
+            color: #1d4ed8 !important;
             font-weight: 700;
             box-shadow: 0 2px 6px rgba(59, 130, 246, 0.1);
         }
 
-        /* Trạng thái hiển thị Đúng/Sai sau khi học sinh Submit bấm nộp bài */
         .option-menu-item.option-correct {
-            background-color: #d1fae5 !important; /* Menu chuyển màu xanh lá khi đúng */
+            background-color: #d1fae5 !important;
             border-color: #10b981 !important;
             color: #065f46 !important;
             font-weight: 700;
         }
         .option-menu-item.option-wrong {
-            background-color: #ffe4e6 !important; /* Menu chuyển màu đỏ khi chọn sai */
+            background-color: #ffe4e6 !important;
             border-color: #f43f5e !important;
             color: #9f1239 !important;
             font-weight: 700;
@@ -248,8 +231,8 @@
 
         /* Helpers & Loading States */
         #waiting-screen {
-      display: flex;
-  }
+            display: flex;
+        }
         .hidden {
             display: none !important;
         }
@@ -291,26 +274,24 @@
         };
     </script>
 
-    <!-- THAY THẾ TOÀN BỘ KHỐI WAITING-SCREEN CŨ THÀNH ĐOẠN NÀY -->
-   <div id="waiting-screen" style=" flex-direction: column; gap: 12px; height: 100%;">
-        
+    <!-- SCREEN 1: WAITING SCREEN (TRƯỜNG HỌC) -->
+    <div id="waiting-screen" style="flex-direction: column; gap: 12px; height: 100%;">
         <div class="card" style="padding: 0; overflow: hidden; height: 220px; flex-shrink: 0;">
             <img src="./Picture1.png" style="width: 100%; height: 100%; object-fit: cover; display: block;" alt="School Image">
         </div>
-
         <div class="card" style="padding: 16px; display: flex; flex-direction: column; justify-content: center; text-align: center; margin-bottom: 0;">
             <div style="font-size: 48px; margin-bottom: 6px;">📖</div>
             <h3 style="font-size: 25px; margin: 0 0 6px 0; color: #ef4444; font-weight: 800;">Waiting for the passage</h3>
             <p style="font-size: 16px; color: #475569; line-height: 1.5; margin: 0 0 12px 0;text-align: justify;">
                 Please choose <b>Level</b> and <b>Topic</b> on your mobile app, then click the <b>Read up </b> button to reach the Passage!
             </p>
-            
             <button onclick="simulateLaunch()" id="btn-demo-offline" style="background-color: #4f46e5; color: white; border: none; padding: 10px 20px; border-radius: 8px; font-size: 13px; font-weight: bold; cursor: pointer; box-shadow: 0 2px 4px rgba(79, 70, 229, 0.2); width: 100%; display: none;">
-    Try Demo Offline Practice
+                Try Demo Offline Practice
             </button>
         </div>
-
     </div>
+
+    <!-- SCREEN 2: LOADING SCREEN (Xoay tròn) -->
     <div id="loading-screen" class="card hidden" style="text-align: center; padding: 30px 15px;">
         <div class="spinner"></div>
         <h3 style="font-size: 15px; margin: 10px 0 6px 0; color: #0f172a; font-weight: 800;">Connecting to the Passage</h3>
@@ -319,12 +300,13 @@
         </p>
     </div>
 
+    <!-- SCREEN 3: ERROR SCREEN -->
     <div id="error-screen" class="error-card hidden" style="margin-bottom: 12px;">
         <h3 style="margin-top:0; font-size:15px; font-weight:800; color:#991b1b;">❌ Connection Failed:</h3>
         <p id="error-message" style="margin-bottom: 12px; font-weight: bold; font-family: monospace;"></p>
         <div style="border-top: 1px solid #fca5a5; padding-top: 10px; font-size:11px; color:#b91c1c;">
             <b>Troubleshooting Checklist:</b><br>
-            • Please ensure you have pasted a new, active Gemini API Key into the html source code.<br>
+            • Please ensure your Gemini API Key is valid and hasn't exceeded its quota.<br>
             • Ensure your mobile device has a stable Internet connection.
         </div>
         <button onclick="retryOffline()" style="margin-top: 14px; background-color: #ef4444; color: white; border: none; padding: 8px 14px; border-radius: 6px; font-size: 11px; font-weight: bold; cursor: pointer; display: block; width: 100%;">
@@ -332,17 +314,14 @@
         </button>
     </div>
 
+    <!-- SCREEN 4: MAIN QUIZ INTERFACE -->
     <div id="split-screen-container" class="hidden" style="display: flex; flex-direction: column; flex: 1; overflow: hidden;">
-        
         <div class="card" style="flex-shrink: 0; margin-bottom: 8px; padding: 10px;">
             <h3 id="reading-title" class="reading-title">Loading...</h3>
-            <div id="reading-passage" class="passage-box">
-                Loading study material...
-            </div>
+            <div id="reading-passage" class="passage-box">Loading study material...</div>
         </div>
 
         <div class="card" style="flex: 1; display: flex; flex-direction: column; justify-content: space-between; overflow: hidden; margin-bottom: 0; padding: 10px;">
-            
             <div style="overflow-y: auto; flex: 1; margin-bottom: 8px;" id="question-box-scroll">
                 <div class="question-header">
                     <span id="current-question-num" class="question-num">QUESTION 1/10</span>
@@ -351,11 +330,8 @@
                         <button onclick="nextQuestion()" id="btn-next" class="header-nav-btn">Next</button>
                     </div>
                 </div>
-
                 <p id="question-text" class="question-text">Loading...</p>
-                
                 <div id="options-grid" class="options-container"></div>
-
                 <div id="question-explanation" class="explanation-box hidden"></div>
             </div>
 
@@ -372,30 +348,18 @@
                     <span id="bubble-8" class="dot"></span>
                     <span id="bubble-9" class="dot"></span>
                 </div>
-
-                <button onclick="gradeQuiz()" id="btn-submit" class="submit-btn hidden">
-                    Submit Answers
-                </button>
-
+                <button onclick="gradeQuiz()" id="btn-submit" class="submit-btn hidden">Submit Answers</button>
                 <div id="result" class="result-box hidden"></div>
             </div>
-
         </div>
     </div>
 
-    <footer>
-        Enhancing Reading Comprehension by Le Thien Phuoc
-    </footer>
+    <footer>Enhancing Reading Comprehension by Le Thien Phuoc</footer>
 
     <script>
         var keyPart1 = "AQ.Ab"; 
         var keyPart2 = "8RN6ImY3ZbsE2FEM74MWeKIfWJLC2XGWdmcOs9Fdg-LxF7nw"; 
-
-        var apiKey = keyPart1 + keyPart2;
-        if (keyPart2.indexOf("AIza") === 0) {
-            apiKey = keyPart2;
-        }
-        apiKey = apiKey.trim();
+        var apiKey = (keyPart2.indexOf("AIza") === 0) ? keyPart2 : (keyPart1 + keyPart2).trim();
 
         var currentLevel = "";
         var currentTopic = "";
@@ -405,19 +369,16 @@
         var activeQuestionIdx = 0; 
         var selectedAnswers = {};  
         var isSubmitted = false;   
+        var isAiLoading = false; // Biến chặn đứng chớp tắt và spam API khóa tài khoản
 
         function arrayIndexOf(arr, val) {
-            for (var i = 0; i < arr.length; i++) {
-                if (arr[i] === val) return i;
-            }
+            for (var i = 0; i < arr.length; i++) { if (arr[i] === val) return i; }
             return -1;
         }
 
         function showElement(id) {
             var el = document.getElementById(id);
-            if (el) {
-                el.className = el.className.replace(/\bhidden\b/g, "").trim();
-            }
+            if (el) el.className = el.className.replace(/\bhidden\b/g, "").trim();
         }
 
         function hideElement(id) {
@@ -431,13 +392,34 @@
             }
         }
 
+        // HÀM CHUYỂN ĐỔI MÀN HÌNH AN TOÀN - TRIỆT TIÊU 100% LỖI DỒN CỤC
+        function switchScreen(activeScreenId) {
+            var screens = ["waiting-screen", "loading-screen", "error-screen", "split-screen-container"];
+            for (var i = 0; i < screens.length; i++) {
+                var scr = document.getElementById(screens[i]);
+                if (!scr) continue;
+                if (screens[i] === activeScreenId) {
+                    if (activeScreenId === "waiting-screen") {
+                        scr.style.display = "flex";
+                    } else {
+                        showElement(screens[i]);
+                    }
+                } else {
+                    if (screens[i] === "waiting-screen") {
+                        scr.style.display = "none";
+                    } else {
+                        hideElement(screens[i]);
+                    }
+                }
+            }
+        }
+
         function simulateLaunch() {
             if (bgAudio) { bgAudio.play().catch(function(e){ console.log(e); }); }
             loadConfigAndTriggerAI("B2", "Artificial Intelligence");
         }
 
         function retryOffline() {
-            hideElement("error-screen");
             generateOfflineBackupQuiz(currentLevel || "B2", currentTopic || "Artificial Intelligence");
         }
 
@@ -447,19 +429,14 @@
             var vars = query.split("&");
             for (var i = 0; i < vars.length; i++) {
                 var pair = vars[i].split("=");
-                if (pair[0] === name) {
-                    return pair[1] ? decodeURIComponent(pair[1]) : "";
-                }
+                if (pair[0] === name) return pair[1] ? decodeURIComponent(pair[1]) : "";
             }
             return "";
         }
 
         function parseParameters() {
-            var level = "";
-            var topic = "";
-
-            var urlLevel = getQueryParam("level");
-            var urlTopic = getQueryParam("topic");
+            var level = ""; var topic = "";
+            var urlLevel = getQueryParam("level"); var urlTopic = getQueryParam("topic");
             if (urlLevel) level = urlLevel.trim();
             if (urlTopic) topic = urlTopic.trim();
 
@@ -483,44 +460,37 @@
                     }
                 }
             }
-
             return { level: level, topic: topic };
         }
 
         function loadConfigAndTriggerAI(level, topic) {
             currentLevel = level;
             currentTopic = topic;
+            isAiLoading = true; // Khóa đầu vào quét ngầm
 
-           hideElement("waiting-screen");
-            hideElement("split-screen-container");
-            hideElement("error-screen");
-            showElement("loading-screen");
+            switchScreen("loading-screen"); // Chỉ bật duy nhất màn hình quay spinner
 
             if (!apiKey || apiKey === "AIza" || apiKey.trim() === "") {
                 setTimeout(function() {
-                    hideElement("loading-screen");
-                    var errEl = document.getElementById("error-message");
-                    errEl.innerText = "API Key not configured in HTML file. Please paste your Gemini Key into line 387.";
-                    showElement("error-screen");
+                    showError("API Key not configured in HTML file. Please paste your Gemini Key into code.");
                 }, 800);
                 return;
             }
 
             var apiUrl = "https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=" + apiKey;
-            
-            // --- THAY THẾ BIẾN PROMPTTEXT ĐỂ ÉP SỐ TỪ THEO CHUẨN CEFR ---
-var wordCountLimit = "around 180-250 words"; // Mặc định cho B1-B2
-if (level === "A1" || level === "A2") {
-    wordCountLimit = "exactly 100-150 words using simple sentence structures";
-} else if (level === "C1" || level === "C2") {
-    wordCountLimit = "exactly 300-400 words with advanced vocabulary and complex sentences";
-}
+            var wordCountLimit = "around 180-250 words";
+            if (level === "A1" || level === "A2") {
+                wordCountLimit = "exactly 100-150 words using simple sentence structures";
+            } else if (level === "C1" || level === "C2") {
+                wordCountLimit = "exactly 300-400 words with advanced vocabulary and complex sentences";
+            }
 
-var promptText = "Create a reading comprehension study unit in English on the topic of '" + topic + "' tailored for CEFR level '" + level + "'. " +
-                 "Generate a title (do NOT include prefix labels like 'Exam Study:'), a reading passage (" + wordCountLimit + "), and exactly 10 multiple-choice questions. " +
-                 "Each question must have exactly 4 choices (A, B, C, D), exactly one single-letter answer (A, B, C, or D), and a short explanation in English." +
-    "CRITICAL: DO NOT use exact words from the passage in the correct answer. The correct answer MUST be paraphrased using synonyms or different sentence structures." +
-"WORD MATCHING TRAPS: Put exact words or phrases from the passage into the WRONG answers (distractors) to trap students who only look for matching words without understanding.";
+            var promptText = "Create a reading comprehension study unit in English on the topic of '" + topic + "' tailored for CEFR level '" + level + "'. " +
+                             "Generate a title, a reading passage (" + wordCountLimit + "), and exactly 10 multiple-choice questions. " +
+                             "Each question must have exactly 4 choices (A, B, C, D), exactly one single-letter answer (A, B, C, or D), and a short explanation in English. " +
+                             "CRITICAL: DO NOT use exact words from the passage in the correct answer. The correct answer MUST be paraphrased. " +
+                             "WORD MATCHING TRAPS: Put exact words from the passage into the WRONG answers to trap students.";
+
             var payload = {
                 contents: [{ parts: [{ text: promptText }] }],
                 generationConfig: {
@@ -540,7 +510,7 @@ var promptText = "Create a reading comprehension study unit in English on the to
                                         B: { type: "STRING" },
                                         C: { type: "STRING" },
                                         D: { type: "STRING" },
-                                        answer: { type: "STRING", description: "Must be A, B, C, or D" },
+                                        answer: { type: "STRING" },
                                         explanation: { type: "STRING" }
                                     },
                                     required: ["question", "A", "B", "C", "D", "answer", "explanation"]
@@ -555,22 +525,19 @@ var promptText = "Create a reading comprehension study unit in English on the to
             var xhr = new XMLHttpRequest();
             xhr.open("POST", apiUrl, true);
             xhr.setRequestHeader("Content-Type", "application/json");
-            
             xhr.onreadystatechange = function () {
                 if (xhr.readyState === 4) {
-                    hideElement("loading-screen");
                     if (xhr.status === 200) {
                         try {
                             var response = JSON.parse(xhr.responseText);
-                            var candidate = response.candidates[0];
-                            var jsonText = candidate.content.parts[0].text;
+                            var jsonText = response.candidates[0].content.parts[0].text;
                             var parsedData = JSON.parse(jsonText);
-
                             if (parsedData && parsedData.title && parsedData.questions && parsedData.questions.length >= 10) {
                                 quizData = parsedData;
+                                isAiLoading = false; // Mở khóa chặn thành công
                                 initQuizUI();
                             } else {
-                                throw new Error("Incomplete JSON dataset returned by Gemini AI.");
+                                throw new Error("Incomplete JSON from AI.");
                             }
                         } catch (e) {
                             showError("Parser Failure: " + e.message);
@@ -579,128 +546,72 @@ var promptText = "Create a reading comprehension study unit in English on the to
                         var errorMsg = "HTTP Status " + xhr.status;
                         try {
                             var errResp = JSON.parse(xhr.responseText);
-                            if (errResp.error && errResp.error.message) {
-                                errorMsg = errResp.error.message;
-                            }
+                            if (errResp.error && errResp.error.message) errorMsg = errResp.error.message;
                         } catch(e) {}
                         showError(errorMsg);
                     }
                 }
             };
-
             xhr.send(JSON.stringify(payload));
         }
 
-       
-function showError(msg) {
-   showElement("waiting-screen");
-    var errEl = document.getElementById("error-message");
-    errEl.innerText = msg;
-    showElement("error-screen");
-    
-    // NẾU LỖI KHÔNG LẤY ĐƯỢC BÀI, HIỂN THỊ NÚT DEMO RA CHO HỌC SINH BẤM
-    var btnDemo = document.getElementById("btn-demo-offline");
-    if (btnDemo) { btnDemo.style.display = "block"; }
-}
-        function generateOfflineBackupQuiz(level, topic) {
-            var simulatedTitle = "The Evolution of " + topic;
-            var simulatedPassage = "This backup offline reading unit has been compiled for CEFR scale <b>" + level + "</b> focusing on the topic of <b>" + topic + "</b>. Modern innovations have changed the landscape of <b>" + topic + "</b>. Historically, progress was constrained due to lack of technology. However, educational methods are adapting to help students master basic terminology of <b>" + topic + "</b>. By practicing this offline lesson, answering all 10 questions, and calculating your scores, you confirm that the dual-pane viewport interface is fully responsive!";
+        function showError(msg) {
+            isAiLoading = false; // Nhả khóa để học sinh bấm thử lại hoặc chọn bài khác
+            switchScreen("error-screen"); // Hiện độc tôn màn hình báo lỗi đỏ
+            var errEl = document.getElementById("error-message");
+            if (errEl) errEl.innerText = msg;
+            var btnDemo = document.getElementById("btn-demo-offline");
+            if (btnDemo) btnDemo.style.display = "block";
+        }
 
+        function generateOfflineBackupQuiz(level, topic) {
+            isAiLoading = false;
+            var simulatedTitle = "The Evolution of " + topic;
+            var simulatedPassage = "This backup offline reading unit has been compiled for CEFR scale <b>" + level + "</b> focusing on the topic of <b>" + topic + "</b>. Modern innovations have changed the landscape of <b>" + topic + "</b>. By practicing this offline lesson, answering all 10 questions, you confirm that the viewport interface is fully responsive!";
             var questions = [];
             for (var i = 1; i <= 10; i++) {
-                var questionText = "";
-                var answer = "A";
-                var options = {};
-                var explanation = "";
-
-                if (i === 1) {
-                    questionText = "What is the primary subject explored in this reading lesson?";
-                    options = { A: "The evolution of " + topic, B: "A collection of unrelated cooking guides", C: "Traditional agriculture patterns", D: "Modern digital gaming industries" };
-                    answer = "A";
-                    explanation = "The passage directly establishes that this exercise centers on " + topic + " .";
-                } else if (i === 2) {
-                    questionText = "This reading passage is structurally adjusted for which level?";
-                    options = { A: "A1 level", B: "C2 level", C: "Target CEFR scale: " + level, D: "Preschool vocabulary level" };
-                    answer = "C";
-                    explanation = "The text states the study guide is dynamically adjusted to CEFR scale of " + level + ".";
-                } else {
-                    questionText = "Question " + i + ": Is active learning of " + topic + " recommended for " + level + " students?";
-                    options = { A: "Yes, it dramatically builds core comprehension skills.", B: "No, it is unnecessary.", C: "It should only be read once.", D: "Not sure." };
-                    answer = "A";
-                    explanation = "Consistent active learning is proven to enhance performance at " + level + " scale.";
-                }
-
                 questions.push({
-                    question: questionText,
-                    A: options.A,
-                    B: options.B,
-                    C: options.C,
-                    D: options.D,
-                    answer: answer,
-                    explanation: explanation
+                    question: "Question " + i + ": What is the primary subject explored in this reading lesson?",
+                    A: "The evolution of " + topic, B: "Cooking guides", C: "Agriculture patterns", D: "Modern gaming industries",
+                    answer: "A", explanation: "The passage establishes that this exercise centers on " + topic + "."
                 });
             }
-
-            quizData = {
-                title: simulatedTitle,
-                passage: simulatedPassage,
-                questions: questions
-            };
-
+            quizData = { title: simulatedTitle, passage: simulatedPassage, questions: questions };
             initQuizUI();
         }
 
-        
         function initQuizUI() {
-    // 1. ÉP BUỘC XÓA HOÀN TOÀN MÀN HÌNH CHỜ VÀ MÀN HÌNH TẢI
-    var waitingScr = document.getElementById("waiting-screen");
-    if (waitingScr) { waitingScr.style.display = "none"; } // Tắt tận gốc màn hình trường
-    
-    hideElement("loading-screen"); // Ẩn màn hình xoay tải bài
-    
-    // 2. HIỆN MÀN HÌNH BÀI ĐỌC LÊN
-    showElement("split-screen-container");
+            switchScreen("split-screen-container"); // ẨN SẠCH CÁC MÀN HÌNH CHỜ, HIỆN ĐỘC TÔN BÀI ĐỌC
 
-    selectedAnswers = {};
-    isSubmitted = false;
-    activeQuestionIdx = 0;
-    hideElement("result");
+            selectedAnswers = {};
+            isSubmitted = false;
+            activeQuestionIdx = 0;
+            hideElement("result");
 
-    document.getElementById("reading-title").innerHTML = quizData.title;
-    document.getElementById("reading-passage").innerHTML = quizData.passage;
+            document.getElementById("reading-title").innerHTML = quizData.title;
+            document.getElementById("reading-passage").innerHTML = quizData.passage;
+            showQuestion(0);
+        }
 
-    showQuestion(0);
-}
         function showQuestion(idx) {
             if (!quizData || idx < 0 || idx >= quizData.questions.length) return;
             activeQuestionIdx = idx;
-
             var q = quizData.questions[idx];
 
             document.getElementById("current-question-num").innerText = "QUESTION " + (idx + 1) + "/10";
-            //document.getElementById("question-text").innerText = q.question;
-// --- ĐOẠN 1: THAY THẾ DÒNG HIỂN THỊ CÂU HỎI ĐỂ TỰ ĐỘNG TÔ ĐỎ ĐỐI CHIẾU ---
+            
             var originalQuestion = q.question;
             var originalPassage = quizData.passage;
-
-            // Tìm từ nằm trong dấu nháy đơn '' hoặc nháy kép "" ở câu hỏi để làm từ khóa đối chiếu
             var match = originalQuestion.match(/['"]([^'"]+)['"]/);
             if (match && match[1]) {
                 var keyword = match[1];
                 var regex = new RegExp("\\b(" + keyword + ")\\b", "gi");
-                
-                // Tô đỏ từ đó trong câu hỏi
                 originalQuestion = originalQuestion.replace(regex, "<span style='color: #ef4444; font-weight: bold;'>$1</span>");
-                
-                // Tô đỏ luôn từ đó trong đoạn văn bài đọc
                 originalPassage = originalPassage.replace(regex, "<span style='color: #ef4444; font-weight: bold;'>$1</span>");
             }
             
-            // Cập nhật nội dung đã tô màu lên màn hình câu hỏi và đoạn văn
             document.getElementById("question-text").innerHTML = originalQuestion;
-           if (quizData) {
-                  document.getElementById("reading-passage").innerHTML = originalPassage;
-              }
+            document.getElementById("reading-passage").innerHTML = originalPassage;
            
             var optionsGrid = document.getElementById("options-grid");
             optionsGrid.innerHTML = "";
@@ -709,44 +620,26 @@ function showError(msg) {
             for (var i = 0; i < optKeys.length; i++) {
                 var key = optKeys[i];
                 var isChosen = selectedAnswers[idx] === key;
-                
                 var label = document.createElement("label");
-                var labelClass = "option-menu-item "; // Chuyển sang CSS class menu-item mới
-
+                var labelClass = "option-menu-item ";
                 var radio = document.createElement("input");
-                radio.type = "radio";
-                radio.name = "q" + idx;
-                radio.value = key;
+                radio.type = "radio"; radio.name = "q" + idx; radio.value = key;
                 if (isChosen) radio.checked = true;
 
                 if (isSubmitted) {
                     radio.disabled = true;
-                    var correctAns = q.answer;
-                    if (key === correctAns) {
-                        labelClass += "option-correct";
-                    } else if (isChosen && key !== correctAns) {
-                        labelClass += "option-wrong";
-                    }
+                    if (key === q.answer) labelClass += "option-correct";
+                    else if (isChosen && key !== q.answer) labelClass += "option-wrong";
                 } else {
-                    if (isChosen) {
-                        labelClass += "option-selected";
-                    }
-                    
-                    (function(currentKey) {
-                        label.onclick = function() {
-                            selectOption(currentKey);
-                        };
-                    })(key);
+                    if (isChosen) labelClass += "option-selected";
+                    (function(currentKey) { label.onclick = function() { selectOption(currentKey); }; })(key);
                 }
 
                 label.className = labelClass;
                 label.appendChild(radio);
-                
-                // Hiển thị dạng chữ sạch không dấu chấm: "A. OptionText"
                 var spanText = document.createElement("span");
                 spanText.innerText = key + ". " + q[key];
                 label.appendChild(spanText);
-
                 optionsGrid.appendChild(label);
             }
 
@@ -763,7 +656,6 @@ function showError(msg) {
 
             updateProgressBubbles();
             updateSubmitButton();
-
             var qBox = document.getElementById("question-box-scroll");
             if (qBox) qBox.scrollTop = 0;
         }
@@ -774,38 +666,21 @@ function showError(msg) {
             showQuestion(activeQuestionIdx);
         }
 
-        function nextQuestion() {
-            if (activeQuestionIdx < quizData.questions.length - 1) {
-                showQuestion(activeQuestionIdx + 1);
-            }
-        }
-
-        function prevQuestion() {
-            if (activeQuestionIdx > 0) {
-                showQuestion(activeQuestionIdx - 1);
-            }
-        }
+        function nextQuestion() { if (activeQuestionIdx < quizData.questions.length - 1) showQuestion(activeQuestionIdx + 1); }
+        function prevQuestion() { if (activeQuestionIdx > 0) showQuestion(activeQuestionIdx - 1); }
 
         function updateProgressBubbles() {
             for (var i = 0; i < 10; i++) {
                 var bubble = document.getElementById("bubble-" + i);
                 if (!bubble) continue;
-
                 bubble.className = "dot";
-
                 var isAnswered = selectedAnswers[i] !== undefined;
                 var isActive = activeQuestionIdx === i;
 
-                if (isActive) {
-                    bubble.className += " dot-active";
-                } else if (isAnswered) {
+                if (isActive) bubble.className += " dot-active";
+                else if (isAnswered) {
                     if (isSubmitted) {
-                        var q = quizData.questions[i];
-                        if (selectedAnswers[i] === q.answer) {
-                            bubble.className += " dot-correct";
-                        } else {
-                            bubble.className += " dot-wrong";
-                        }
+                        bubble.className += (selectedAnswers[i] === quizData.questions[i].answer) ? " dot-correct" : " dot-wrong";
                     } else {
                         bubble.className += " dot-answered";
                     }
@@ -817,18 +692,9 @@ function showError(msg) {
             var btnSubmit = document.getElementById("btn-submit");
             var total = quizData ? quizData.questions.length : 10;
             var answeredCount = 0;
-            
-            for (var key in selectedAnswers) {
-                if (selectedAnswers.hasOwnProperty(key)) {
-                    answeredCount++;
-                }
-            }
+            for (var key in selectedAnswers) { if (selectedAnswers.hasOwnProperty(key)) answeredCount++; }
 
-            if (isSubmitted) {
-                hideElement("btn-submit");
-                return;
-            }
-
+            if (isSubmitted) { hideElement("btn-submit"); return; }
             if (answeredCount >= 7 || activeQuestionIdx >= 8) {
                 showElement("btn-submit");
                 btnSubmit.innerText = "Submit Answers (" + answeredCount + "/" + total + ")";
@@ -836,70 +702,32 @@ function showError(msg) {
                 hideElement("btn-submit");
             }
         }
-// --- ĐOẠN 1: CHÈN THÊM HÀM TẠO ÂM THANH OFFLINE ---
-function playQuizSound(isVictory) {
-    try {
-        var AudioContext = window.AudioContext || window.webkitAudioContext;
-        if (!AudioContext) return;
-        var ctx = new AudioContext();
-        var osc = ctx.createOscillator();
-        var gain = ctx.createGain();
-        osc.connect(gain);
-        gain.connect(ctx.destination);
-        
-        // --- ĐOẠN THAY THẾ CHO KHỐI LỆNH TRONG ẢNH ---
-        // --- ĐOẠN CODE SỬA LỖI MẤT ÂM THANH Ở CÁC LẦN LÀM BÀI TIẾP THEO ---
-        var audioUrl = '';
 
-        if (isVictory) {
-            audioUrl = './victory.mp3'; 
-        } else {
-            audioUrl = './wrong.mp3';
+        function playQuizSound(isVictory) {
+            try {
+                var audioUrl = isVictory ? './victory.mp3' : './wrong.mp3';
+                var audio = new Audio(audioUrl);
+                audio.volume = 1.0; audio.currentTime = 0; audio.load();
+                var playPromise = audio.play();
+                if (playPromise !== undefined) {
+                    playPromise.catch(function() {
+                        var unlockAudio = function() {
+                            audio.play();
+                            document.removeEventListener('click', unlockAudio);
+                            document.removeEventListener('touchstart', unlockAudio);
+                        };
+                        document.addEventListener('click', unlockAudio);
+                        document.addEventListener('touchstart', unlockAudio);
+                    });
+                }
+            } catch (e) { console.log("Sound error", e); }
         }
 
-        if (audioUrl) {
-            // Tạo đối tượng âm thanh mới hoàn toàn cho mỗi lần bấm
-            var audio = new Audio(audioUrl);
-            audio.volume = 1.0; 
-            
-            // --- 2 DÒNG LỆNH QUAN TRỌNG ĐỂ RESET ÂM THANH KHÔNG BỊ KẸT BỘ NHỚ ---
-            audio.currentTime = 0; // Tua về giây đầu tiên
-            audio.load();          // Ép trình duyệt tải lại file hoàn toàn mới
-
-            // Tiến hành phát âm thanh
-            var playPromise = audio.play();
-
-            if (playPromise !== undefined) {
-                playPromise.catch(function(error) {
-                    console.log("Chờ học sinh tương tác để kích hoạt âm thanh...");
-                    
-                    // Mẹo phá băng bảo mật WebView nếu bị chặn
-                    var unlockAudio = function() {
-                        audio.currentTime = 0;
-                        audio.load();
-                        audio.play();
-                        document.removeEventListener('click', unlockAudio);
-                        document.removeEventListener('touchstart', unlockAudio);
-                    };
-                    document.addEventListener('click', unlockAudio);
-                    document.addEventListener('touchstart', unlockAudio);
-                });
-            }
-        }
-    } catch (e) { console.log("Sound error context", e); }
-}
         function gradeQuiz() {
             if (!quizData) return;
-
             var total = quizData.questions.length;
             var answeredCount = 0;
-            
-            for (var key in selectedAnswers) {
-                if (selectedAnswers.hasOwnProperty(key)) {
-                    answeredCount++;
-                }
-            }
-
+            for (var key in selectedAnswers) { if (selectedAnswers.hasOwnProperty(key)) answeredCount++; }
             if (answeredCount < total) {
                 alert("Please answer all " + total + " questions before submitting!");
                 return;
@@ -907,37 +735,19 @@ function playQuizSound(isVictory) {
 
             isSubmitted = true;
             var score = 0;
-
             for (var idx = 0; idx < quizData.questions.length; idx++) {
-                var q = quizData.questions[idx];
-                if (selectedAnswers[idx] === q.answer) {
-                    score++;
-                }
+                if (selectedAnswers[idx] === quizData.questions[idx].answer) score++;
             }
 
-            // --- ĐOẠN 2: THAY THẾ ĐOẠN HIỂN THỊ ĐIỂM CŨ ---
             var resDiv = document.getElementById("result");
             showElement("result");
-            
-            // Tự động đưa ra nhận xét dựa trên số câu đúng
             var comment = "";
-            if (score === 10) {
-                comment = " ⭐ Excellent! Perfect Score! 🎉";
-                playQuizSound(true); // Bật âm thanh chiến thắng
-            } else if (score >= 8) {
-                comment = " 👍 Great job! Well done!";
-                playQuizSound(true); // Bật âm thanh chiến thắng
-            } else if (score >= 5) {
-                comment = " 📚 Good effort! Keep practicing!";
-                playQuizSound(false); // Bật âm thanh buồn nhắc nhở
-            } else {
-                comment = " 💪 Don't give up! Try again!";
-                playQuizSound(false); // Bật âm thanh buồn nhắc nhở
-            }
+            if (score === 10) { comment = " ⭐ Excellent! Perfect Score! 🎉"; playQuizSound(true); }
+            else if (score >= 8) { comment = " 👍 Great job! Well done!"; playQuizSound(true); }
+            else if (score >= 5) { comment = " 📚 Good effort! Keep practicing!"; playQuizSound(false); }
+            else { comment = " 💪 Don't give up! Try again!"; playQuizSound(false); }
 
-            // Hiển thị cả Điểm số và Lời nhận xét lên màn hình
             resDiv.innerHTML = "YOUR SCORE: " + score + "/" + total + "<br><span style='font-size:13px; font-weight:normal;'>" + comment + "</span>";
-
             sendResultToMIT(score, total);
             showQuestion(activeQuestionIdx);
         }
@@ -949,71 +759,36 @@ function playQuizSound(isVictory) {
             }
         }
 
-
-        var isAiLoading = false; // Biến cờ chặn đứng spam gọi AI liên tục
-
-function checkConnection() {
-    var params = parseParameters();
-    
-    // 1. Nếu đang trong quá trình tải AI, chặn hoàn toàn không cho quét tiếp
-    if (isAiLoading) return; 
-
-    if (params.level && params.topic) {
-        var currentConfigStr = params.level + "|" + params.topic;
-        
-        if (currentConfigStr !== lastReceivedConfig || !quizData) {
-            lastReceivedConfig = currentConfigStr;
-            currentLevel = params.level;
-            currentTopic = params.topic;
-            
-            isAiLoading = true; // Khóa đầu vào ngay khi bắt đầu gọi AI
-            loadConfigAndTriggerAI(currentLevel, currentTopic);
+        function checkConnection() {
+            if (isAiLoading) return; // Đang chạy tải AI thì dừng quét ngầm ngay lập tức, triệt tiêu lỗi chớp nháy!
+            var params = parseParameters();
+            if (params.level && params.topic) {
+                var currentConfigStr = params.level + "|" + params.topic;
+                if (currentConfigStr !== lastReceivedConfig || !quizData) {
+                    lastReceivedConfig = currentConfigStr;
+                    loadConfigAndTriggerAI(params.level.trim(), params.topic.trim());
+                }
+            }
         }
-    }
-}
 
-// Sửa lại hàm initQuizUI để mở khóa khi thành công
-var originalInitQuizUI = initQuizUI;
-initQuizUI = function() {
-    isAiLoading = false; // Mở khóa cờ chặn
-    var waitingScr = document.getElementById("waiting-screen");
-    if (waitingScr) { waitingScr.style.display = "none"; } // Ẩn triệt để màn hình trường
-    hideElement("loading-screen");
-    originalInitQuizUI();
-};
-
-// Sửa lại hàm showError để mở khóa và ẩn màn hình chờ khi thất bại
-var originalShowError = showError;
-showError = function(msg) {
-    isAiLoading = false; // Mở khóa cờ chặn để có thể bấm thử lại sau
-    var waitingScr = document.getElementById("waiting-screen");
-    if (waitingScr) { waitingScr.style.display = "none"; } // Ẩn triệt để màn hình trường, không cho dồn cục
-    hideElement("loading-screen");
-    originalShowError(msg);
-};
-
-window.onload = function() {
-    // Khởi tạo nhạc nền
-    bgAudio = new Audio('https://github.com/ltphuoc2100-code/reading_skill/raw/refs/heads/main/nhacnen.mp3');
-    bgAudio.volume = 0.5; 
-    bgAudio.loop = true;  
-
-    var playBg = bgAudio.play();
-    if (playBg !== undefined) {
-        playBg.catch(function() {
-            var unlockBg = function() {
-                if (bgAudio && !quizData) bgAudio.play();
-                document.removeEventListener('click', unlockBg);
-                document.removeEventListener('touchstart', unlockBg);
-            };
-            document.addEventListener('click', unlockBg);
-            document.addEventListener('touchstart', unlockBg);
-        });
-    }
-
-    // Tăng thời gian quét lên 1.5 giây để điện thoại chạy nhẹ nhàng hơn, không bị lag
-    setInterval(checkConnection, 1500); 
-};
-</script>
+        window.onload = function() {
+            bgAudio = new Audio('https://github.com/ltphuoc2100-code/reading_skill/raw/refs/heads/main/nhacnen.mp3');
+            bgAudio.volume = 0.5; bgAudio.loop = true;  
+            var playBg = bgAudio.play();
+            if (playBg !== undefined) {
+                playBg.catch(function() {
+                    var unlockBg = function() {
+                        if (bgAudio && !quizData) bgAudio.play();
+                        document.removeEventListener('click', unlockBg);
+                        document.removeEventListener('touchstart', unlockBg);
+                    };
+                    document.addEventListener('click', unlockBg);
+                    document.addEventListener('touchstart', unlockBg);
+                });
+            }
+            // Thời gian quét giãn rộng thành 2 giây giúp App mượt mà, không bị xung đột lệnh
+            setInterval(checkConnection, 2000); 
+        };
+    </script>
 </body>
 </html>
