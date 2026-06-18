@@ -486,7 +486,10 @@
             currentLevel = level;
             currentTopic = topic;
 
-            hideElement("waiting-screen");
+            // ÉP BUỘC ẨN SẠCH MÀN HÌNH TRƯỜNG NGAY KHI BẮT ĐẦU CHẠY
+            var waitingScr = document.getElementById("waiting-screen");
+            if (waitingScr) { waitingScr.style.display = "none"; }
+            
             hideElement("split-screen-container");
             hideElement("error-screen");
             showElement("loading-screen");
@@ -503,19 +506,18 @@
 
             var apiUrl = "https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=" + apiKey;
             
-            // --- THAY THẾ BIẾN PROMPTTEXT ĐỂ ÉP SỐ TỪ THEO CHUẨN CEFR ---
-var wordCountLimit = "around 180-250 words"; // Mặc định cho B1-B2
-if (level === "A1" || level === "A2") {
-    wordCountLimit = "exactly 100-150 words using simple sentence structures";
-} else if (level === "C1" || level === "C2") {
-    wordCountLimit = "exactly 300-400 words with advanced vocabulary and complex sentences";
-}
+            var wordCountLimit = "around 180-250 words"; 
+            if (level === "A1" || level === "A2") {
+                wordCountLimit = "exactly 100-150 words using simple sentence structures";
+            } else if (level === "C1" || level === "C2") {
+                wordCountLimit = "exactly 300-400 words with advanced vocabulary and complex sentences";
+            }
 
-var promptText = "Create a reading comprehension study unit in English on the topic of '" + topic + "' tailored for CEFR level '" + level + "'. " +
-                 "Generate a title (do NOT include prefix labels like 'Exam Study:'), a reading passage (" + wordCountLimit + "), and exactly 10 multiple-choice questions. " +
-                 "Each question must have exactly 4 choices (A, B, C, D), exactly one single-letter answer (A, B, C, or D), and a short explanation in English." +
-    "CRITICAL: DO NOT use exact words from the passage in the correct answer. The correct answer MUST be paraphrased using synonyms or different sentence structures." +
-"WORD MATCHING TRAPS: Put exact words or phrases from the passage into the WRONG answers (distractors) to trap students who only look for matching words without understanding.";
+            var promptText = "Create a reading comprehension study unit in English on the topic of '" + topic + "' tailored for CEFR level '" + level + "'. " +
+                             "Generate a title (do NOT include prefix labels like 'Exam Study:'), a reading passage (" + wordCountLimit + "), and exactly 10 multiple-choice questions. " +
+                             "Each question must have exactly 4 choices (A, B, C, D), exactly one single-letter answer (A, B, C, or D), and a short explanation in English." +
+                "CRITICAL: DO NOT use exact words from the passage in the correct answer. The correct answer MUST be paraphrased using synonyms or different sentence structures." +
+            "WORD MATCHING TRAPS: Put exact words or phrases from the passage into the WRONG answers (distractors) to trap students who only look for matching words without understanding.";
             var payload = {
                 contents: [{ parts: [{ text: promptText }] }],
                 generationConfig: {
@@ -585,7 +587,6 @@ var promptText = "Create a reading comprehension study unit in English on the to
 
             xhr.send(JSON.stringify(payload));
         }
-
        
 function showError(msg) {
     var errEl = document.getElementById("error-message");
@@ -645,6 +646,11 @@ function showError(msg) {
         }
 
         function initQuizUI() {
+            // ÉP BUỘC ẨN HOÀN TOÀN MÀN HÌNH CHỜ TRƯỜNG HỌC VÀ XOAY TRÒN LOADING
+            var waitingScr = document.getElementById("waiting-screen");
+            if (waitingScr) { waitingScr.style.display = "none"; }
+            hideElement("loading-screen");
+
             showElement("split-screen-container");
 
             selectedAnswers = {};
