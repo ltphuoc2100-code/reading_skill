@@ -323,9 +323,9 @@
             <b>Notice:</b><br>
             • Please wait a moment!<br>
                 </div>
-        <button onclick="retryOffline()" style="margin-top: 14px; background-color: #ef4444; color: white; border: none; padding: 8px 14px; border-radius: 6px; font-size: 11px; font-weight: bold; cursor: pointer; display: block; width: 80%;">
-            Please load Standard Offline Quiz Instead
-        </button>
+                <button onclick="simulateLaunch()" id="btn-demo-offline" style="background-color: #4f46e5; color: white; border: none; padding: 12px 24px; border-radius: 10px; font-size: 15px; font-weight: bold; cursor: pointer; box-shadow: 0 4px 6px rgba(79, 70, 229, 0.3); width: auto; margin: 15px auto 0 auto; display: none;">
+  Please load Standard Offline Quiz Instead
+  </button>
     </div>
 
     <div id="split-screen-container" class="hidden" style="display: flex; flex-direction: column; flex: 1; overflow: hidden;">
@@ -958,6 +958,50 @@ function playQuizSound(isVictory) {
             setInterval(checkConnection, 500);
             checkConnection();
         };
+
+        // --- TỰ ĐỘNG PHÁT NHẠC NỀN KHÔNG GIAN KHI MỞ APP ---
+function playBackgroundMusic() {
+    try {
+        var AudioContext = window.AudioContext || window.webkitAudioContext;
+        if (!AudioContext) return;
+        var audioCtx = new AudioContext();
+        
+        // Tạo hàm phát một nốt nhạc nhẹ nhàng lặp đi lặp lại
+        function playTone(freq, startTime, duration) {
+            var osc = audioCtx.createOscillator();
+            var gain = audioCtx.createGain();
+            osc.type = 'sine'; // Tiếng sóng mượt mà
+            osc.frequency.setValueAtTime(freq, startTime);
+            
+            gain.gain.setValueAtTime(0.02, startTime); // Giới hạn âm lượng cực nhỏ, êm dịu không chói tai
+            gain.gain.exponentialRampToValueAtTime(0.0001, startTime + duration);
+            
+            osc.connect(gain);
+            gain.connect(audioCtx.destination);
+            osc.start(startTime);
+            osc.stop(startTime + duration);
+        }
+
+        // Tạo giai điệu thư giãn lặp lại mỗi 6 giây
+        setInterval(function() {
+            var now = audioCtx.currentTime;
+            playTone(261.63, now, 2);       // Nốt Đô
+            playTone(329.63, now + 1.5, 2); // Nốt Mi
+            playTone(392.00, now + 3.0, 2); // Nốt Sol
+            playTone(523.25, now + 4.5, 2); // Nốt Đố
+        }, 6000);
+    } catch(e) { console.log("Không kích hoạt được nhạc nền do bảo mật WebView"); }
+}
+
+// Kích hoạt nhạc nền ngay khi học sinh chạm tay vào màn hình app lần đầu tiên
+document.addEventListener('click', function initMusic() {
+    playBackgroundMusic();
+    document.removeEventListener('click', initMusic);
+}, { once: true });
+document.addEventListener('touchstart', function initMusic() {
+    playBackgroundMusic();
+    document.removeEventListener('touchstart', initMusic);
+}, { once: true });
         </script>
 </body>
 </html>
