@@ -488,7 +488,7 @@
             currentLevel = level;
             currentTopic = topic;
 
-           // hideElement("waiting-screen");
+           hideElement("waiting-screen");
             hideElement("split-screen-container");
             hideElement("error-screen");
             showElement("loading-screen");
@@ -590,6 +590,7 @@ var promptText = "Create a reading comprehension study unit in English on the to
 
        
 function showError(msg) {
+   showElement("waiting-screen");
     var errEl = document.getElementById("error-message");
     errEl.innerText = msg;
     showElement("error-screen");
