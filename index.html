@@ -937,21 +937,26 @@ function playQuizSound(isVictory) {
                 window.AppInventor.setWebViewString(dataString);
             }
         }
-function checkConnection() {
+
+
+        function checkConnection() {
     var params = parseParameters();
     
-    // Chỉ kích hoạt AI khi thực sự có Level và Topic truyền từ App sang
-    if (params.level && params.topic && !quizData) {
+    // Nếu App Inventor thực sự truyền Level và Topic sang
+    if (params.level && params.topic) {
         var currentConfigStr = params.level + "|" + params.topic;
-        if (currentConfigStr !== lastReceivedConfig) {
+        
+        // Chỉ kích hoạt khi cấu hình thay đổi HOẶC khi chưa có dữ liệu bài đọc
+        if (currentConfigStr !== lastReceivedConfig || !quizData) {
             lastReceivedConfig = currentConfigStr;
             currentLevel = params.level;
             currentTopic = params.topic;
+            
+            // Lập tức gọi Gemini AI tạo bài đọc mới
             loadConfigAndTriggerAI(currentLevel, currentTopic);
         }
     }
 }
-
 window.onload = function() {
     // Khởi tạo nhạc nền vui nhộn
     bgAudio = new Audio('https://github.com/ltphuoc2100-code/reading_skill/raw/refs/heads/main/nhacnen.mp3');
