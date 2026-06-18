@@ -398,7 +398,7 @@
         var currentTopic = "";
         var quizData = null;
         var lastReceivedConfig = "";
-        
+        var bgAudio = null;
         var activeQuestionIdx = 0; 
         var selectedAnswers = {};  
         var isSubmitted = false;   
@@ -686,7 +686,10 @@ function showError(msg) {
             
             // Cập nhật nội dung đã tô màu lên màn hình câu hỏi và đoạn văn
             document.getElementById("question-text").innerHTML = originalQuestion;
-            document.getElementById("reading-passage").innerHTML = originalPassage;
+           if (quizData) {
+                  document.getElementById("reading-passage").innerHTML = originalPassage;
+              }
+           
             var optionsGrid = document.getElementById("options-grid");
             optionsGrid.innerHTML = "";
 
