@@ -429,6 +429,7 @@
         }
 
         function simulateLaunch() {
+            if (bgAudio) { bgAudio.play().catch(function(e){ console.log(e); }); }
             loadConfigAndTriggerAI("B2", "Artificial Intelligence");
         }
 
