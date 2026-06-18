@@ -934,21 +934,23 @@ function playQuizSound(isVictory) {
             }
         }
 
-        function checkConnection() {
-            var params = parseParameters();
-            
-            if (params.level && params.topic) {
-                var currentConfigStr = params.level + "|" + params.topic;
-                if (currentConfigStr !== lastReceivedConfig) {
-                    lastReceivedConfig = currentConfigStr;
-                    currentLevel = params.level;
-                    currentTopic = params.topic;
-                    
-                    loadConfigAndTriggerAI(currentLevel, currentTopic);
-                }
-            }
-        }
+        
 
+function checkConnection() {
+    var params = parseParameters();
+
+    // Chỉ khi nào trên App thực sự bấm gửi Level và Topic sang thì mới kích hoạt AI
+    if (params.level && params.topic) {
+        var currentConfigStr = params.level + "|" + params.topic;
+        if (currentConfigStr !== lastReceivedConfig) {
+            lastReceivedConfig = currentConfigStr;
+            currentLevel = params.level;
+            currentTopic = params.topic;
+            loadConfigAndTriggerAI(currentLevel, currentTopic);
+        }
+    }
+}
+        
         window.onload = function() {
             setInterval(checkConnection, 500);
             checkConnection();
