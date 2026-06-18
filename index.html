@@ -993,7 +993,7 @@ window.addEventListener("DOMContentLoaded", function() {
         }
 
         var waitingScreen = document.getElementById("waiting-screen");
-        if (waitingScreen) { waitingScreen.style.display = "none"; }
+        if (waitingScreen) { waitingScreen.classList.add("hidden"); } // SỬA DÒNG NÀY
         
         try {
             var decodedData = decodeURIComponent(dataParam);
@@ -1018,7 +1018,7 @@ window.addEventListener("DOMContentLoaded", function() {
         // Ẩn ngay lập tức màn hình chờ hình ngôi trường
         var waitingScreen = document.getElementById("waiting-screen");
         if (waitingScreen) {
-            waitingScreen.style.display = "none"; 
+           waitingScreen.classList.add("hidden"); 
         }
         
         // Nếu dữ liệu dạng chữ mã hóa mã Code, giải mã nó ra và chạy bài làm
