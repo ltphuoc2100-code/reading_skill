@@ -382,6 +382,7 @@
     </footer>
 
     <script>
+        var bgMusic = null; // Thêm dòng này để quản lý file nhạc mp3 từ Github
         var keyPart1 = "AQ.Ab"; 
         var keyPart2 = "8RN6ImY3ZbsE2FEM74MWeKIfWJLC2XGWdmcOs9Fdg-LxF7nw"; 
 
@@ -481,6 +482,11 @@
         }
 
         function loadConfigAndTriggerAI(level, topic) {
+           // TẮT NHẠC NỀN NGAY LẬP TỨC KHI BẤM READ UP ĐỂ VÀO BÀI ĐỌC
+            if (bgMusic) { 
+                bgMusic.pause(); 
+                bgMusic.currentTime = 0; 
+            }
             currentLevel = level;
             currentTopic = topic;
 
@@ -958,46 +964,33 @@ function playQuizSound(isVictory) {
         };
 
         // --- TỰ ĐỘNG PHÁT NHẠC NỀN KHÔNG GIAN KHI MỞ APP ---
-function playBackgroundMusic() {
+// --- HÀM PHÁT FILE NHẠC MP3 TỪ GITHUB CỦA THẦY ---
+function playGitBackgroundMusic() {
+    if (bgMusic) return; // Nếu nhạc đang phát rồi thì không tạo trùng tránh lặp tiếng
+    
     try {
-        var AudioContext = window.AudioContext || window.webkitAudioContext;
-        if (!AudioContext) return;
-        var audioCtx = new AudioContext();
+        // Thầy nhớ đổi đúng tên file nhạc của thầy trên GitHub vào đây (ví dụ: ./nhacnen.mp3)
+        bgMusic = new Audio('./nhacnen.mp3'); 
+        bgMusic.loop = true; // Bật chế độ lặp vô hạn
+        bgMusic.volume = 0.4; // Âm lượng 40% dịu nhẹ
         
-        // Tạo hàm phát một nốt nhạc nhẹ nhàng lặp đi lặp lại
-        function playTone(freq, startTime, duration) {
-            var osc = audioCtx.createOscillator();
-            var gain = audioCtx.createGain();
-            osc.type = 'sine'; // Tiếng sóng mượt mà
-            osc.frequency.setValueAtTime(freq, startTime);
-            
-            gain.gain.setValueAtTime(0.02, startTime); // Giới hạn âm lượng cực nhỏ, êm dịu không chói tai
-            gain.gain.exponentialRampToValueAtTime(0.0001, startTime + duration);
-            
-            osc.connect(gain);
-            gain.connect(audioCtx.destination);
-            osc.start(startTime);
-            osc.stop(startTime + duration);
+        var playPromise = bgMusic.play();
+        if (playPromise !== undefined) {
+            playPromise.catch(function(error) {
+                console.log("Trình duyệt chặn phát tự động, chờ người dùng chạm màn hình.");
+            });
         }
-
-        // Tạo giai điệu thư giãn lặp lại mỗi 6 giây
-        setInterval(function() {
-            var now = audioCtx.currentTime;
-            playTone(261.63, now, 2);       // Nốt Đô
-            playTone(329.63, now + 1.5, 2); // Nốt Mi
-            playTone(392.00, now + 3.0, 2); // Nốt Sol
-            playTone(523.25, now + 4.5, 2); // Nốt Đố
-        }, 6000);
-    } catch(e) { console.log("Không kích hoạt được nhạc nền do bảo mật WebView"); }
+    } catch(e) { console.log("Lỗi tải file nhạc", e); }
 }
 
 // Kích hoạt nhạc nền ngay khi học sinh chạm tay vào màn hình app lần đầu tiên
 document.addEventListener('click', function initMusic() {
-    playBackgroundMusic();
+    playGitBackgroundMusic();
     document.removeEventListener('click', initMusic);
 }, { once: true });
+
 document.addEventListener('touchstart', function initMusic() {
-    playBackgroundMusic();
+    playGitBackgroundMusic();
     document.removeEventListener('touchstart', initMusic);
 }, { once: true });
         </script>
