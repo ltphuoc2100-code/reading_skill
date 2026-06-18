@@ -651,6 +651,8 @@ function showError(msg) {
         }
 
         function initQuizUI() {
+            hideElement("waiting-screen");
+      hideElement("loading-screen");
             showElement("split-screen-container");
 
             selectedAnswers = {};
