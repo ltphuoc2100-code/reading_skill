@@ -935,40 +935,30 @@ function playQuizSound(isVictory) {
         }
 function checkConnection() {
     var params = parseParameters();
-
-    // Chỉ kích hoạt khi thực sự có dữ liệu truyền từ App sang và chưa có bài quiz nào được tải
+    
+    // Chỉ kích hoạt AI khi thực sự có Level và Topic truyền từ App sang
     if (params.level && params.topic && !quizData) {
         var currentConfigStr = params.level + "|" + params.topic;
         if (currentConfigStr !== lastReceivedConfig) {
             lastReceivedConfig = currentConfigStr;
             currentLevel = params.level;
             currentTopic = params.topic;
-
             loadConfigAndTriggerAI(currentLevel, currentTopic);
         }
     }
 }
-        
 
+window.onload = function() {
+    // Khởi tạo nhạc nền vui nhộn
+    bgAudio = new Audio('./nhac_nen_vui.mp3');
+    bgAudio.volume = 0.5; 
+    bgAudio.loop = true;  
 
-        
-        window.onload = function() {
-            setInterval(checkConnection, 500);
-            
-        };
-        // --- ĐOẠN CODE TỰ ĐỘNG BỎ QUA MÀN HÌNH TRƯỜNG KHI CÓ BÀI ĐỌC MỚI ---
-window.addEventListener("DOMContentLoaded", function() {
-// --- 1. ĐOẠN CODE PHÁT NHẠC NỀN VUI NHỘN KHI MỚI MỞ APP (HÌNH TRƯỜNG) ---
-    var bgAudio = new Audio('./nhac_nen_vui.mp3');
-    bgAudio.volume = 0.6; // Đặt âm lượng vừa phải (60%) để không bị quá to
-    bgAudio.loop = true;  // Cho phép nhạc lặp đi lặp lại nếu học sinh ở màn hình chờ lâu
-
-    // Phát nhạc nền (Nếu WebView chặn thì sẽ đợi học sinh chạm màn hình là phát ngay)
     var playBg = bgAudio.play();
     if (playBg !== undefined) {
         playBg.catch(function() {
             var unlockBg = function() {
-                bgAudio.play();
+                if (bgAudio && !quizData) bgAudio.play();
                 document.removeEventListener('click', unlockBg);
                 document.removeEventListener('touchstart', unlockBg);
             };
@@ -977,62 +967,9 @@ window.addEventListener("DOMContentLoaded", function() {
         });
     }
 
-    // --- 2. TỰ ĐỘNG TẮT NHẠC NỀN KHI CÓ BÀI ĐỌC MỚI (ĐOẠN CŨ CỦA THẦY) ---
-    var urlParams = new URLSearchParams(window.location.search);
-    var dataParam = urlParams.get('data') || urlParams.get('passage'); 
-    
-    if (!dataParam && typeof window.AppInventor !== "undefined") {
-        try { dataParam = window.AppInventor.getWebViewString(); } catch(e) {}
-    }
-
-    if (dataParam) {
-        // KHI CÓ BÀI ĐỌC MỚI: Tắt ngay nhạc nền vui nhộn để chuẩn bị làm bài
-        if (bgAudio) {
-            bgAudio.pause();
-            bgAudio.currentTime = 0;
-        }
-
-        var waitingScreen = document.getElementById("waiting-screen");
-        if (waitingScreen) { waitingScreen.classList.add("hidden"); } // SỬA DÒNG NÀY
-        
-        try {
-            var decodedData = decodeURIComponent(dataParam);
-            quizData = JSON.parse(decodedData);
-            initQuizUI(); 
-        } catch (err) { console.log("Đang đợi dữ liệu..."); }
-    }
-    
-    // 1. Kiểm tra xem trên đường link URL có chứa dữ liệu bài đọc từ MIT truyền sang không
-    var urlParams = new URLSearchParams(window.location.search);
-    var dataParam = urlParams.get('data') || urlParams.get('passage'); 
-    
-    // Nếu không tìm thấy trên URL, thử kiểm tra biến window.AppInventor xem MIT có truyền trực tiếp không
-    if (!dataParam && typeof window.AppInventor !== "undefined") {
-        try {
-            dataParam = window.AppInventor.getWebViewString();
-        } catch(e) {}
-    }
-
-    // 2. NẾU CÓ DỮ LIỆU BÀI ĐỌC: Xóa ngay màn hình trường và mở bài đọc luôn!
-    if (dataParam) {
-        // Ẩn ngay lập tức màn hình chờ hình ngôi trường
-        var waitingScreen = document.getElementById("waiting-screen");
-        if (waitingScreen) {
-           waitingScreen.classList.add("hidden"); 
-        }
-        
-        // Nếu dữ liệu dạng chữ mã hóa mã Code, giải mã nó ra và chạy bài làm
-        try {
-            var decodedData = decodeURIComponent(dataParam);
-            quizData = JSON.parse(decodedData);
-            
-            // Nhảy thẳng vào giao diện làm bài, bỏ qua màn hình chào
-            initQuizUI(); 
-        } catch (err) {
-            console.log("Đang đợi dữ liệu chuẩn...");
-        }
-    }
-});
-    </script>
+    // Chỉ chạy bộ quét ngầm, không gọi trực tiếp hàm checkConnection
+    setInterval(checkConnection, 500);
+};
+</script>
 </body>
 </html>
