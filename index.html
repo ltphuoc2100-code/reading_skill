@@ -650,22 +650,27 @@ function showError(msg) {
             initQuizUI();
         }
 
+        
         function initQuizUI() {
-            hideElement("waiting-screen");
-      hideElement("loading-screen");
-            showElement("split-screen-container");
+    // 1. ÉP BUỘC XÓA HOÀN TOÀN MÀN HÌNH CHỜ VÀ MÀN HÌNH TẢI
+    var waitingScr = document.getElementById("waiting-screen");
+    if (waitingScr) { waitingScr.style.display = "none"; } // Tắt tận gốc màn hình trường
+    
+    hideElement("loading-screen"); // Ẩn màn hình xoay tải bài
+    
+    // 2. HIỆN MÀN HÌNH BÀI ĐỌC LÊN
+    showElement("split-screen-container");
 
-            selectedAnswers = {};
-            isSubmitted = false;
-            activeQuestionIdx = 0;
-            hideElement("result");
+    selectedAnswers = {};
+    isSubmitted = false;
+    activeQuestionIdx = 0;
+    hideElement("result");
 
-            document.getElementById("reading-title").innerHTML = quizData.title;
-            document.getElementById("reading-passage").innerHTML = quizData.passage;
+    document.getElementById("reading-title").innerHTML = quizData.title;
+    document.getElementById("reading-passage").innerHTML = quizData.passage;
 
-            showQuestion(0);
-        }
-
+    showQuestion(0);
+}
         function showQuestion(idx) {
             if (!quizData || idx < 0 || idx >= quizData.questions.length) return;
             activeQuestionIdx = idx;
