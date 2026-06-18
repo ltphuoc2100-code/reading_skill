@@ -955,6 +955,50 @@ function playQuizSound(isVictory) {
         };
         // --- ĐOẠN CODE TỰ ĐỘNG BỎ QUA MÀN HÌNH TRƯỜNG KHI CÓ BÀI ĐỌC MỚI ---
 window.addEventListener("DOMContentLoaded", function() {
+// --- 1. ĐOẠN CODE PHÁT NHẠC NỀN VUI NHỘN KHI MỚI MỞ APP (HÌNH TRƯỜNG) ---
+    var bgAudio = new Audio('./nhac_nen_vui.mp3');
+    bgAudio.volume = 0.6; // Đặt âm lượng vừa phải (60%) để không bị quá to
+    bgAudio.loop = true;  // Cho phép nhạc lặp đi lặp lại nếu học sinh ở màn hình chờ lâu
+
+    // Phát nhạc nền (Nếu WebView chặn thì sẽ đợi học sinh chạm màn hình là phát ngay)
+    var playBg = bgAudio.play();
+    if (playBg !== undefined) {
+        playBg.catch(function() {
+            var unlockBg = function() {
+                bgAudio.play();
+                document.removeEventListener('click', unlockBg);
+                document.removeEventListener('touchstart', unlockBg);
+            };
+            document.addEventListener('click', unlockBg);
+            document.addEventListener('touchstart', unlockBg);
+        });
+    }
+
+    // --- 2. TỰ ĐỘNG TẮT NHẠC NỀN KHI CÓ BÀI ĐỌC MỚI (ĐOẠN CŨ CỦA THẦY) ---
+    var urlParams = new URLSearchParams(window.location.search);
+    var dataParam = urlParams.get('data') || urlParams.get('passage'); 
+    
+    if (!dataParam && typeof window.AppInventor !== "undefined") {
+        try { dataParam = window.AppInventor.getWebViewString(); } catch(e) {}
+    }
+
+    if (dataParam) {
+        // KHI CÓ BÀI ĐỌC MỚI: Tắt ngay nhạc nền vui nhộn để chuẩn bị làm bài
+        if (bgAudio) {
+            bgAudio.pause();
+            bgAudio.currentTime = 0;
+        }
+
+        var waitingScreen = document.getElementById("waiting-screen");
+        if (waitingScreen) { waitingScreen.style.display = "none"; }
+        
+        try {
+            var decodedData = decodeURIComponent(dataParam);
+            quizData = JSON.parse(decodedData);
+            initQuizUI(); 
+        } catch (err) { console.log("Đang đợi dữ liệu..."); }
+    }
+    
     // 1. Kiểm tra xem trên đường link URL có chứa dữ liệu bài đọc từ MIT truyền sang không
     var urlParams = new URLSearchParams(window.location.search);
     var dataParam = urlParams.get('data') || urlParams.get('passage'); 
