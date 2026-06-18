@@ -943,26 +943,56 @@ function playQuizSound(isVictory) {
             }
         }
 
-        function checkConnection() {
-            var params = parseParameters();
+function checkConnection() {
+    var params = parseParameters();
+    
+    if (params.level && params.topic) {
+        var currentConfigStr = params.level + "|" + params.topic;
+        if (currentConfigStr !== lastReceivedConfig) {
+            lastReceivedConfig = currentConfigStr;
+            currentLevel = params.level;
+            currentTopic = params.topic;
             
-            if (params.level && params.topic) {
-                var currentConfigStr = params.level + "|" + params.topic;
-                if (currentConfigStr !== lastReceivedConfig) {
-                    lastReceivedConfig = currentConfigStr;
-                    currentLevel = params.level;
-                    currentTopic = params.topic;
-                    
-                    loadConfigAndTriggerAI(currentLevel, currentTopic);
-                }
-            }
+            // 1. ÉP KÍCH HOẠT PHÁT NHẠC NGAY KHI CÓ TÍN HIỆU TỪ NÚT BẤM CỦA APP TRUYỀN SANG
+            playGitBackgroundMusic();
+            
+            // 2. GỌI LỆNH TẢI BÀI ĐỌC AI
+            loadConfigAndTriggerAI(currentLevel, currentTopic);
         }
+    }
+}
 
-        window.onload = function() {
-            setInterval(checkConnection, 500);
-            checkConnection();
+// Thay đổi nhẹ hàm loadConfigAndTriggerAI để tắt nhạc ngay khi vào màn hình làm bài
+var originalLoadConfig = loadConfigAndTriggerAI;
+loadConfigAndTriggerAI = function(level, topic) {
+    // TẮT NHẠC NỀN LẬP TỨC KHI VÀO MÀN HÌNH TẢI BÀI / LÀM BÀI ĐỌC
+    if (bgMusic) { 
+        bgMusic.pause(); 
+        bgMusic.currentTime = 0; 
+    }
+    originalLoadConfig(level, topic);
+};
+
+window.onload = function() {
+    setInterval(checkConnection, 500);
+    checkConnection();
+    
+    // Nếu học sinh chạm tay vào màn hình chờ hoặc bấm nút Demo, cũng kích hoạt mở/tắt nhạc tương ứng
+    var unlockMusic = function() { playGitBackgroundMusic(); };
+    document.addEventListener('click', unlockMusic, { once: true });
+    document.addEventListener('touchstart', unlockMusic, { once: true });
+
+    var demoBtn = document.getElementById("btn-demo-offline");
+    if (demoBtn) {
+        var originalClick = demoBtn.onclick;
+        demoBtn.onclick = function() {
+            if (bgMusic) { bgMusic.pause(); bgMusic.currentTime = 0; }
+            if (originalClick) originalClick();
         };
+    }
+};
 
+        
         // --- TỰ ĐỘNG PHÁT NHẠC NỀN KHÔNG GIAN KHI MỞ APP ---
 // --- HÀM PHÁT FILE NHẠC MP3 TỪ GITHUB CỦA THẦY ---
 function playGitBackgroundMusic() {
@@ -970,7 +1000,7 @@ function playGitBackgroundMusic() {
     
     try {
         // Thầy nhớ đổi đúng tên file nhạc của thầy trên GitHub vào đây (ví dụ: ./nhacnen.mp3)
-        bgMusic = new Audio('./nhacnen.mp3'); 
+        bgMusic = new Audio('https://github.com/ltphuoc2100-code/reading_skill/raw/refs/heads/main/nhacnen.mp3'); 
         bgMusic.loop = true; // Bật chế độ lặp vô hạn
         bgMusic.volume = 0.4; // Âm lượng 40% dịu nhẹ
         
