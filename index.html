@@ -953,35 +953,27 @@ function checkConnection() {
             currentLevel = params.level;
             currentTopic = params.topic;
             
-            // 1. ÉP KÍCH HOẠT PHÁT NHẠC NGAY KHI CÓ TÍN HIỆU TỪ NÚT BẤM CỦA APP TRUYỀN SANG
-            playGitBackgroundMusic();
+            // TẮT NHẠC NỀN NGAY LẬP TỨC KHI BẤM READ UP ĐỂ VÀO BÀI ĐỌC
+            if (bgMusic) { 
+                bgMusic.pause(); 
+                bgMusic.currentTime = 0; 
+            }
             
-            // 2. GỌI LỆNH TẢI BÀI ĐỌC AI
             loadConfigAndTriggerAI(currentLevel, currentTopic);
         }
     }
 }
 
-// Thay đổi nhẹ hàm loadConfigAndTriggerAI để tắt nhạc ngay khi vào màn hình làm bài
-var originalLoadConfig = loadConfigAndTriggerAI;
-loadConfigAndTriggerAI = function(level, topic) {
-    // TẮT NHẠC NỀN LẬP TỨC KHI VÀO MÀN HÌNH TẢI BÀI / LÀM BÀI ĐỌC
-    if (bgMusic) { 
-        bgMusic.pause(); 
-        bgMusic.currentTime = 0; 
-    }
-    originalLoadConfig(level, topic);
-};
-
 window.onload = function() {
     setInterval(checkConnection, 500);
     checkConnection();
     
-    // Nếu học sinh chạm tay vào màn hình chờ hoặc bấm nút Demo, cũng kích hoạt mở/tắt nhạc tương ứng
-    var unlockMusic = function() { playGitBackgroundMusic(); };
-    document.addEventListener('click', unlockMusic, { once: true });
-    document.addEventListener('touchstart', unlockMusic, { once: true });
+    // 🔓 VƯỢT BẢO MẬT WEBVIEW: Học sinh cứ chạm tay vào bất cứ vị trí nào trên màn hình trường là nhạc phát ngay!
+    var triggerMusic = function() { playGitBackgroundMusic(); };
+    document.addEventListener('click', triggerMusic, { once: true });
+    document.addEventListener('touchstart', triggerMusic, { once: true });
 
+    // Nếu bấm nút Demo Offline trên màn hình trường học thì cũng tắt nhạc luôn
     var demoBtn = document.getElementById("btn-demo-offline");
     if (demoBtn) {
         var originalClick = demoBtn.onclick;
