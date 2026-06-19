@@ -296,7 +296,7 @@
         </div>
         
         <div class="card" style="flex: 1; padding: 16px; display: flex; flex-direction: column; justify-content: center; align-items: center; text-align: center; margin-bottom: 0; overflow-y: auto;">
-            <div style="font-size: 86px; margin-bottom: 4px;">📖</div>
+            <div style="font-size: 70px; margin-bottom: 4px;">📖</div>
             <h3 style="font-size: 22px; margin: 0 0 6px 0; color: #ef4444; font-weight: 800;">Waiting for the passage</h3>
             <p style="font-size: 15px; color: #475569; line-height: 1.4; margin: 0 0 10px 0; text-align: justify;">
                 Please choose <b>Level</b> and <b>Topic</b> on your mobile app, then click the <b>Read up</b> button to reach the Passage!
@@ -964,13 +964,13 @@ function checkConnection() {
     }
 }
 
-// KHAI BÁO HÀM PHÁT NHẠC LÊN TRÊN ĐỂ TRÌNH DUYỆT TÌM THẤY TRƯỚC
+// KHAI BÁO HÀM PHÁT NHẠC VỚI LINK RAW CHUẨN CỦA GITHUB CỦA THẦY
 function playGitBackgroundMusic() {
     if (bgMusic) return; // Nếu nhạc đang phát rồi thì bỏ qua không tạo trùng tiếng
     
     try {
-        // Đường link trực tiếp chuẩn từ kho GitHub của thầy
-        bgMusic = new Audio('https://github.com/ltphuoc2100-code/reading_skill/raw/refs/heads/main/nhacnen.mp3'); 
+        // ĐÂY LÀ LINK RAW ĐÃ ĐƯỢC CHỈNH SỬA ĐÚNG ĐỊNH DẠNG HỆ THỐNG GITHUB ĐỂ PHÁT ĐƯỢC 100%
+        bgMusic = new Audio('https://raw.githubusercontent.com/ltphuoc2100-code/reading_skill/refs/heads/main/nhacnen.mp3'); 
         bgMusic.loop = true; 
         bgMusic.volume = 0.4; // Âm lượng 40% dịu nhẹ
         
