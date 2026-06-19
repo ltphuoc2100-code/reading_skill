@@ -964,16 +964,61 @@ function checkConnection() {
     }
 }
 
+// --- KHU VỰC QUẢN LÝ VÀ PHÁT NHẠC NỀN CHUẨN XÁC ---
+var bgMusic = null;
+var hasMusicStarted = false;
+
+function playGitBackgroundMusic() {
+    if (hasMusicStarted) return; // Nếu đã phát rồi thì không bật trùng tiếng
+    
+    try {
+        // Sử dụng đường link trực tiếp (Raw Link) từ kho GitHub của thầy
+        bgMusic = new Audio('https://github.com/ltphuoc2100-code/reading_skill/raw/refs/heads/main/nhacnen.mp3'); 
+        bgMusic.loop = true; // Lặp vô hạn
+        bgMusic.volume = 0.4; // Âm lượng 40% vừa phải, êm dịu
+        
+        bgMusic.play().then(function() {
+            hasMusicStarted = true;
+            console.log("Nhạc nền đã phát thành công!");
+        }).catch(function(error) {
+            console.log("WebView chặn tự động phát ngầm, chờ tương tác bấm chạm.");
+        });
+    } catch(e) { console.log("Lỗi khởi tạo file nhạc", e); }
+}
+
+function checkConnection() {
+    var params = parseParameters();
+    
+    if (params.level && params.topic) {
+        var currentConfigStr = params.level + "|" + params.topic;
+        if (currentConfigStr !== lastReceivedConfig) {
+            lastReceivedConfig = currentConfigStr;
+            currentLevel = params.level;
+            currentTopic = params.topic;
+            
+            // TẮT NHẠC NỀN LẬP TỨC KHI HỌC SINH BẤM "READ UP" ĐỂ VÀO BÀI ĐỌC
+            if (bgMusic) { 
+                bgMusic.pause(); 
+                bgMusic.currentTime = 0; 
+            }
+            
+            loadConfigAndTriggerAI(currentLevel, currentTopic);
+        }
+    }
+}
+
 window.onload = function() {
+    // Chạy quét kiểm tra kết nối từ MIT App Inventor sang
     setInterval(checkConnection, 500);
     checkConnection();
     
-    // 🔓 VƯỢT BẢO MẬT WEBVIEW: Học sinh cứ chạm tay vào bất cứ vị trí nào trên màn hình trường là nhạc phát ngay!
+    // 🔓 VƯỢT RÀO BẢO MẬT WEBVIEW ANDROID:
+    // Học sinh mở app lên, chỉ cần chạm tay vào bất cứ đâu trên màn hình trường là nhạc nổi lên ngay!
     var triggerMusic = function() { playGitBackgroundMusic(); };
     document.addEventListener('click', triggerMusic, { once: true });
     document.addEventListener('touchstart', triggerMusic, { once: true });
 
-    // Nếu bấm nút Demo Offline trên màn hình trường học thì cũng tắt nhạc luôn
+    // Nếu bấm nút Demo Offline trên màn hình trường học thì cũng tắt nhạc luôn cho yên tĩnh làm bài
     var demoBtn = document.getElementById("btn-demo-offline");
     if (demoBtn) {
         var originalClick = demoBtn.onclick;
@@ -983,38 +1028,6 @@ window.onload = function() {
         };
     }
 };
-
-        
-        // --- TỰ ĐỘNG PHÁT NHẠC NỀN KHÔNG GIAN KHI MỞ APP ---
-// --- HÀM PHÁT FILE NHẠC MP3 TỪ GITHUB CỦA THẦY ---
-function playGitBackgroundMusic() {
-    if (bgMusic) return; // Nếu nhạc đang phát rồi thì không tạo trùng tránh lặp tiếng
-    
-    try {
-        // Thầy nhớ đổi đúng tên file nhạc của thầy trên GitHub vào đây (ví dụ: ./nhacnen.mp3)
-        bgMusic = new Audio('https://github.com/ltphuoc2100-code/reading_skill/raw/refs/heads/main/nhacnen.mp3'); 
-        bgMusic.loop = true; // Bật chế độ lặp vô hạn
-        bgMusic.volume = 0.4; // Âm lượng 40% dịu nhẹ
-        
-        var playPromise = bgMusic.play();
-        if (playPromise !== undefined) {
-            playPromise.catch(function(error) {
-                console.log("Trình duyệt chặn phát tự động, chờ người dùng chạm màn hình.");
-            });
-        }
-    } catch(e) { console.log("Lỗi tải file nhạc", e); }
-}
-
-// Kích hoạt nhạc nền ngay khi học sinh chạm tay vào màn hình app lần đầu tiên
-document.addEventListener('click', function initMusic() {
-    playGitBackgroundMusic();
-    document.removeEventListener('click', initMusic);
-}, { once: true });
-
-document.addEventListener('touchstart', function initMusic() {
-    playGitBackgroundMusic();
-    document.removeEventListener('touchstart', initMusic);
-}, { once: true });
-        </script>
+</script>
 </body>
 </html>
