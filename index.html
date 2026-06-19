@@ -297,7 +297,7 @@
         
         <div class="card" style="flex: 1; padding: 16px; display: flex; flex-direction: column; justify-content: center; align-items: center; text-align: center; margin-bottom: 0; overflow-y: auto;">
             <div style="font-size: 70px !important; margin-bottom: 4px;">📖</div>
-            <h3 style="font-size: 22px; margin: 0 0 6px 0; color: #ef4444; font-weight: 800;">Waiting for the passage</h3>
+            <h3 style="font-size: 22px; margin: 0 0 6px 0; color: #ef4444; font-weight: 800;">Welcome to the Reading Comprehension</h3>
             <p style="font-size: 15px; color: #475569; line-height: 1.4; margin: 0 0 10px 0; text-align: justify;">
                 Please choose <b>Level</b> and <b>Topic</b> on your mobile app, then click the <b>Read up</b> button to reach the Passage!
             </p>
@@ -953,59 +953,14 @@ function checkConnection() {
             currentLevel = params.level;
             currentTopic = params.topic;
             
-            // TẮT NHẠC NỀN NGAY LẬP TỨC KHI BẤM READ UP ĐỂ VÀO BÀI ĐỌC
-            if (bgMusic) { 
-                bgMusic.pause(); 
-                bgMusic.currentTime = 0; 
-            }
-            
             loadConfigAndTriggerAI(currentLevel, currentTopic);
         }
     }
 }
 
-// KHAI BÁO HÀM PHÁT NHẠC VỚI LINK RAW CHUẨN CỦA GITHUB CỦA THẦY
-function playGitBackgroundMusic() {
-    if (bgMusic) return; // Nếu nhạc đang phát rồi thì bỏ qua không tạo trùng tiếng
-    
-    try {
-        // ĐÂY LÀ LINK RAW ĐÃ ĐƯỢC CHỈNH SỬA ĐÚNG ĐỊNH DẠNG HỆ THỐNG GITHUB ĐỂ PHÁT ĐƯỢC 100%
-        bgMusic = new Audio('https://raw.githubusercontent.com/ltphuoc2100-code/reading_skill/refs/heads/main/nhacnen.mp3'); 
-        bgMusic.loop = true; 
-        bgMusic.volume = 0.4; // Âm lượng 40% dịu nhẹ
-        
-        var playPromise = bgMusic.play();
-        if (playPromise !== undefined) {
-            playPromise.then(function() {
-                console.log("Nhạc nền bắt đầu phát!");
-            }).catch(function(error) {
-                console.log("WebView chặn tự động phát ngầm, chờ chạm màn hình.");
-            });
-        }
-    } catch(e) { console.log("Lỗi tải file nhạc", e); }
-}
-
 window.onload = function() {
     setInterval(checkConnection, 500);
     checkConnection();
-    
-    // 🔓 PHÁ BĂNG BẢO MẬT WEBVIEW: 
-    // Học sinh mở app lên, chạm tay vào bất cứ đâu trên màn hình chờ là nhạc nổi lên ngay!
-    var triggerMusic = function() { 
-        playGitBackgroundMusic(); 
-    };
-    document.addEventListener('click', triggerMusic, { once: true });
-    document.addEventListener('touchstart', triggerMusic, { once: true });
-
-    // Nếu bấm nút Demo Offline trên màn hình trường học thì cũng tắt nhạc luôn cho yên tĩnh
-    var demoBtn = document.getElementById("btn-demo-offline");
-    if (demoBtn) {
-        var originalClick = demoBtn.onclick;
-        demoBtn.onclick = function() {
-            if (bgMusic) { bgMusic.pause(); bgMusic.currentTime = 0; }
-            if (originalClick) originalClick();
-        };
-    }
 };
 </script>
 </body>
