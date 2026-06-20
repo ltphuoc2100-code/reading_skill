@@ -979,25 +979,38 @@ window.onload = function() {
 };
 // Hàm xử lý phát âm đọc trực tiếp từ khung bài văn (Vá lỗi an toàn chống crash)
 // Hàm đọc thử ở màn hình chào (Hoàn toàn miễn phí, không tốn API)
+// Hàm đọc thử ở màn hình chào (Phiên bản vượt rào bảo mật Webview Android)
 function speakWelcomeText() {
-    var synth = window.speechSynthesis || window.webkitSpeechSynthesis;
+    // ÉP BUỘC KHỞI TẠO LẠI TRONG SỰ KIỆN CLICK ĐỂ ANDROID CẤP QUYỀN
+    var synth = window.speechSynthesis || window.webkitSpeechSynthesis || (navigator.speechSynthesis);
+    
     if (!synth) {
         alert("Your device browser does not support Text-to-Speech function.");
         return;
     }
+    
+    // Nếu máy đang đọc nửa chừng mà bấm tiếp thì dừng lại
     if (synth.speaking) {
         synth.cancel();
         return;
     }
     
-    // Câu chữ tiếng Anh cố định để máy đọc thử nghiệm
-    var welcomeText = "Welcome to Reading Comprehension. Please choose Level and Topic, then click the READ UP button to reach the Passage!";
-    
-    synth.cancel(); // Phá băng bảo mật WebView
-    var utterance = new SpeechSynthesisUtterance(welcomeText);
-    utterance.lang = 'en-US';
-    utterance.rate = 0.9;
-    synth.speak(utterance);
+    try {
+        // Xóa các lệnh đọc bị kẹt trước đó (Phá băng bảo mật)
+        synth.cancel(); 
+        
+        var welcomeText = "Welcome to Reading Comprehension. Please choose Level and Topic, then click the READ UP button to reach the Passage!";
+        var utterance = new SpeechSynthesisUtterance(welcomeText);
+        
+        utterance.lang = 'en-US'; // Giọng Mỹ chuẩn
+        utterance.rate = 0.9;     // Tốc độ vừa phải
+        
+        // Kích hoạt phát giọng đọc
+        synth.speak(utterance);
+        
+    } catch(err) {
+        alert("Voice error: " + err.message);
+    }
 }
         
 </script>
