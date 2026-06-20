@@ -523,9 +523,10 @@
             var promptText = "Create a reading comprehension study unit in English on the topic of '" + topic + "' tailored for CEFR level '" + level + "'. " +
                              "Generate a title (do NOT include prefix labels like 'Exam Study:'), a reading passage (" + wordCountLimit + "), and exactly 10 multiple-choice questions. " +
                              "Each question must have exactly 4 choices (A, B, C, D), exactly one single-letter answer (A, B, C, or D), and a short explanation in English." +
-                "CRITICAL: DO NOT use exact words from the passage in the correct answer. The correct answer MUST be paraphrased using synonyms or different sentence structures." +
-            "WORD MATCHING TRAPS: Put exact words or phrases from the passage into the WRONG answers (distractors) to trap students who only look for matching words without understanding.";
-            var payload = {
+                "CRITICAL PARAPHRASING RULES:\n" +
+"1. The CORRECT answer MUST be paraphrased using synonyms or different sentence structures. Do not use exact words from the passage.\n" +
+"2. WORD MATCHING TRAPS: You CAN put exact words or phrases from the passage into the WRONG answers (distractors) to trap students. HOWEVER, those wrong answers must be factually or logically INCORRECT based on the story (e.g., changing the person, action, or context so it becomes false).\n" +
+"3. ABSOLUTE FORBIDDEN: Never include a wrong answer that means the exact same thing as the correct answer. If the text says 'by car', and the correct answer is 'using an automobile', the wrong answer CANNOT be 'by car'. Make the wrong answers clearly false (e.g., 'by train', 'on foot')."     var payload = {
                 contents: [{ parts: [{ text: promptText }] }],
                 generationConfig: {
                     responseMimeType: "application/json",
@@ -994,36 +995,37 @@ window.onload = function() {
     checkConnection();
 };
 function displayReading(data) {
-    // 1. Hiển thị tiêu đề kèm theo chiếc nút LOA phát âm xịn sò
+    // 1. Hiển thị tiêu đề kèm theo chiếc nút LOA phát âm xịn sò - Đã ép cùng hàng (flex)
     document.getElementById("reading-title").innerHTML = 
-        data.title + 
-        ` <button onclick="speakPassage()" class="inline-flex items-center justify-center w-8 h-8 ml-2 bg-indigo-100 hover:bg-indigo-200 active:scale-95 text-indigo-700 rounded-full shadow-sm transition-all duration-150 align-middle" title="Listen to passage">
-            <span style="font-size: 16px;">🔊</span>
-         </button>`;
+        `<div class="flex items-center justify-center gap-2">
+            <span>${data.title}</span>
+            <button onclick="speakPassage()" class="inline-flex items-center justify-center w-8 h-8 ml-2 bg-indigo-100 hover:bg-indigo-200 active:scale-95 text-indigo-700 rounded-full shadow-sm transition-all duration-150 align-middle" title="Listen to passage">
+                <span style="font-size: 16px;">🔊</span>
+            </button>
+        </div>`;
 
     // 2. Đổ nội dung bài đọc vào khung
     document.getElementById("reading-passage").innerHTML = data.passage;
-
-    // 3. Lưu nội dung bài đọc vào một biến tạm để máy tính hiểu khi bấm nút loa
-    window.currentPassageText = data.passage; 
 }
 
 // Hàm xử lý phát âm trực tiếp bằng giọng đọc Tiếng Anh chuẩn của trình duyệt WebViewer
 // Hàm xử lý phát âm ĐÃ ĐƯỢC VÁ LỖI AN TOÀN chống crash trên WebView
+// Hàm xử lý phát âm ĐÃ ĐƯỢC VÁ LỖI AN TOÀN chống crash trên mọi WebView
 function speakPassage() {
-    // Kiểm tra xem trình duyệt của điện thoại có hỗ trợ phát âm không
+    // 1. Kiểm tra an toàn xem trình duyệt có hỗ trợ speechSynthesis không
     if (!window.speechSynthesis) {
         alert("Your device browser does not support Text-to-Speech function.");
         return;
     }
 
-    // Kiểm tra an toàn: Nếu đang đọc mà bấm lại thì dừng hoàn toàn
-    if (window.speechSynthesis && window.speechSynthesis.speaking) {
+    // 2. [VÁ LỖI QUAN TRỌNG]: Kiểm tra an toàn: Nếu đang đọc mà bấm lại thì dừng hoàn toàn
+    // Sử dụng kiểm tra chặt chẽ để tránh lỗi 'Cannot read properties of undefined'
+    if (typeof window.speechSynthesis.speaking !== 'undefined' && window.speechSynthesis.speaking) {
         window.speechSynthesis.cancel();
         return;
     }
     
-    // Lấy trực tiếp nội dung bài đọc đang hiển thị trên màn hình của thầy
+    // 3. Lấy trực tiếp nội dung bài đọc đang hiển thị trên màn hình của thầy
     var passageElement = document.getElementById("reading-passage");
     if (passageElement) {
         var currentText = passageElement.innerHTML;
