@@ -923,31 +923,12 @@ function playQuizSound(isVictory) {
                 comment = " ⭐ Excellent! Perfect Score! 🎉";
                 playQuizSound(true); // Bật âm thanh chiến thắng
 // Nếu học sinh xuất sắc đạt tối đa 10/10 câu, kích hoạt bắn pháo hoa rực rỡ!
-if (score === 10) {
-    // Tiếng bập bùng pháo hoa kéo dài 3 giây
-    var duration = 3 * 1000;
-    var end = Date.now() + duration;
-
-    (function frame() {
-        // Bắn pháo từ góc trái màn hình
-        confetti({
-            particleCount: 3,
-            angle: 60,
-            spread: 55,
-            origin: { x: 0, y: 0.8 }
-        });
-        // Bắn pháo từ góc phải màn hình
-        confetti({
-            particleCount: 3,
-            angle: 120,
-            spread: 55,
-            origin: { x: 1, y: 0.8 }
-        });
-
-        if (Date.now() < end) {
-            requestAnimationFrame(frame);
-        }
-    }());
+if (score === 10 && typeof confetti === 'function') {
+    confetti({
+        particleCount: 100,
+        spread: 70,
+        origin: { y: 0.6 }
+    });
 }
                 
             } else if (score >= 8) {
