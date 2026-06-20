@@ -995,16 +995,16 @@ window.onload = function() {
     checkConnection();
 };
 function displayReading(data) {
-    // 1. Hiển thị tiêu đề kèm theo chiếc nút LOA phát âm xịn sò - Đã ép cùng hàng (flex)
+    // Ép nút loa cùng hàng bằng cú pháp ghép chuỗi truyền thống cực kỳ an toàn
     document.getElementById("reading-title").innerHTML = 
-        `<div class="flex items-center justify-center gap-2">
-            <span>${data.title}</span>
-            <button onclick="speakPassage()" class="inline-flex items-center justify-center w-8 h-8 ml-2 bg-indigo-100 hover:bg-indigo-200 active:scale-95 text-indigo-700 rounded-full shadow-sm transition-all duration-150 align-middle" title="Listen to passage">
-                <span style="font-size: 16px;">🔊</span>
-            </button>
-        </div>`;
+        '<div class="flex items-center justify-center gap-2">' +
+            '<span>' + data.title + '</span>' +
+            '<button onclick="speakPassage()" class="inline-flex items-center justify-center w-8 h-8 ml-2 bg-indigo-100 hover:bg-indigo-200 active:scale-95 text-indigo-700 rounded-full shadow-sm transition-all duration-150 align-middle" title="Listen to passage">' +
+                '<span style="font-size: 16px;">🔊</span>' +
+            '</button>' +
+        '</div>';
 
-    // 2. Đổ nội dung bài đọc vào khung
+    // Đổ nội dung bài đọc vào khung
     document.getElementById("reading-passage").innerHTML = data.passage;
 }
 
