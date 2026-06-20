@@ -974,6 +974,32 @@ window.onload = function() {
     setInterval(checkConnection, 500);
     checkConnection();
 };
+// Hàm xử lý phát âm đọc trực tiếp từ khung bài văn (Vá lỗi an toàn chống crash)
+function speakPassage() {
+    if (!window.speechSynthesis) {
+        alert("Your device browser does not support Text-to-Speech function.");
+        return;
+    }
+    // [VÁ LỖI AN TOÀN]: Nếu đang đọc mà bấm tiếp thì dừng lại ngay để tránh treo máy
+    if (typeof window.speechSynthesis.speaking !== 'undefined' && window.speechSynthesis.speaking) {
+        window.speechSynthesis.cancel();
+        return;
+    }
+    
+    // Lấy trực tiếp khung chữ của đoạn văn trên màn hình
+    var passageElement = document.getElementById("reading-passage");
+    if (passageElement) {
+        // Lấy chữ thuần túy (innerText) để tránh máy đọc nhầm các thẻ HTML ẩn
+        var currentText = passageElement.innerText || passageElement.textContent;
+        var utterance = new SpeechSynthesisUtterance(currentText);
+        
+        utterance.lang = 'en-US'; // Giọng đọc chuẩn Anh - Mỹ
+        utterance.rate = 0.9;     // Tốc độ 0.9 vừa phải, phù hợp cho học sinh luyện nghe
+        
+        window.speechSynthesis.speak(utterance);
+    }
+}
+        
 </script>
 </body>
 </html>
