@@ -664,7 +664,17 @@ function showError(msg) {
             activeQuestionIdx = 0;
             hideElement("result");
 
-            document.getElementById("reading-title").innerHTML = quizData.title;
+            //document.getElementById("reading-title").innerHTML = quizData.title;
+            // CHỈ THAY THẾ ĐÚNG DÒNG NÀY ĐỂ ĐẨY NÚT LOA SANG BÊN PHẢI TIÊU ĐỀ
+    var titleContainer = document.getElementById("reading-title");
+    if (titleContainer) {
+        titleContainer.innerHTML = '<div class="flex items-center justify-between w-full">' +
+            '<span class="font-bold text-slate-800">' + quizData.title + '</span>' +
+            '<button onclick="speakPassage()" class="inline-flex items-center justify-center w-8 h-8 bg-indigo-100 hover:bg-indigo-200 active:scale-95 text-indigo-700 rounded-full shadow-sm transition-all duration-150" title="Listen to passage">' +
+                '<span style="font-size: 16px;">🔊</span>' +
+            '</button>' +
+        '</div>';
+    }
             document.getElementById("reading-passage").innerHTML = quizData.passage;
 
             showQuestion(0);
