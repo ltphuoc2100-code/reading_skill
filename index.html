@@ -1009,16 +1009,27 @@ function displayReading(data) {
 }
 
 // Hàm xử lý phát âm trực tiếp bằng giọng đọc Tiếng Anh chuẩn của trình duyệt WebViewer
+// Hàm xử lý phát âm ĐÃ ĐƯỢC VÁ LỖI AN TOÀN chống crash trên WebView
 function speakPassage() {
-    // Nếu đang đọc mà bấm lại thì dừng hoàn toàn
-    if (window.speechSynthesis.speaking) {
+    // Kiểm tra xem trình duyệt của điện thoại có hỗ trợ phát âm không
+    if (!window.speechSynthesis) {
+        alert("Your device browser does not support Text-to-Speech function.");
+        return;
+    }
+
+    // Kiểm tra an toàn: Nếu đang đọc mà bấm lại thì dừng hoàn toàn
+    if (window.speechSynthesis && window.speechSynthesis.speaking) {
         window.speechSynthesis.cancel();
         return;
     }
     
-    if (window.currentPassageText) {
+    // Lấy trực tiếp nội dung bài đọc đang hiển thị trên màn hình của thầy
+    var passageElement = document.getElementById("reading-passage");
+    if (passageElement) {
+        var currentText = passageElement.innerHTML;
         // Loại bỏ các thẻ HTML nếu có để tránh máy đọc nhầm ký tự lạ
-        var cleanText = window.currentPassageText.replace(/<\/?[^>]+(>|$)/g, "");
+        var cleanText = currentText.replace(/<\/?[^>]+(>|$)/g, "");
+        
         var utterance = new SpeechSynthesisUtterance(cleanText);
         utterance.lang = 'en-US'; // Thiết lập giọng đọc chuẩn Anh - Mỹ
         utterance.rate = 0.9;     // Tốc độ đọc vừa phải (0.9) giúp học sinh dễ nghe hơn
