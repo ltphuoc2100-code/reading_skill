@@ -1008,13 +1008,13 @@ function speakPassage() {
 // HÀM ĐỌC THỬ MÀN HÌNH CHÀO - ĐÃ SỬA CHỐNG CHẶN TRÊN ĐIỆN THOẠI
 function speakWelcomeText() {
     try {
-        var synth = window.speechSynthesis || window.webkitSpeechSynthesis;
+        var synth = window.speechSynthesis || window.webkitSynthesis;
         if (!synth) {
-            alert("Thiết bị không hỗ trợ Text-to-Speech.");
+            alert("Device does not support Text-to-Speech.");
             return;
         }
         
-        // Nếu đang phát thì bấm lại sẽ dừng
+        // Nếu đang phát, bấm lại sẽ dừng
         if (synth.speaking) {
             synth.cancel();
             return;
@@ -1025,7 +1025,7 @@ function speakWelcomeText() {
         
         var utterance = new SpeechSynthesisUtterance(text);
         utterance.lang = 'en-US';
-        utterance.rate = 0.9; // Tốc độ đọc vừa phải, dễ nghe
+        utterance.rate = 0.9; // Tốc độ đọc vừa phải
         synth.speak(utterance);
         
     } catch(err) {
