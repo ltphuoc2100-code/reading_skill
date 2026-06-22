@@ -288,7 +288,11 @@
             return true;
         };
     </script>
-
+<div style="text-align: center; margin: 10px 0;">
+    <button onclick="speakWelcomeText()" style="background-color: #e0e7ff; color: #4f46e5; border: 2px solid #4f46e5; padding: 10px 20px; border-radius: 20px; font-size: 14px; font-weight: bold; cursor: pointer; display: inline-flex; align-items: center; gap: 6px; box-shadow: 0 4px 6px rgba(0,0,0,0.1);">
+        🔊 CLICK HERE TO TEST VOICE
+    </button>
+</div>
     <!-- THAY THẾ TOÀN BỘ KHỐI WAITING-SCREEN CŨ THÀNH ĐOẠN NÀY -->
    <div id="waiting-screen" style="display: flex !important; flex-direction: column; height: 100%; box-sizing: border-box; gap: 10px;">
         
@@ -298,9 +302,7 @@
         
         <div class="card" style="flex: 1; padding: 16px; display: flex; flex-direction: column; justify-content: center; align-items: center; text-align: center; margin-bottom: 0; overflow-y: auto;">
             <div style="font-size: 100px !important; margin-bottom: -10px;margin-top: -30px;">📖</div>
-                        <button onclick="speakWelcomeText()" style="pointer-events: auto !important; margin-bottom: 10px; background-color: #e0e7ff; color: #4f46e5; border: none; padding: 8px 16px; border-radius: 20px; font-size: 13px; font-weight: bold; cursor: pointer; display: flex; align-items: center; gap: 6px; position: relative; z-index: 9999;">
-    🔊 Test Voice (Free)
-</button>
+                        
             <h3 style="font-size: 22px; margin: 0 0 6px 0; color: #ef4444; font-weight: 800;">Welcome to Reading Comprehension</h3>
         <p class="text-sm text-slate-600 text-center m-0 p-0 leading-loose">Please choose <span class="inline-flex items-center justify-center h-7 px-2.5 bg-indigo-50 border border-indigo-200 text-indigo-700 font-black text-xs rounded-lg shadow-sm select-none cursor-default align-middle mx-1">Level</span> and <span class="inline-flex items-center justify-between max-w-[130px] h-7 px-2.5 bg-teal-50 border border-teal-200 text-teal-800 font-bold text-[11px] rounded-lg shadow-sm select-none cursor-default align-middle mx-1 truncate"><span class="truncate mr-1">Topic</span><span class="text-xs flex-shrink-0">📖</span></span>, then click the <span class="inline-flex items-center justify-center h-7 px-2.5 bg-rose-500 text-white font-black text-[10px] rounded-lg shadow-md shadow-rose-100 uppercase tracking-wider select-none cursor-default align-middle mx-1">READ UP ⚡</span>  to reach the Passage!</p>
             </p>
