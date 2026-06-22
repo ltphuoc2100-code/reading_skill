@@ -289,7 +289,7 @@
         };
     </script>
 <div style="text-align: center; margin: 10px 0; position: relative; z-index: 999999 !important; pointer-events: auto !important;">
-    <button onclick="document.body.style.pointerEvents='auto'; speakWelcomeText();" style="position: relative !important; z-index: 999999 !important; pointer-events: auto !important; cursor: pointer;">
+    <button onclick="if(window.AppInventor){ window.AppInventor.setWebViewString('Welcome to Reading Comprehension. Please choose Level and Topic, then click the READ UP button to reach the Passage!'); } else { speakWelcomeText(); }" style="position: relative !important; z-index: 999999 !important; pointer-events: auto !important; cursor: pointer;">
     🔊 Read Passage
 </button>
 </div>
