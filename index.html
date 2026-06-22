@@ -977,44 +977,37 @@ window.onload = function() {
     setInterval(checkConnection, 500);
     checkConnection();
 };
-// ========================================================
-// CÁC HÀM PHÁT ÂM (PHẢI NẰM TRONG THẺ SCRIPT)
-// ========================================================
-
-// ========================================================
-// CÁC HÀM PHÁT ÂM ONLINE CHỐNG KHÓA BẢO MẬT (MIỄN PHÍ)
-// ========================================================
-
-// 1. Hàm đọc bài văn chính (Sau khi bấm READ UP)
 function speakPassage() {
     try {
-        var passageElement = document.getElementById("reading-passage");
-        if (passageElement) {
-            var currentText = passageElement.innerText || passageElement.textContent;
-            
-            var audioUrl = "https://translate.google.com/translate_tts?ie=UTF-8&tl=en&client=tw-ob&q=" + encodeURIComponent(currentText);
-            
-            var audio = new Audio(audioUrl);
-            audio.play();
-        }
-    } catch(err) {
-        alert("Audio error: " + err.message);
-    }
-}
+        // Ép buộc giải phóng quyền cảm ứng cho toàn màn hình ngay khi bấm nút
+        document.body.style.pointerEvents = 'auto';
+        var waitingScreen = document.getElementById('waiting-screen');
+        if (waitingScreen) waitingScreen.style.pointerEvents = 'auto';
 
-// 2. Hàm đọc thử ở màn hình chào mừng (Welcome)
-function speakWelcomeText() {
-    try {
-        var text = "Welcome to Reading Comprehension. Please choose Level and Topic, then click the READ UP button to reach the Passage!";
+        var passageElement = document.getElementById("reading-passage");
+        var currentText = "";
+
+        // Kiểm tra xem đang ở màn hình chào hay màn hình bài đọc để lấy chữ chuẩn xác
+        if (passageElement && passageElement.innerText.trim() !== "") {
+            currentText = passageElement.innerText || passageElement.textContent;
+        } else {
+            // Nếu đang ở màn hình chào, máy sẽ đọc câu chào mừng thử nghiệm này
+            currentText = "Welcome to Reading Comprehension. Please choose Level and Topic, then click the READ UP button to reach the Passage!";
+        }
         
-        // Mượn đường link âm thanh dịch thuật của Google
-        var audioUrl = "https://translate.google.com/translate_tts?ie=UTF-8&tl=en&client=tw-ob&q=" + encodeURIComponent(text);
+        // Chuyển sang công nghệ âm thanh trực tuyến của Google (Miễn phí, chống chặn bảo mật)
+        var audioUrl = "https://translate.google.com/translate_tts?ie=UTF-8&tl=en&client=tw-ob&q=" + encodeURIComponent(currentText);
         
         var audio = new Audio(audioUrl);
         audio.play();
     } catch(err) {
         alert("Audio error: " + err.message);
     }
+}
+
+// 2. Hàm đọc phụ bổ trợ
+function speakWelcomeText() {
+    speakPassage(); // Gọi chung sang hàm phát âm online chuẩn
 }
         
 </script>
