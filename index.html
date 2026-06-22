@@ -1002,22 +1002,20 @@ function speakPassage() {
         synth.speak(utterance);
     }
 }
-
-// Hàm đọc thử ở màn hình chào (Dùng âm thanh Online miễn phí, không tốn API, chống chặn bảo mật)
 function speakWelcomeText() {
     try {
         var text = "Welcome to Reading Comprehension. Please choose Level and Topic, then click the READ UP button to reach the Passage!";
         
-        // Tạo đường link âm thanh Google dịch chuẩn tiếng Anh
+        // Mượn đường link âm thanh dịch thuật của Google
         var audioUrl = "https://translate.google.com/translate_tts?ie=UTF-8&tl=en&client=tw-ob&q=" + encodeURIComponent(text);
         
-        // Ép điện thoại phát file âm thanh trực tiếp (Không dùng SpeechSynthesis của máy)
         var audio = new Audio(audioUrl);
         audio.play();
     } catch(err) {
         alert("Audio error: " + err.message);
     }
 }
+
         
 </script>
 </body>
