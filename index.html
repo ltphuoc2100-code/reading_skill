@@ -277,8 +277,25 @@
     <script src="https://cdn.tailwindcss.com"></script>
 </head>
 <body>
-<button onclick="speakWelcomeText()">
-🔊 Read Passage
+<!-- Nút lệnh nguyên khối, nổi bật, dễ bấm trên điện thoại -->
+<button onclick="speakWelcomeText()" style="
+    display: inline-block !important; 
+    min-width: 200px; 
+    background-color: #2563eb !important; 
+    color: white !important; 
+    border: 2px solid #1d4ed8 !important; 
+    padding: 12px 24px !important; 
+    border-radius: 8px !important; 
+    font-size: 16px !important; 
+    font-weight: bold !important; 
+    cursor: pointer !important; 
+    box-shadow: 0 4px 6px rgba(37, 99, 235, 0.3) !important;
+    position: relative !important; 
+    z-index: 999999 !important; 
+    pointer-events: auto !important;
+    text-align: center;
+    margin: 10px auto;">
+    🔊 Read Passage
 </button>
     <script>
         window.onerror = function(message, source, lineno, colno, error) {
