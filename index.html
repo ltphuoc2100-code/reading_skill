@@ -982,24 +982,25 @@ window.onload = function() {
 // ========================================================
 
 // 1. Hàm đọc bài văn chính
+// HÀM ĐỌC ĐOẠN VĂN CHÍNH - ĐÃ ĐỒNG BỘ VỚI APP INVENTOR
 function speakPassage() {
-    var synth = window.speechSynthesis || window.webkitSpeechSynthesis;
-    if (!synth) {
-        alert("Your device browser does not support Text-to-Speech function.");
-        return;
-    }
-    if (synth.speaking) {
-        synth.cancel();
-        return;
-    }
     var passageElement = document.getElementById("reading-passage");
     if (passageElement) {
         var currentText = passageElement.innerText || passageElement.textContent;
-        synth.cancel(); 
-        var utterance = new SpeechSynthesisUtterance(currentText);
-        utterance.lang = 'en-US';
-        utterance.rate = 0.9;
-        synth.speak(utterance);
+        
+        // Nếu đang chạy trong App Inventor, gửi chữ về cho App tự đọc
+        if (window.AppInventor && typeof window.AppInventor.setWebViewString === 'function') {
+            window.AppInventor.setWebViewString(currentText);
+        } else {
+            // Nếu chạy trên trình duyệt máy tính bình thường
+            var synth = window.speechSynthesis || window.webkitSpeechSynthesis;
+            if (!synth) return;
+            if (synth.speaking) { synth.cancel(); return; }
+            var utterance = new SpeechSynthesisUtterance(currentText);
+            utterance.lang = 'en-US';
+            utterance.rate = 0.9;
+            synth.speak(utterance);
+        }
     }
 }
 // HÀM ĐỌC THỬ MÀN HÌNH CHÀO MỪNG - ĐÃ SỬA CHỐNG CHẶN TRÊN ĐIỆN THOẠI
