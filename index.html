@@ -1005,24 +1005,16 @@ function speakPassage() {
 
 // 2. Hàm đọc thử ở màn hình chào mừng
 function speakWelcomeText() {
-    var synth = window.speechSynthesis || window.webkitSpeechSynthesis;
-    if (!synth) {
-        alert("Your device browser does not support Text-to-Speech function.");
-        return;
-    }
-    if (synth.speaking) {
-        synth.cancel();
-        return;
-    }
     try {
-        synth.cancel(); 
-        var welcomeText = "Welcome to Reading Comprehension. Please choose Level and Topic, then click the READ UP button to reach the Passage!";
-        var utterance = new SpeechSynthesisUtterance(welcomeText);
-        utterance.lang = 'en-US'; 
-        utterance.rate = 0.9;     
-        synth.speak(utterance);
+        var text = "Welcome to Reading Comprehension. Please choose Level and Topic, then click the READ UP button to reach the Passage!";
+        
+        // Dùng nguồn âm thanh online của Google TTS để vượt qua bẫy bảo mật Webview của máy thầy
+        var audioUrl = "https://translate.google.com/translate_tts?ie=UTF-8&tl=en&client=tw-ob&q=" + encodeURIComponent(text);
+        
+        var audio = new Audio(audioUrl);
+        audio.play();
     } catch(err) {
-        alert("Voice error: " + err.message);
+        alert("Audio error: " + err.message);
     }
 }
         
