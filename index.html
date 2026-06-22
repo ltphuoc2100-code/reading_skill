@@ -1005,7 +1005,7 @@ function speakPassage() {
 }
 // HÀM ĐỌC THỬ MÀN HÌNH CHÀO MỪNG - ĐÃ SỬA CHỐNG CHẶN TRÊN ĐIỆN THOẠI
 // HÀM ĐỌC THỬ MÀN HÌNH CHÀO - ĐÃ SỬA CHỐNG CHẶN TRÊN ĐIỆN THOẠI
-function speakWelcomeText() {
+/*function speakWelcomeText() {
     try {
         var synth = window.speechSynthesis || window.webkitSynthesis;
         if (!synth) {
@@ -1029,6 +1029,54 @@ function speakWelcomeText() {
         
     } catch(err) {
         alert("Audio error: " + err.message);
+    }
+}*/
+
+        // HÀM ĐỌC MÀN HÌNH CHÀO CÓ TÍNH NĂNG TÔ MÀU KARAOKE
+function speakWelcomeText() {
+    try {
+        // Tìm đoạn văn bản chào mừng của thầy (đoạn chữ nằm trong thẻ <p>)
+        var welcomeP = document.querySelector("#waiting-screen p");
+        if (!welcomeP) return;
+
+        // Nội dung văn bản gốc
+        var text = "Welcome to Reading Comprehension. Please choose Level and Topic, then click the READ UP button to reach the Passage!";
+        
+        // Tách câu thành từng từ và bọc vào thẻ <span> để chuẩn bị tô màu
+        var words = text.split(/\s+/);
+        var formattedHTML = "";
+        for (var i = 0; i < words.length; i++) {
+            formattedHTML += '<span id="welcome-word-' + i + '">' + words[i] + '</span> ';
+        }
+        welcomeP.innerHTML = formattedHTML; // Thay thế chữ thường bằng chữ cấu trúc Karaoke
+
+        // Gửi lệnh về cho App Inventor cất tiếng đọc
+        if (window.AppInventor && typeof window.AppInventor.setWebViewString === 'function') {
+            window.AppInventor.setWebViewString("READ_WELCOME:" + text);
+        }
+    } catch(err) {
+        alert("Karaoke error: " + err.message);
+    }
+}
+
+// Hàm nhận lệnh từ App Inventor gửi ngược lại để tô màu từ đang đọc
+function highlightWelcomeWord(wordIndex) {
+    // Xóa màu của từ cũ trước đó
+    var currentHighlighted = document.querySelector(".welcome-highlight");
+    if (currentHighlighted) {
+        currentHighlighted.style.backgroundColor = "transparent";
+        currentHighlighted.style.color = "inherit";
+        currentHighlighted.classList.remove("welcome-highlight");
+    }
+
+    // Tô nền vàng chữ đỏ cho từ đang đọc đến
+    var targetWord = document.getElementById("welcome-word-" + wordIndex);
+    if (targetWord) {
+        targetWord.style.backgroundColor = "#fde047"; // Nền vàng rực
+        targetWord.style.color = "#b91c1c";           // Chữ đỏ đậm
+        targetWord.style.borderRadius = "4px";
+        targetWord.style.padding = "0 2px";
+        targetWord.classList.add("welcome-highlight");
     }
 }
 </script>
