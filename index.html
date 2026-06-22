@@ -1004,20 +1004,24 @@ function speakPassage() {
         synth.speak(utterance);
     }
 }
+// HÀM ĐỌC THỬ MÀN HÌNH CHÀO MỪNG - ĐÃ SỬA CHỐNG CHẶN TRÊN ĐIỆN THOẠI
 function speakWelcomeText() {
     try {
         var text = "Welcome to Reading Comprehension. Please choose Level and Topic, then click the READ UP button to reach the Passage!";
         
-        // Mượn đường link âm thanh dịch thuật của Google
-        var audioUrl = "https://translate.google.com/translate_tts?ie=UTF-8&tl=en&client=tw-ob&q=" + encodeURIComponent(text);
-        
-        var audio = new Audio(audioUrl);
-        audio.play();
+        // Nếu đang chạy bên trong App Inventor trên điện thoại
+        if (window.AppInventor) {
+            window.AppInventor.setWebViewString(text);
+        } else {
+            // Nếu thầy đang chạy thử nghiệm bằng trình duyệt máy tính bình thường
+            var audioUrl = "https://translate.google.com/translate_tts?ie=UTF-8&tl=en&client=tw-ob&q=" + encodeURIComponent(text);
+            var audio = new Audio(audioUrl);
+            audio.play();
+        }
     } catch(err) {
         alert("Audio error: " + err.message);
     }
 }
-
         
 </script>
 </body>
