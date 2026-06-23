@@ -604,7 +604,7 @@ function showError(msg) {
     var btnDemo = document.getElementById("btn-demo-offline");
     if (btnDemo) { btnDemo.style.display = "block"; }
 }
-        function generateOfflineBackupQuiz(level, topic) {
+    /*    function generateOfflineBackupQuiz(level, topic) {
             var simulatedTitle = "The Evolution of " + topic;
             var simulatedPassage = "This backup offline reading unit has been compiled for CEFR scale <b>" + level + "</b> focusing on the topic of <b>" + topic + "</b>. Modern innovations have changed the landscape of <b>" + topic + "</b>. Historically, progress was constrained due to lack of technology. However, educational methods are adapting to help students master basic terminology of <b>" + topic + "</b>. By practicing this offline lesson, answering all 10 questions, and calculating your scores, you confirm that the dual-pane viewport interface is fully responsive!";
 
@@ -650,7 +650,7 @@ function showError(msg) {
             };
 
             initQuizUI();
-        }
+        }*/
 
         function initQuizUI() {
             // ÉP BUỘC ẨN HOÀN TOÀN MÀN HÌNH CHỜ TRƯỜNG HỌC VÀ XOAY TRÒN LOADING
@@ -958,14 +958,12 @@ function playQuizSound(isVictory) {
 
 function checkConnection() {
     var params = parseParameters();
-    
     if (params.level && params.topic) {
         var currentConfigStr = params.level + "|" + params.topic;
         if (currentConfigStr !== lastReceivedConfig) {
             lastReceivedConfig = currentConfigStr;
             currentLevel = params.level;
             currentTopic = params.topic;
-            
             loadConfigAndTriggerAI(currentLevel, currentTopic);
         }
     }
@@ -975,11 +973,9 @@ window.onload = function() {
     setInterval(checkConnection, 500);
     checkConnection();
 };
-// ========================================================
-// CÁC HÀM PHÁT ÂM (PHẢI NẰM TRONG THẺ SCRIPT)
-// ========================================================
 
-// 1. Hàm đọc bài văn chính
+
+
 // HÀM ĐỌC ĐOẠN VĂN CHÍNH - ĐÃ ĐỒNG BỘ VỚI APP INVENTOR
 /*function speakPassage() {
     var passageElement = document.getElementById("reading-passage");
@@ -1002,61 +998,29 @@ window.onload = function() {
     }
 }*/
         // HÀM ĐỌC ĐOẠN VĂN CHÍNH CÓ HIỆU ỨNG TÔ MÀU KARAOKE VÀ TỰ ĐỘNG CUỘN
+// HÀM ĐỌC ĐOẠN VĂN CHÍNH - ĐÃ KHỬ LỖI CHỚP CHỮ VÀ IN ĐẬM
+// HÀM ĐỌC ĐOẠN VĂN CHÍNH - TỰ ĐỘNG BỌC CHỮ KHÔNG CẦN CHÈN HÀM PHỤ
 function speakPassage() {
     try {
         var passageElement = document.getElementById("reading-passage");
         if (!passageElement) return;
 
-        // 1. Lấy toàn bộ văn bản thuần để gửi sang App Inventor đọc thành tiếng
+        // 1. Lấy văn bản thuần gửi sang App Inventor đọc ngay lập tức
         var fullText = passageElement.innerText || passageElement.textContent;
-        
-        // Gửi duy nhất một lệnh sang App Inventor cất tiếng đọc
         if (window.AppInventor && typeof window.AppInventor.setWebViewString === 'function') {
             window.AppInventor.setWebViewString("READ_PASSAGE:" + fullText);
         }
 
-        // 2. CHUẨN BỊ CẤU TRÚC KARAOKE BẢO TOÀN GIAO DIỆN (Chỉ chạy 1 lần duy nhất)
+        // Nếu kích hoạt đọc mà chưa bọc chữ thì bọc ngay
         if (!passageElement.querySelectorAll('.p-word').length) {
-            var originalHTML = passageElement.innerHTML;
-            
-            var tempDiv = document.createElement('div');
-            tempDiv.innerHTML = originalHTML;
-            
-            var textNodes = [];
-            var walk = document.createTreeWalker(tempDiv, NodeFilter.SHOW_TEXT, null, false);
-            var node;
-            while(node = walk.nextNode()) { textNodes.push(node); }
-            
-            var wordIndex = 0;
-            for (var i = 0; i < textNodes.length; i++) {
-                var txtNode = textNodes[i];
-                if (txtNode.parentNode.nodeName === 'SCRIPT' || txtNode.parentNode.nodeName === 'STYLE') continue;
-                
-                var words = txtNode.nodeValue.split(/(\s+)/);
-                var fragment = document.createDocumentFragment();
-                
-                for (var j = 0; j < words.length; j++) {
-                    if (words[j].trim() === "") {
-                        fragment.appendChild(document.createTextNode(words[j]));
-                    } else {
-                        var span = document.createElement('span');
-                        span.className = 'p-word';
-                        span.id = 'p-word-' + wordIndex;
-                        span.innerText = words[j];
-                        fragment.appendChild(span);
-                        wordIndex++;
-                    }
-                }
-                txtNode.parentNode.replaceChild(fragment, txtNode);
-            }
-            passageElement.innerHTML = tempDiv.innerHTML;
+            preparePassageKaraoke();
         }
 
-        // 3. HIỆU ỨNG CHẠY CHỮ KARAOKE TỰ ĐỘNG THEO THỜI GIAN
+        // 2. KÍCH HOẠT CHẠY CHỮ KARAOKE MƯỢT MÀ
         var allWords = passageElement.querySelectorAll('.p-word');
         var currentIndex = 0;
         
-        // Xóa sạch các màu cũ nếu có
+        // Xóa sạch các màu cũ
         var oldHighlights = passageElement.querySelectorAll(".p-highlight");
         for(var i = 0; i < oldHighlights.length; i++){
             oldHighlights[i].style.backgroundColor = "transparent";
@@ -1081,131 +1045,74 @@ function speakPassage() {
 
             var targetWord = document.getElementById("p-word-" + currentIndex);
             if (targetWord) {
-                targetWord.style.backgroundColor = "#fde047"; // Nền vàng rực
+                targetWord.style.backgroundColor = "#fde047"; // Nền vàng
                 targetWord.style.color = "#b91c1c";           // Chữ đỏ đậm
                 targetWord.style.borderRadius = "4px";
                 targetWord.style.padding = "0 2px";
                 targetWord.style.fontWeight = "bold";
                 targetWord.classList.add("p-highlight");
                 
-                // TỰ ĐỘNG CUỘN MÀN HÌNH THEO CHỮ KHÔNG CẦN VUỐT TAY
+                // Cuộn mượt mà theo chữ
                 targetWord.scrollIntoView({ behavior: 'smooth', block: 'center' });
             }
             
             currentIndex++;
-        }, 320); // Tốc độ nhảy chữ
+        }, 310); // Tốc độ 310ms khớp với giọng đọc nhanh của máy
 
     } catch(err) {
         console.log("Passage error: " + err.message);
     }
 }
-// HÀM ĐỌC THỬ MÀN HÌNH CHÀO MỪNG - ĐÃ SỬA CHỐNG CHẶN TRÊN ĐIỆN THOẠI
-// HÀM ĐỌC THỬ MÀN HÌNH CHÀO - ĐÃ SỬA CHỐNG CHẶN TRÊN ĐIỆN THOẠI
-/*function speakWelcomeText() {
+
+// HÀM BỌC SẴN CHỮ TỰ ĐỘNG CHẠY NGẦM
+function preparePassageKaraoke() {
     try {
-        var synth = window.speechSynthesis || window.webkitSynthesis;
-        if (!synth) {
-            alert("Device does not support Text-to-Speech.");
-            return;
-        }
+        var passageElement = document.getElementById("reading-passage");
+        if (!passageElement) return;
+
+        var textNodes = [];
+        var walk = document.createTreeWalker(passageElement, NodeFilter.SHOW_TEXT, null, false);
+        var node;
+        while(node = walk.nextNode()) { textNodes.push(node); }
         
-        // Nếu đang phát, bấm lại sẽ dừng
-        if (synth.speaking) {
-            synth.cancel();
-            return;
-        }
-
-        var text = "Welcome to Reading Comprehension. Please choose Level and Topic, then click the READ UP button to reach the Passage!";
-        synth.cancel(); 
-        
-        var utterance = new SpeechSynthesisUtterance(text);
-        utterance.lang = 'en-US';
-        utterance.rate = 0.9; // Tốc độ đọc vừa phải
-        synth.speak(utterance);
-        
-    } catch(err) {
-        alert("Audio error: " + err.message);
-    }
-}*/
-
-        // HÀM ĐỌC MÀN HÌNH CHÀO CÓ TÍNH NĂNG TÔ MÀU KARAOKE
-// 1. HÀM ĐỌC MÀN HÌNH CHÀO CÓ TÍNH NĂNG TÔ MÀU KARAOKE
-// HÀM ĐỌC MÀN HÌNH CHÀO TỰ ĐỘNG CHẠY CHỮ KARAOKE
-// HÀM ĐỌC KARAOKE BẢO TOÀN BIỂU TƯỢNG VÀ GIAO DIỆN GỐC
-function speakWelcomeText() {
-    try {
-        var welcomeP = document.querySelector("#waiting-screen p");
-        if (!welcomeP) return;
-
-        // Nội dung chữ thuần khiết gửi về cho điện thoại đọc to rõ
-        var cleanText = "Welcome to Reading Comprehension. Please choose Level and Topic, then click the READ UP button to reach the Passage!";
-        
-        // Báo cho App Inventor cất tiếng đọc (Đã sửa đồng bộ chữ E với Block)
-        if (window.AppInventor && typeof window.AppInventor.setWebViewString === 'function') {
-            window.AppInventor.setWebViewString("READ_WELCOME:" + cleanText);
-        }
-
-        // TẠO HIỆU ỨNG KARAOKE BẰNG CÁCH DUYỆT CHỮ (KHÔNG LÀM MẤT BIỂU TƯỢNG)
-        if (!welcomeP.querySelectorAll('.k-word').length) {
-            // Danh sách các từ cần chạy màu
-            var wordsArray = cleanText.split(/\s+/);
-            var currentHTML = welcomeP.innerHTML;
-
-            // Tiến hành bọc từng từ khóa mà không chạm vào các thẻ biểu tượng của thầy
-            wordsArray.forEach(function(word, idx) {
-                // Chỉ bọc những từ chưa được bọc
-                var cleanWord = word.replace(/[.,\/#!$%\^&\*;:{}=\-_`~()]/g,"");
-                if(cleanWord.length > 1) {
-                    var regex = new RegExp("\\b" + cleanWord + "\\b", "g");
-                    currentHTML = currentHTML.replace(regex, '<span id="w-word-' + idx + '" class="k-word" style="transition: all 0.1s ease;">' + cleanWord + '</span>');
+        var wordIndex = 0;
+        for (var i = 0; i < textNodes.length; i++) {
+            var txtNode = textNodes[i];
+            if (txtNode.parentNode.nodeName === 'SCRIPT' || txtNode.parentNode.nodeName === 'STYLE' || txtNode.parentNode.className === 'p-word') continue;
+            
+            var words = txtNode.nodeValue.split(/(\s+)/);
+            var fragment = document.createDocumentFragment();
+            
+            for (var j = 0; j < words.length; j++) {
+                if (words[j].trim() === "") {
+                    fragment.appendChild(document.createTextNode(words[j]));
+                } else {
+                    var span = document.createElement('span');
+                    span.className = 'p-word';
+                    span.id = 'p-word-' + wordIndex;
+                    span.innerText = words[j];
+                    fragment.appendChild(span);
+                    wordIndex++;
                 }
-            });
-            welcomeP.innerHTML = currentHTML;
+            }
+            txtNode.parentNode.replaceChild(fragment, txtNode);
         }
-
-        // CHẠY CHỮ ĐUỔI THEO GIỌNG ĐỌC
-        var totalWordsCount = 20; // Số từ ước lượng trong câu chào
-        var currentIndex = 0;
-        
-        // Xóa màu cũ nếu có
-        var oldHighlights = welcomeP.querySelectorAll(".k-highlight");
-        for(var i=0; i<oldHighlights.length; i++){
-            oldHighlights[i].style.backgroundColor = "transparent";
-            oldHighlights[i].style.color = "inherit";
-            oldHighlights[i].classList.remove("k-highlight");
-        }
-
-        var interval = setInterval(function() {
-            if (currentIndex >= totalWordsCount) {
-                clearInterval(interval);
-                return;
-            }
-            
-            // Xóa nền vàng từ trước đó
-            var prevHighlight = welcomeP.querySelector(".k-highlight");
-            if (prevHighlight) {
-                prevHighlight.style.backgroundColor = "transparent";
-                prevHighlight.style.color = "inherit";
-                prevHighlight.classList.remove("k-highlight");
-            }
-
-            // Tô nền vàng chữ đỏ cho từ hiện tại mà không làm mất biểu tượng xung quanh
-            var targetWord = document.getElementById("w-word-" + currentIndex);
-            if (targetWord) {
-                targetWord.style.backgroundColor = "#fde047"; 
-                targetWord.style.color = "#b91c1c";           
-                targetWord.style.borderRadius = "4px";
-                targetWord.style.padding = "0 2px";
-                targetWord.classList.add("k-highlight");
-            }
-            
-            currentIndex++;
-        }, 360); // Tốc độ nhảy chữ
-
-    } catch(err) {
-        console.log("Karaoke error: " + err.message);
-    }
+    } catch(e) { console.log(e); }
 }
+
+// MẸO TỰ ĐỘNG THEO DÕI: Cứ màn hình thay đổi bài đọc là tự bọc chữ Karaoke luôn
+var observer = new MutationObserver(function(mutations) {
+    setTimeout(preparePassageKaraoke, 200);
+});
+window.addEventListener('DOMContentLoaded', function() {
+    var passageElement = document.getElementById("reading-passage");
+    if(passageElement) {
+        observer.observe(passageElement, { childList: true, subtree: true });
+    }
+    setTimeout(preparePassageKaraoke, 500);
+});
+       
+
 </script>
 </body>
 </html>
