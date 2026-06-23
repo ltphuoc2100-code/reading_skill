@@ -1000,27 +1000,27 @@ window.onload = function() {
         // HÀM ĐỌC ĐOẠN VĂN CHÍNH CÓ HIỆU ỨNG TÔ MÀU KARAOKE VÀ TỰ ĐỘNG CUỘN
 // HÀM ĐỌC ĐOẠN VĂN CHÍNH - ĐÃ KHỬ LỖI CHỚP CHỮ VÀ IN ĐẬM
 // HÀM ĐỌC ĐOẠN VĂN CHÍNH - TỰ ĐỘNG BỌC CHỮ KHÔNG CẦN CHÈN HÀM PHỤ
+// 1. HÀM ĐỌC ĐOẠN VĂN CHÍNH - TỰ ĐỘNG ĐIỀU TỐC VÀ XÓA MÀU TỪ CUỐI KHI HẾT BÀI
 function speakPassage() {
     try {
         var passageElement = document.getElementById("reading-passage");
         if (!passageElement) return;
 
-        // 1. Lấy văn bản thuần gửi sang App Inventor đọc ngay lập tức
+        // Gửi văn bản thuần sang App Inventor đọc
         var fullText = passageElement.innerText || passageElement.textContent;
         if (window.AppInventor && typeof window.AppInventor.setWebViewString === 'function') {
             window.AppInventor.setWebViewString("READ_PASSAGE:" + fullText);
         }
 
-        // Nếu kích hoạt đọc mà chưa bọc chữ thì bọc ngay
         if (!passageElement.querySelectorAll('.p-word').length) {
             preparePassageKaraoke();
         }
 
-        // 2. KÍCH HOẠT CHẠY CHỮ KARAOKE MƯỢT MÀ
+        // KÍCH HOẠT CHẠY CHỮ ĐIỀU TỐC CO GIÃN
         var allWords = passageElement.querySelectorAll('.p-word');
         var currentIndex = 0;
         
-        // Xóa sạch các màu cũ
+        // Xóa sạch các màu cũ trước khi bắt đầu đọc mới
         var oldHighlights = passageElement.querySelectorAll(".p-highlight");
         for(var i = 0; i < oldHighlights.length; i++){
             oldHighlights[i].style.backgroundColor = "transparent";
@@ -1028,14 +1028,23 @@ function speakPassage() {
             oldHighlights[i].classList.remove("p-highlight");
         }
 
-        if (window.passageInterval) clearInterval(window.passageInterval);
+        if (window.passageTimeout) clearTimeout(window.passageTimeout);
         
-        window.passageInterval = setInterval(function() {
+        function triggerNextWord() {
+            // MẸO SỬA LỖI: Khi đã chạy hết danh sách từ
             if (currentIndex >= allWords.length) {
-                clearInterval(window.passageInterval);
+                // Tìm và xóa màu của từ cuối cùng ngay lập tức khi hết bài
+                var lastHighlight = passageElement.querySelector(".p-highlight");
+                if (lastHighlight) {
+                    lastHighlight.style.backgroundColor = "transparent";
+                    lastHighlight.style.color = "inherit";
+                    lastHighlight.classList.remove("p-highlight");
+                }
+                clearTimeout(window.passageTimeout);
                 return;
             }
             
+            // Xóa màu từ liền trước
             var prevHighlight = passageElement.querySelector(".p-highlight");
             if (prevHighlight) {
                 prevHighlight.style.backgroundColor = "transparent";
@@ -1043,28 +1052,43 @@ function speakPassage() {
                 prevHighlight.classList.remove("p-highlight");
             }
 
-            var targetWord = document.getElementById("p-word-" + currentIndex);
+            // Tô màu từ hiện tại
+            var targetWord = allWords[currentIndex];
             if (targetWord) {
                 targetWord.style.backgroundColor = "#fde047"; // Nền vàng
                 targetWord.style.color = "#b91c1c";           // Chữ đỏ đậm
                 targetWord.style.borderRadius = "4px";
                 targetWord.style.padding = "0 2px";
-                targetWord.style.fontWeight = "bold";
                 targetWord.classList.add("p-highlight");
                 
-                // Cuộn mượt mà theo chữ
                 targetWord.scrollIntoView({ behavior: 'smooth', block: 'center' });
             }
             
+            // TỰ ĐIỀU TỐC THEO ĐỘ DÀI TỪ
+            var wordText = targetWord ? targetWord.innerText.trim() : "";
+            var wordLength = wordText.length;
+            
+            var baseDelay = 220; 
+            var extraDelayPerLetter = 22; 
+            var totalDelay = baseDelay + (wordLength * extraDelayPerLetter);
+            
+            if (totalDelay < 260) totalDelay = 260;
+            if (totalDelay > 550) totalDelay = 550;
+
             currentIndex++;
-        }, 310); // Tốc độ 310ms khớp với giọng đọc nhanh của máy
+            
+            window.passageTimeout = setTimeout(triggerNextWord, totalDelay);
+        }
+
+        // Bắt đầu chạy từ đầu tiên
+        triggerNextWord();
 
     } catch(err) {
         console.log("Passage error: " + err.message);
     }
 }
 
-// HÀM BỌC SẴN CHỮ TỰ ĐỘNG CHẠY NGẦM
+// 2. HÀM BỌC SẴN CHỮ TỰ ĐỘNG CHẠY NGẦM - KHỬ LỖI IN ĐẬM CHỮ
 function preparePassageKaraoke() {
     try {
         var passageElement = document.getElementById("reading-passage");
@@ -1091,6 +1115,12 @@ function preparePassageKaraoke() {
                     span.className = 'p-word';
                     span.id = 'p-word-' + wordIndex;
                     span.innerText = words[j];
+                    
+                    // Ép chữ lấy font nguyên bản của hệ thống, tuyệt đối không tự in đậm
+                    span.style.fontWeight = "inherit"; 
+                    span.style.fontStyle = "inherit";
+                    span.style.display = "inline-block";
+                    
                     fragment.appendChild(span);
                     wordIndex++;
                 }
@@ -1100,7 +1130,7 @@ function preparePassageKaraoke() {
     } catch(e) { console.log(e); }
 }
 
-// MẸO TỰ ĐỘNG THEO DÕI: Cứ màn hình thay đổi bài đọc là tự bọc chữ Karaoke luôn
+// TỰ ĐỘNG THEO DÕI ĐỔI BÀI ĐỂ BỌC CHỮ
 var observer = new MutationObserver(function(mutations) {
     setTimeout(preparePassageKaraoke, 200);
 });
@@ -1111,8 +1141,6 @@ window.addEventListener('DOMContentLoaded', function() {
     }
     setTimeout(preparePassageKaraoke, 500);
 });
-       
-
 </script>
 </body>
 </html>
