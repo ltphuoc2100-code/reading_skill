@@ -985,7 +985,7 @@ window.onload = function() {
 
 // 1. Hàm đọc bài văn chính
 // HÀM ĐỌC ĐOẠN VĂN CHÍNH - ĐÃ ĐỒNG BỘ VỚI APP INVENTOR
-function speakPassage() {
+/*function speakPassage() {
     var passageElement = document.getElementById("reading-passage");
     if (passageElement) {
         var currentText = passageElement.innerText || passageElement.textContent;
@@ -1003,6 +1003,104 @@ function speakPassage() {
             utterance.rate = 0.9;
             synth.speak(utterance);
         }
+    }
+}*/
+        // HÀM ĐỌC ĐOẠN VĂN CHÍNH CÓ HIỆU ỨNG TÔ MÀU KARAOKE VÀ TỰ ĐỘNG CUỘN
+function speakPassage() {
+    try {
+        var passageElement = document.getElementById("reading-passage");
+        if (!passageElement) return;
+
+        // 1. Lấy toàn bộ văn bản thuần để gửi sang App Inventor đọc thành tiếng
+        var fullText = passageElement.innerText || passageElement.textContent;
+        
+        // Gửi duy nhất một lệnh sang App Inventor cất tiếng đọc
+        if (window.AppInventor && typeof window.AppInventor.setWebViewString === 'function') {
+            window.AppInventor.setWebViewString("READ_PASSAGE:" + fullText);
+        }
+
+        // 2. CHUẨN BỊ CẤU TRÚC KARAOKE BẢO TOÀN GIAO DIỆN (Chỉ chạy 1 lần duy nhất)
+        if (!passageElement.querySelectorAll('.p-word').length) {
+            var originalHTML = passageElement.innerHTML;
+            
+            var tempDiv = document.createElement('div');
+            tempDiv.innerHTML = originalHTML;
+            
+            var textNodes = [];
+            var walk = document.createTreeWalker(tempDiv, NodeFilter.SHOW_TEXT, null, false);
+            var node;
+            while(node = walk.nextNode()) { textNodes.push(node); }
+            
+            var wordIndex = 0;
+            for (var i = 0; i < textNodes.length; i++) {
+                var txtNode = textNodes[i];
+                if (txtNode.parentNode.nodeName === 'SCRIPT' || txtNode.parentNode.nodeName === 'STYLE') continue;
+                
+                var words = txtNode.nodeValue.split(/(\s+)/);
+                var fragment = document.createDocumentFragment();
+                
+                for (var j = 0; j < words.length; j++) {
+                    if (words[j].trim() === "") {
+                        fragment.appendChild(document.createTextNode(words[j]));
+                    } else {
+                        var span = document.createElement('span');
+                        span.className = 'p-word';
+                        span.id = 'p-word-' + wordIndex;
+                        span.innerText = words[j];
+                        fragment.appendChild(span);
+                        wordIndex++;
+                    }
+                }
+                txtNode.parentNode.replaceChild(fragment, txtNode);
+            }
+            passageElement.innerHTML = tempDiv.innerHTML;
+        }
+
+        // 3. HIỆU ỨNG CHẠY CHỮ KARAOKE TỰ ĐỘNG THEO THỜI GIAN
+        var allWords = passageElement.querySelectorAll('.p-word');
+        var currentIndex = 0;
+        
+        // Xóa sạch các màu cũ nếu có
+        var oldHighlights = passageElement.querySelectorAll(".p-highlight");
+        for(var i = 0; i < oldHighlights.length; i++){
+            oldHighlights[i].style.backgroundColor = "transparent";
+            oldHighlights[i].style.color = "inherit";
+            oldHighlights[i].classList.remove("p-highlight");
+        }
+
+        if (window.passageInterval) clearInterval(window.passageInterval);
+        
+        window.passageInterval = setInterval(function() {
+            if (currentIndex >= allWords.length) {
+                clearInterval(window.passageInterval);
+                return;
+            }
+            
+            var prevHighlight = passageElement.querySelector(".p-highlight");
+            if (prevHighlight) {
+                prevHighlight.style.backgroundColor = "transparent";
+                prevHighlight.style.color = "inherit";
+                prevHighlight.classList.remove("p-highlight");
+            }
+
+            var targetWord = document.getElementById("p-word-" + currentIndex);
+            if (targetWord) {
+                targetWord.style.backgroundColor = "#fde047"; // Nền vàng rực
+                targetWord.style.color = "#b91c1c";           // Chữ đỏ đậm
+                targetWord.style.borderRadius = "4px";
+                targetWord.style.padding = "0 2px";
+                targetWord.style.fontWeight = "bold";
+                targetWord.classList.add("p-highlight");
+                
+                // TỰ ĐỘNG CUỘN MÀN HÌNH THEO CHỮ KHÔNG CẦN VUỐT TAY
+                targetWord.scrollIntoView({ behavior: 'smooth', block: 'center' });
+            }
+            
+            currentIndex++;
+        }, 380); // Tốc độ nhảy chữ
+
+    } catch(err) {
+        console.log("Passage error: " + err.message);
     }
 }
 // HÀM ĐỌC THỬ MÀN HÌNH CHÀO MỪNG - ĐÃ SỬA CHỐNG CHẶN TRÊN ĐIỆN THOẠI
