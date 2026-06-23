@@ -999,9 +999,10 @@ window.onload = function() {
 }*/
         // HÀM ĐỌC ĐOẠN VĂN CHÍNH CÓ HIỆU ỨNG TÔ MÀU KARAOKE VÀ TỰ ĐỘNG CUỘN
 // 1. HÀM ĐỌC ĐOẠN VĂN CHÍNH - TRIỆT TIÊU BỘ ĐẾM CŨ & TĂNG TỐC TỐI ĐA
+// HÀM ĐỌC ĐOẠN VĂN CHÍNH - BẢN TỐI ƯU SIÊU NHẸ, KHÔNG LAG, CHẠY CỰC NHANH
 function speakPassage() {
     try {
-        // CỨ BẤM NÚT LÀ DIỆT NGAY BỘ ĐẾM CŨ (CHỐNG NGHẼN, CHỐNG CHẬM KHI ĐỌC LẠI)
+        // 1. Xóa sạch bộ đếm thời gian cũ nếu đang chạy ngầm
         if (window.passageTimeout) {
             clearTimeout(window.passageTimeout);
             window.passageTimeout = null;
@@ -1010,20 +1011,49 @@ function speakPassage() {
         var passageElement = document.getElementById("reading-passage");
         if (!passageElement) return;
 
-        // Gửi văn bản thuần sang App Inventor đọc
+        // 2. Gửi văn bản thuần sang App Inventor đọc thành tiếng ngay lập tức
         var fullText = passageElement.innerText || passageElement.textContent;
         if (window.AppInventor && typeof window.AppInventor.setWebViewString === 'function') {
             window.AppInventor.setWebViewString("READ_PASSAGE:" + fullText);
         }
 
-        if (!passageElement.querySelectorAll('.p-word').length) {
-            preparePassageKaraoke();
+        // 3. THỰC HIỆN BỌC CHỮ (Giải pháp ép cấu trúc siêu tốc, không dùng bộ theo dõi ngầm)
+        var textNodes = [];
+        var walk = document.createTreeWalker(passageElement, NodeFilter.SHOW_TEXT, null, false);
+        var node;
+        while(node = walk.nextNode()) { textNodes.push(node); }
+        
+        var wordIndex = 0;
+        for (var i = 0; i < textNodes.length; i++) {
+            var txtNode = textNodes[i];
+            if (txtNode.parentNode.nodeName === 'SCRIPT' || txtNode.parentNode.nodeName === 'STYLE' || txtNode.parentNode.classList.contains('p-word')) continue;
+            
+            var words = txtNode.nodeValue.split(/(\s+)/);
+            var fragment = document.createDocumentFragment();
+            
+            for (var j = 0; j < words.length; j++) {
+                if (words[j].trim() === "") {
+                    fragment.appendChild(document.createTextNode(words[j]));
+                } else {
+                    var span = document.createElement('span');
+                    span.className = 'p-word';
+                    span.id = 'p-word-' + wordIndex;
+                    span.innerText = words[j];
+                    span.style.fontWeight = "inherit"; 
+                    span.style.fontStyle = "inherit";
+                    span.style.display = "inline-block";
+                    fragment.appendChild(span);
+                    wordIndex++;
+                }
+            }
+            txtNode.parentNode.replaceChild(fragment, txtNode);
         }
 
+        // 4. CHẠY CHỮ KARAOKE VỚI TỐC ĐỘ SIÊU TỐC ĐUỔI KỊP MÁY
         var allWords = passageElement.querySelectorAll('.p-word');
         var currentIndex = 0;
         
-        // Xóa sạch các màu cũ ngay lập tức
+        // Xóa sạch màu cũ
         var oldHighlights = passageElement.querySelectorAll(".p-highlight");
         for(var i = 0; i < oldHighlights.length; i++){
             oldHighlights[i].style.backgroundColor = "transparent";
@@ -1031,7 +1061,6 @@ function speakPassage() {
             oldHighlights[i].classList.remove("p-highlight");
         }
 
-        // Hàm điều tốc thế hệ mới - Đã đẩy tốc độ nhanh lên gấp rưỡi
         function triggerNextWord() {
             if (currentIndex >= allWords.length) {
                 var lastHighlight = passageElement.querySelector(".p-highlight");
@@ -1062,82 +1091,29 @@ function speakPassage() {
                 targetWord.scrollIntoView({ behavior: 'smooth', block: 'center' });
             }
             
-            // CẤU HÌNH TỐC ĐỘ MỚI (Đã ép thời gian xuống cực thấp để chữ chạy nhanh vèo vèo)
+            // ĐIỀU TỐC SIÊU NHANH: Máy đọc tiếng Anh tự nhiên cực kỳ nhanh, nên mình siết thời gian rất thấp
             var wordText = targetWord ? targetWord.innerText.trim() : "";
             var wordLength = wordText.length;
             
-            var baseDelay = 150;           // Giảm từ 220 xuống 150 (Chữ lướt cực nhanh)
-            var extraDelayPerLetter = 12;  // Giảm từ 22 xuống 12 (Từ dài không bị khựng lâu)
+            var baseDelay = 110;          // Hạ từ 150 xuống 110 (Tốc độ tên lửa)
+            var extraDelayPerLetter = 10; // Cử mỗi chữ cái cộng thêm 10ms thay vì 12ms
             var totalDelay = baseDelay + (wordLength * extraDelayPerLetter);
             
-            // Giới hạn trần tốc độ để chữ bám đuổi gắt gao với máy
-            if (totalDelay < 180) totalDelay = 180;
-            if (totalDelay > 380) totalDelay = 380;
+            // Giới hạn tốc độ tối đa không cho phép chữ chạy chậm
+            if (totalDelay < 140) totalDelay = 140;
+            if (totalDelay > 280) totalDelay = 280;
 
             currentIndex++;
-            
             window.passageTimeout = setTimeout(triggerNextWord, totalDelay);
         }
 
-        // Bắt đầu chạy
+        // Kích hoạt chạy từ đầu tiên
         triggerNextWord();
 
     } catch(err) {
         console.log("Passage error: " + err.message);
     }
 }
-
-// 2. HÀM BỌC CHỮ CHẠY NGẦM GIỮ NGUYÊN ĐỘ THANH MẢNH
-function preparePassageKaraoke() {
-    try {
-        var passageElement = document.getElementById("reading-passage");
-        if (!passageElement) return;
-
-        var textNodes = [];
-        var walk = document.createTreeWalker(passageElement, NodeFilter.SHOW_TEXT, null, false);
-        var node;
-        while(node = walk.nextNode()) { textNodes.push(node); }
-        
-        var wordIndex = 0;
-        for (var i = 0; i < textNodes.length; i++) {
-            var txtNode = textNodes[i];
-            if (txtNode.parentNode.nodeName === 'SCRIPT' || txtNode.parentNode.nodeName === 'STYLE' || txtNode.parentNode.className === 'p-word') continue;
-            
-            var words = txtNode.nodeValue.split(/(\s+)/);
-            var fragment = document.createDocumentFragment();
-            
-            for (var j = 0; j < words.length; j++) {
-                if (words[j].trim() === "") {
-                    fragment.appendChild(document.createTextNode(words[j]));
-                } else {
-                    var span = document.createElement('span');
-                    span.className = 'p-word';
-                    span.id = 'p-word-' + wordIndex;
-                    span.innerText = words[j];
-                    
-                    span.style.fontWeight = "inherit"; 
-                    span.style.fontStyle = "inherit";
-                    span.style.display = "inline-block";
-                    
-                    fragment.appendChild(span);
-                    wordIndex++;
-                }
-            }
-            txtNode.parentNode.replaceChild(fragment, txtNode);
-        }
-    } catch(e) { console.log(e); }
-}
-
-var observer = new MutationObserver(function(mutations) {
-    setTimeout(preparePassageKaraoke, 200);
-});
-window.addEventListener('DOMContentLoaded', function() {
-    var passageElement = document.getElementById("reading-passage");
-    if(passageElement) {
-        observer.observe(passageElement, { childList: true, subtree: true });
-    }
-    setTimeout(preparePassageKaraoke, 500);
-});
 
 </script>
 </body>
