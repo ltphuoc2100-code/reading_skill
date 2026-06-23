@@ -1000,60 +1000,13 @@ window.onload = function() {
         // HÀM ĐỌC ĐOẠN VĂN CHÍNH CÓ HIỆU ỨNG TÔ MÀU KARAOKE VÀ TỰ ĐỘNG CUỘN
 // 1. HÀM ĐỌC ĐOẠN VĂN CHÍNH - TRIỆT TIÊU BỘ ĐẾM CŨ & TĂNG TỐC TỐI ĐA
 // HÀM ĐỌC ĐOẠN VĂN CHÍNH - BẢN TỐI ƯU SIÊU NHẸ, KHÔNG LAG, CHẠY CỰC NHANH
+// HÀM ĐỌC ĐOẠN VĂN CHÍNH - KHỚP KHÍT 100% THEO GIỌNG ĐỌC THỰC TẾ (BẢN CHUẨN ĐÉT)
 function speakPassage() {
     try {
-        // 1. Xóa sạch bộ đếm thời gian cũ nếu đang chạy ngầm
-        if (window.passageTimeout) {
-            clearTimeout(window.passageTimeout);
-            window.passageTimeout = null;
-        }
-
         var passageElement = document.getElementById("reading-passage");
         if (!passageElement) return;
 
-        // 2. Gửi văn bản thuần sang App Inventor đọc thành tiếng ngay lập tức
-        var fullText = passageElement.innerText || passageElement.textContent;
-        if (window.AppInventor && typeof window.AppInventor.setWebViewString === 'function') {
-            window.AppInventor.setWebViewString("READ_PASSAGE:" + fullText);
-        }
-
-        // 3. THỰC HIỆN BỌC CHỮ (Giải pháp ép cấu trúc siêu tốc, không dùng bộ theo dõi ngầm)
-        var textNodes = [];
-        var walk = document.createTreeWalker(passageElement, NodeFilter.SHOW_TEXT, null, false);
-        var node;
-        while(node = walk.nextNode()) { textNodes.push(node); }
-        
-        var wordIndex = 0;
-        for (var i = 0; i < textNodes.length; i++) {
-            var txtNode = textNodes[i];
-            if (txtNode.parentNode.nodeName === 'SCRIPT' || txtNode.parentNode.nodeName === 'STYLE' || txtNode.parentNode.classList.contains('p-word')) continue;
-            
-            var words = txtNode.nodeValue.split(/(\s+)/);
-            var fragment = document.createDocumentFragment();
-            
-            for (var j = 0; j < words.length; j++) {
-                if (words[j].trim() === "") {
-                    fragment.appendChild(document.createTextNode(words[j]));
-                } else {
-                    var span = document.createElement('span');
-                    span.className = 'p-word';
-                    span.id = 'p-word-' + wordIndex;
-                    span.innerText = words[j];
-                    span.style.fontWeight = "inherit"; 
-                    span.style.fontStyle = "inherit";
-                    span.style.display = "inline-block";
-                    fragment.appendChild(span);
-                    wordIndex++;
-                }
-            }
-            txtNode.parentNode.replaceChild(fragment, txtNode);
-        }
-
-        // 4. CHẠY CHỮ KARAOKE VỚI TỐC ĐỘ SIÊU TỐC ĐUỔI KỊP MÁY
-        var allWords = passageElement.querySelectorAll('.p-word');
-        var currentIndex = 0;
-        
-        // Xóa sạch màu cũ
+        // Xóa sạch màu cũ trước khi đọc
         var oldHighlights = passageElement.querySelectorAll(".p-highlight");
         for(var i = 0; i < oldHighlights.length; i++){
             oldHighlights[i].style.backgroundColor = "transparent";
@@ -1061,54 +1014,95 @@ function speakPassage() {
             oldHighlights[i].classList.remove("p-highlight");
         }
 
-        function triggerNextWord() {
-            if (currentIndex >= allWords.length) {
+        // 1. Thực hiện bọc chữ siêu tốc (nếu chưa bọc)
+        if (!passageElement.querySelectorAll('.p-word').length) {
+            var textNodes = [];
+            var walk = document.createTreeWalker(passageElement, NodeFilter.SHOW_TEXT, null, false);
+            var node;
+            while(node = walk.nextNode()) { textNodes.push(node); }
+            
+            var wordIndex = 0;
+            for (var i = 0; i < textNodes.length; i++) {
+                var txtNode = textNodes[i];
+                if (txtNode.parentNode.nodeName === 'SCRIPT' || txtNode.parentNode.nodeName === 'STYLE' || txtNode.parentNode.classList.contains('p-word')) continue;
+                
+                var words = txtNode.nodeValue.split(/(\s+)/);
+                var fragment = document.createDocumentFragment();
+                
+                for (var j = 0; j < words.length; j++) {
+                    if (words[j].trim() === "") {
+                        fragment.appendChild(document.createTextNode(words[j]));
+                    } else {
+                        var span = document.createElement('span');
+                        span.className = 'p-word';
+                        span.id = 'p-word-' + wordIndex;
+                        span.innerText = words[j];
+                        span.style.fontWeight = "inherit"; 
+                        span.style.fontStyle = "inherit";
+                        span.style.display = "inline-block";
+                        fragment.appendChild(span);
+                        wordIndex++;
+                    }
+                }
+                txtNode.parentNode.replaceChild(fragment, txtNode);
+            }
+        }
+
+        // 2. Lấy chữ thuần gửi sang App Inventor đọc
+        var fullText = passageElement.innerText || passageElement.textContent;
+        if (window.AppInventor && typeof window.AppInventor.setWebViewString === 'function') {
+            window.AppInventor.setWebViewString("READ_PASSAGE:" + fullText);
+        }
+
+        // 3. KHỚP CHỮ KARAOKE CHÍNH XÁC THEO TỪNG TỪ MÁY PHÁT ÂM RA
+        if ('speechSynthesis' in window) {
+            window.speechSynthesis.cancel(); // Tắt âm thanh cũ nếu có
+            
+            var utterance = new SpeechSynthesisUtterance(fullText);
+            utterance.lang = 'en-US';
+            utterance.rate = 1.0; // Tốc độ đọc chuẩn tự nhiên
+
+            var allWords = passageElement.querySelectorAll('.p-word');
+            var wordCount = 0;
+
+            // Sự kiện thần thánh: Máy đọc đến từ nào, kích hoạt tô màu từ đó ngay lập tức!
+            utterance.onboundary = function(event) {
+                if (event.name === 'word') {
+                    // Xóa màu từ trước
+                    var prevHighlight = passageElement.querySelector(".p-highlight");
+                    if (prevHighlight) {
+                        prevHighlight.style.backgroundColor = "transparent";
+                        prevHighlight.style.color = "inherit";
+                        prevHighlight.classList.remove("p-highlight");
+                    }
+
+                    // Tô màu từ máy đang phát âm hiện tại
+                    var targetWord = allWords[wordCount];
+                    if (targetWord) {
+                        targetWord.style.backgroundColor = "#fde047"; // Nền vàng
+                        targetWord.style.color = "#b91c1c";           // Chữ đỏ đậm
+                        targetWord.style.borderRadius = "4px";
+                        targetWord.style.padding = "0 2px";
+                        targetWord.classList.add("p-highlight");
+                        
+                        targetWord.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                    }
+                    wordCount++;
+                }
+            };
+
+            // Khi máy đọc xong hoàn toàn bài đọc
+            utterance.onend = function() {
                 var lastHighlight = passageElement.querySelector(".p-highlight");
                 if (lastHighlight) {
                     lastHighlight.style.backgroundColor = "transparent";
                     lastHighlight.style.color = "inherit";
                     lastHighlight.classList.remove("p-highlight");
                 }
-                window.passageTimeout = null;
-                return;
-            }
-            
-            var prevHighlight = passageElement.querySelector(".p-highlight");
-            if (prevHighlight) {
-                prevHighlight.style.backgroundColor = "transparent";
-                prevHighlight.style.color = "inherit";
-                prevHighlight.classList.remove("p-highlight");
-            }
+            };
 
-            var targetWord = allWords[currentIndex];
-            if (targetWord) {
-                targetWord.style.backgroundColor = "#fde047"; 
-                targetWord.style.color = "#b91c1c";           
-                targetWord.style.borderRadius = "4px";
-                targetWord.style.padding = "0 2px";
-                targetWord.classList.add("p-highlight");
-                
-                targetWord.scrollIntoView({ behavior: 'smooth', block: 'center' });
-            }
-            
-            // ĐIỀU TỐC SIÊU NHANH: Máy đọc tiếng Anh tự nhiên cực kỳ nhanh, nên mình siết thời gian rất thấp
-            var wordText = targetWord ? targetWord.innerText.trim() : "";
-            var wordLength = wordText.length;
-            
-            var baseDelay = 110;          // Hạ từ 150 xuống 110 (Tốc độ tên lửa)
-            var extraDelayPerLetter = 10; // Cử mỗi chữ cái cộng thêm 10ms thay vì 12ms
-            var totalDelay = baseDelay + (wordLength * extraDelayPerLetter);
-            
-            // Giới hạn tốc độ tối đa không cho phép chữ chạy chậm
-            if (totalDelay < 140) totalDelay = 140;
-            if (totalDelay > 280) totalDelay = 280;
-
-            currentIndex++;
-            window.passageTimeout = setTimeout(triggerNextWord, totalDelay);
+            window.speechSynthesis.speak(utterance);
         }
-
-        // Kích hoạt chạy từ đầu tiên
-        triggerNextWord();
 
     } catch(err) {
         console.log("Passage error: " + err.message);
