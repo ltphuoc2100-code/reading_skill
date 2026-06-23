@@ -288,9 +288,11 @@
             return true;
         };
     </script>
-<button onclick="if(window.AppInventor){ window.AppInventor.setWebViewString('Welcome to Reading Comprehension. Please choose Level and Topic, then click the READ UP button to reach the Passage!'); }" style="position: relative !important; z-index: 999999 !important; pointer-events: auto !important; cursor: pointer;">
-    🔊 Read Passage
-</button>
+<div style="text-align: center; margin: 10px 0; position: relative; z-index: 999999 !important; pointer-events: auto !important;">
+    <button onclick="speakWelcomeText();" style="position: relative !important; z-index: 999999 !important; pointer-events: auto !important; cursor: pointer; background-color: #ef4444; color: white; padding: 6px 16px; border-radius: 20px; font-weight: bold; border: none; box-shadow: 0 4px 6px rgba(0,0,0,0.1);">
+        🔊 Read Aloud
+    </button>
+</div>
     <!-- THAY THẾ TOÀN BỘ KHỐI WAITING-SCREEN CŨ THÀNH ĐOẠN NÀY -->
    <div id="waiting-screen" style="display: flex !important; flex-direction: column; height: 100%; box-sizing: border-box; gap: 10px;">
         
@@ -1036,91 +1038,55 @@ function speakPassage() {
 // 1. HÀM ĐỌC MÀN HÌNH CHÀO CÓ TÍNH NĂNG TÔ MÀU KARAOKE
 // HÀM ĐỌC MÀN HÌNH CHÀO TỰ ĐỘNG CHẠY CHỮ KARAOKE
 // HÀM ĐỌC MÀN HÌNH CHÀO TỰ ĐỘNG CHẠY CHỮ KARAOKE - BẢO TOÀN CẤU TRÚC GỐC
+// HÀM ĐỌC MÀN HÌNH CHÀO TỰ ĐỘNG CHẠY CHỮ KARAOKE CHUẨN ĐÉT
 function speakWelcomeText() {
     try {
         var welcomeP = document.querySelector("#waiting-screen p");
         if (!welcomeP) return;
 
-        // Nếu đây là lần đầu bấm, tiến hành bọc các từ vào thẻ span để chuẩn bị Karaoke
-        if (!welcomeP.querySelectorAll('.k-word').length) {
-            var originalHTML = welcomeP.innerHTML;
-            
-            // Mẹo bọc từ thông minh không phá vỡ các thẻ span màu sắc có sẵn của thầy
-            var tempDiv = document.createElement('div');
-            tempDiv.innerHTML = originalHTML;
-            
-            var textNodes = [];
-            var walk = document.createTreeWalker(tempDiv, NodeFilter.SHOW_TEXT, null, false);
-            var node;
-            while(node = walk.nextNode()) { textNodes.push(node); }
-            
-            var wordIndex = 0;
-            for (var i = 0; i < textNodes.length; i++) {
-                var txtNode = textNodes[i];
-                var words = txtNode.nodeValue.split(/(\s+)/);
-                var fragment = document.createDocumentFragment();
-                
-                for (var j = 0; j < words.length; j++) {
-                    if (words[j].trim() === "") {
-                        fragment.appendChild(document.createTextNode(words[j]));
-                    } else {
-                        var span = document.createElement('span');
-                        span.className = 'k-word';
-                        span.id = 'w-word-' + wordIndex;
-                        span.innerText = words[j];
-                        fragment.appendChild(span);
-                        wordIndex++;
-                    }
-                }
-                txtNode.parentNode.replaceChild(fragment, txtNode);
-            }
-            welcomeP.innerHTML = tempDiv.innerHTML;
-        }
-
-        // Nội dung chữ thuần khiết gửi về cho điện thoại đọc to rõ
-        var cleanText = "Welcome to Reading Comprehension. Please choose Level and Topic, then click the READ UP button to reach the Passage!";
+        var text = "Welcome to Reading Comprehension. Please choose Level and Topic, then click the READ UP button to reach the Passage!";
+        var words = text.split(/\s+/);
         
+        // Bọc từng từ vào thẻ span để chuẩn bị chạy màu
+        var formattedHTML = "";
+        for (var i = 0; i < words.length; i++) {
+            formattedHTML += '<span id="welcome-word-' + i + '" style="transition: all 0.1s ease;">' + words[i] + '</span> ';
+        }
+        welcomeP.innerHTML = formattedHTML;
+
+        // Báo cho App Inventor cất tiếng đọc (Nhớ có chữ E ở chữ WELCOME)
         if (window.AppInventor && typeof window.AppInventor.setWebViewString === 'function') {
-            window.AppInventor.setWebViewString("READ_WELCOME:" + cleanText);
+            window.AppInventor.setWebViewString("READ_WELCOME:" + text);
         }
 
-        // Chạy hiệu ứng Karaoke khớp với tốc độ đọc (khoảng 350ms một từ)
-        var totalWords = welcomeP.querySelectorAll('.k-word').length;
+        // CHẠY HIỆU ỨNG KARAOKE TỰ ĐỘNG THEO GIỌNG ĐỌC
         var currentIndex = 0;
-        
-        // Xóa màu cũ nếu có
-        var oldHighlights = welcomeP.querySelectorAll(".k-highlight");
-        for(var i=0; i<oldHighlights.length; i++){
-            oldHighlights[i].style.backgroundColor = "transparent";
-            oldHighlights[i].style.color = "inherit";
-            oldHighlights[i].classList.remove("k-highlight");
-        }
-
         var interval = setInterval(function() {
-            if (currentIndex >= totalWords) {
+            if (currentIndex >= words.length) {
                 clearInterval(interval);
                 return;
             }
             
-            // Xóa highlight từ trước đó
-            var prevHighlight = welcomeP.querySelector(".k-highlight");
-            if (prevHighlight) {
-                prevHighlight.style.backgroundColor = "transparent";
-                prevHighlight.style.color = "inherit";
-                prevHighlight.classList.remove("k-highlight");
+            // Xóa màu của từ trước đó
+            var currentHighlighted = document.querySelector(".welcome-highlight");
+            if (currentHighlighted) {
+                currentHighlighted.style.backgroundColor = "transparent";
+                currentHighlighted.style.color = "inherit";
+                currentHighlighted.classList.remove("welcome-highlight");
             }
 
-            // Tô màu từ hiện tại
-            var targetWord = document.getElementById("w-word-" + currentIndex);
+            // Tô nền vàng chữ đỏ rực rỡ cho từ hiện tại
+            var targetWord = document.getElementById("welcome-word-" + currentIndex);
             if (targetWord) {
-                targetWord.style.backgroundColor = "#fde047"; // Nền vàng
-                targetWord.style.color = "#b91c1c";           // Chữ đỏ
+                targetWord.style.backgroundColor = "#fde047"; // Nền vàng sáng
+                targetWord.style.color = "#b91c1c";           // Chữ đỏ đậm
                 targetWord.style.borderRadius = "4px";
-                targetWord.classList.add("k-highlight");
+                targetWord.style.padding = "0 4px";
+                targetWord.style.fontWeight = "bold";
+                targetWord.classList.add("welcome-highlight");
             }
-            
             currentIndex++;
-        }, 350);
+        }, 360); // 360ms nhảy 1 từ, khớp khít với tốc độ đọc của điện thoại
 
     } catch(err) {
         alert("Karaoke error: " + err.message);
