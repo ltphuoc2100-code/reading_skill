@@ -288,11 +288,7 @@
             return true;
         };
     </script>
-<div style="text-align: center; margin: 10px 0; position: relative; z-index: 999999 !important; pointer-events: auto !important;">
-    <button onclick="speakWelcomeText();" style="position: relative !important; z-index: 999999 !important; pointer-events: auto !important; cursor: pointer; background-color: #ef4444; color: white; padding: 6px 16px; border-radius: 20px; font-weight: bold; border: none; box-shadow: 0 4px 6px rgba(0,0,0,0.1);">
-        🔊 Read Aloud
-    </button>
-</div>
+
     <!-- THAY THẾ TOÀN BỘ KHỐI WAITING-SCREEN CŨ THÀNH ĐOẠN NÀY -->
    <div id="waiting-screen" style="display: flex !important; flex-direction: column; height: 100%; box-sizing: border-box; gap: 10px;">
         
@@ -1097,7 +1093,7 @@ function speakPassage() {
             }
             
             currentIndex++;
-        }, 380); // Tốc độ nhảy chữ
+        }, 320); // Tốc độ nhảy chữ
 
     } catch(err) {
         console.log("Passage error: " + err.message);
