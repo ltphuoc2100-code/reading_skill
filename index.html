@@ -1035,58 +1035,92 @@ function speakPassage() {
         // HÀM ĐỌC MÀN HÌNH CHÀO CÓ TÍNH NĂNG TÔ MÀU KARAOKE
 // 1. HÀM ĐỌC MÀN HÌNH CHÀO CÓ TÍNH NĂNG TÔ MÀU KARAOKE
 // HÀM ĐỌC MÀN HÌNH CHÀO TỰ ĐỘNG CHẠY CHỮ KARAOKE
+// HÀM ĐỌC MÀN HÌNH CHÀO TỰ ĐỘNG CHẠY CHỮ KARAOKE - BẢO TOÀN CẤU TRÚC GỐC
 function speakWelcomeText() {
     try {
         var welcomeP = document.querySelector("#waiting-screen p");
         if (!welcomeP) return;
 
-        var text = "Welcome to Reading Comprehension. Please choose Level and Topic, then click the READ UP button to reach the Passage!";
-        var words = text.split(/\s+/);
-        
-        var formattedHTML = "";
-        for (var i = 0; i < words.length; i++) {
-            formattedHTML += '<span id="welcome-word-' + i + '">' + words[i] + '</span> ';
-        }
-        welcomeP.innerHTML = formattedHTML;
-
-        // Ép điện thoại phát âm thanh trước
-        if (window.AppInventor && typeof window.AppInventor.setWebViewString === 'function') {
-            window.AppInventor.setWebViewString("READ_WELCOME:" + text);
-        }
-
-        // TỰ ĐỘNG CHẠY CHỮ THEO THỜI GIAN (Mẹo Karaoke không cần Block nâng cấp)
-        var currentIndex = 0;
-        var interval = setInterval(function() {
-            if (currentIndex >= words.length) {
-                clearInterval(interval);
-                // Xóa màu chữ khi đọc xong
-                var currentHighlighted = document.querySelector(".welcome-highlight");
-                if (currentHighlighted) {
-                    currentHighlighted.style.backgroundColor = "transparent";
-                    currentHighlighted.style.color = "inherit";
+        // Nếu đây là lần đầu bấm, tiến hành bọc các từ vào thẻ span để chuẩn bị Karaoke
+        if (!welcomeP.querySelectorAll('.k-word').length) {
+            var originalHTML = welcomeP.innerHTML;
+            
+            // Mẹo bọc từ thông minh không phá vỡ các thẻ span màu sắc có sẵn của thầy
+            var tempDiv = document.createElement('div');
+            tempDiv.innerHTML = originalHTML;
+            
+            var textNodes = [];
+            var walk = document.createTreeWalker(tempDiv, NodeFilter.SHOW_TEXT, null, false);
+            var node;
+            while(node = walk.nextNode()) { textNodes.push(node); }
+            
+            var wordIndex = 0;
+            for (var i = 0; i < textNodes.length; i++) {
+                var txtNode = textNodes[i];
+                var words = txtNode.nodeValue.split(/(\s+)/);
+                var fragment = document.createDocumentFragment();
+                
+                for (var j = 0; j < words.length; j++) {
+                    if (words[j].trim() === "") {
+                        fragment.appendChild(document.createTextNode(words[j]));
+                    } else {
+                        var span = document.createElement('span');
+                        span.className = 'k-word';
+                        span.id = 'w-word-' + wordIndex;
+                        span.innerText = words[j];
+                        fragment.appendChild(span);
+                        wordIndex++;
+                    }
                 }
+                txtNode.parentNode.replaceChild(fragment, txtNode);
+            }
+            welcomeP.innerHTML = tempDiv.innerHTML;
+        }
+
+        // Nội dung chữ thuần khiết gửi về cho điện thoại đọc to rõ
+        var cleanText = "Welcome to Reading Comprehension. Please choose Level and Topic, then click the READ UP button to reach the Passage!";
+        
+        if (window.AppInventor && typeof window.AppInventor.setWebViewString === 'function') {
+            window.AppInventor.setWebViewString("READ_WELCOME:" + cleanText);
+        }
+
+        // Chạy hiệu ứng Karaoke khớp với tốc độ đọc (khoảng 350ms một từ)
+        var totalWords = welcomeP.querySelectorAll('.k-word').length;
+        var currentIndex = 0;
+        
+        // Xóa màu cũ nếu có
+        var oldHighlights = welcomeP.querySelectorAll(".k-highlight");
+        for(var i=0; i<oldHighlights.length; i++){
+            oldHighlights[i].style.backgroundColor = "transparent";
+            oldHighlights[i].style.color = "inherit";
+            oldHighlights[i].classList.remove("k-highlight");
+        }
+
+        var interval = setInterval(function() {
+            if (currentIndex >= totalWords) {
+                clearInterval(interval);
                 return;
             }
             
-            // Tô màu từ hiện tại
-            var currentHighlighted = document.querySelector(".welcome-highlight");
-            if (currentHighlighted) {
-                currentHighlighted.style.backgroundColor = "transparent";
-                currentHighlighted.style.color = "inherit";
-                currentHighlighted.classList.remove("welcome-highlight");
+            // Xóa highlight từ trước đó
+            var prevHighlight = welcomeP.querySelector(".k-highlight");
+            if (prevHighlight) {
+                prevHighlight.style.backgroundColor = "transparent";
+                prevHighlight.style.color = "inherit";
+                prevHighlight.classList.remove("k-highlight");
             }
 
-            var targetWord = document.getElementById("welcome-word-" + currentIndex);
+            // Tô màu từ hiện tại
+            var targetWord = document.getElementById("w-word-" + currentIndex);
             if (targetWord) {
                 targetWord.style.backgroundColor = "#fde047"; // Nền vàng
                 targetWord.style.color = "#b91c1c";           // Chữ đỏ
                 targetWord.style.borderRadius = "4px";
-                targetWord.style.padding = "0 2px";
-                targetWord.classList.add("welcome-highlight");
+                targetWord.classList.add("k-highlight");
             }
             
             currentIndex++;
-        }, 340); // 340 mili giây nhảy 1 từ (khớp với tốc độ đọc của điện thoại)
+        }, 350);
 
     } catch(err) {
         alert("Karaoke error: " + err.message);
