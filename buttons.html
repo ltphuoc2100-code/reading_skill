@@ -54,7 +54,7 @@
             </button>
 
             <!-- 3. NÚT KÍCH HOẠT SOẠN ĐỀ READ UP (Chiếm 22% bề ngang) -->
-            <button onclick="sendSignalToMIT()" class="w-[22%] shrink-0 h-8 bg-rose-500 hover:bg-rose-600 active:scale-90 text-white font-black text-[10px] rounded-lg shadow-md shadow-rose-100 transition-all duration-150 flex items-center justify-center gap-0.5 tracking-wider">
+            <button id="btn-read-up" disabled onclick="sendSignalToMIT()" class="w-[22%] shrink-0 h-8 bg-rose-500 hover:bg-rose-600 active:scale-90 disabled:opacity-40 disabled:bg-slate-300 disabled:text-slate-500 disabled:pointer-events-none text-white font-black text-[10px] rounded-lg shadow-md transition-all duration-150 flex items-center justify-center gap-0.5 tracking-wider">
                 READ UP ⚡
             </button>
             
@@ -241,6 +241,7 @@
 
             // Trượt quay về màn hình chính
             slideOutLevels();
+            checkSelection();
         }
 
         // Hàm chạm chọn Chủ đề
@@ -263,10 +264,24 @@
 
             // Trượt quay về màn hình chính
             slideOutTopics();
+            checkSelection();
         }
 
         // Hàm phát tín hiệu mật mã truyền về MIT App Inventor
         function sendSignalToMIT() {
+            // BƯỚC 4: CHÈN ĐOẠN NÀY VÀO ĐẦU HÀM SENDSIGNAL
+    var btnReadUp = document.getElementById("btn-read-up");
+    if (btnReadUp) btnReadUp.disabled = true; // Mờ đi ngay lập tức khi vừa bấm xong
+
+    // Reset biến trạng thái về rỗng để ép học sinh phải chọn lại từ đầu cho lượt sau
+    currentLevel = ""; 
+    currentTopic = ""; 
+
+    // Trả giao diện chữ hiển thị về mặc định ban đầu
+    document.getElementById("lvl-btn").innerText = "Level";
+    document.getElementById("lvl-btn").className = "w-[18%] shrink-0 h-8 font-black text-xs rounded-lg border flex items-center justify-center transition-all duration-200 active:scale-90 shadow-sm"; // reset màu nút level
+    document.getElementById("top-text").innerText = "Select Topic...";
+    document.getElementById("top-btn").className = "w-[60%] flex-grow h-8 px-2 font-bold text-[11px] rounded-lg border flex items-center justify-between transition-all duration-200 active:scale-95 shadow-sm text-left"; // reset màu nút topic
             var level = currentLevel;
             var topic = currentTopic;
             
@@ -286,15 +301,35 @@
             }
         }
 
+        // BƯỚC 3: CHÈN HÀM NÀY NGAY TRÊN ĐẦU WINDOW.ONLOAD
+function checkSelection() {
+    var btnReadUp = document.getElementById("btn-read-up");
+    if (!btnReadUp) return;
+
+    // Nếu ĐÃ chọn cả Level (khác rỗng) VÀ ĐÃ chọn Topic (khác rỗng)
+    if (currentLevel !== "" && currentTopic !== "") {
+        btnReadUp.disabled = false; // Bật sáng nút, cho phép bấm
+    } else {
+        btnReadUp.disabled = true;  // Mờ nút, khóa lại
+    }
+}
         // Tự động nạp dữ liệu ban đầu khi khởi chạy
-        window.onload = function() {
-            initLevelsSlider();
-            initTopicsSlider();
-            
-            // Thiết lập giá trị mặc định lúc đầu là B1 và Family Life (Lớp 10 - Màu Teal)
-            selectLevel("Level");
-            selectTopic("Topic", 10);
-        };
+       // THẦY THAY THẾ TOÀN BỘ HÀM WINDOW.ONLOAD CŨ THÀNH ĐOẠN NÀY:
+window.onload = function() {
+    initLevelsSlider();
+    initTopicsSlider();
+    
+    // 1. Giữ nguyên biến trạng thái là rỗng để nút READ UP mặc định bị MỜ và KHÓA
+    currentLevel = "";
+    currentTopic = "";
+    
+    // 2. ÉP CHỮ HIỂN THỊ MẶC ĐỊNH LÀ "Level" VÀ "Select Topic..." ĐỂ HỌC SINH BIẾT ĐƯỜNG CHỌN
+    document.getElementById("lvl-btn").innerText = "Level";
+    document.getElementById("top-text").innerText = "Select Topic...";
+    
+    // Gọi hàm kiểm tra để khóa chặt nút READ UP lúc vừa mở app
+    checkSelection();
+};
     </script>
 </body>
 </html>
