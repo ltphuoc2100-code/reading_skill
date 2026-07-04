@@ -274,11 +274,13 @@
 
         // Hàm phát tín hiệu mật mã truyền về MIT App Inventor
        // HÀM GỬI TÍN HIỆU ĐÃ ĐƯỢC CỦA CỐ THỨ TỰ - CHỐNG LỖI RUNTIME ERROR CHUẨN 100%
+// HÀM GỬI TÍN HIỆU SOẠN ĐỀ - BẢN RÚT GỌN TỐI ƯU, CHỐNG KẸT MÀN HÌNH CHÀO MỪNG
 function sendSignalToMIT() {
+    // 1. Lấy dữ liệu Level và Topic hiện tại
     var level = currentLevel;
     var topic = currentTopic;
     
-    // 1. BIÊN DỊCH VÀ GỬI TIN NHẮN ĐI TRƯỚC (Phải gửi khi biến vẫn còn dữ liệu)
+    // 2. Biên dịch chuỗi mật mã chuẩn xác gửi về MIT App Inventor
     var message = "COMPASS:SOAN|" + level + "|" + topic;
     
     if (window.AppInventor && window.AppInventor.setWebViewString) {
@@ -287,21 +289,9 @@ function sendSignalToMIT() {
         console.log("Mock Signal Sent: ", message);
     }
 
-    // 2. SAU KHI GỬI XONG MỚI RESET GIAO DIỆN VÀ KHÓA NÚT BẤM MỜ ĐI
-    var btnReadUp = document.getElementById("btn-read-up");
-    if (btnReadUp) btnReadUp.disabled = true; // Khóa mờ nút bấm ngay
-
-    // Đưa biến trạng thái về rỗng để bắt học sinh chọn lại cho lượt sau
-    currentLevel = ""; 
-    currentTopic = ""; 
-
-    // Trả giao diện các nút hiển thị về chữ mặc định ban đầu
-    document.getElementById("lvl-btn").innerText = "Level";
-    document.getElementById("lvl-btn").className = "w-[18%] shrink-0 h-8 font-black text-xs rounded-lg border flex items-center justify-center transition-all duration-200 active:scale-90 shadow-sm"; 
-    document.getElementById("top-text").innerText = "Select Topic...";
-    document.getElementById("top-btn").className = "w-[60%] flex-grow h-8 px-2 font-bold text-[11px] rounded-lg border flex items-center justify-between transition-all duration-200 active:scale-95 shadow-sm text-left"; 
+    // KHÔNG reset biến, KHÔNG đổi chữ giao diện ở đây nữa để tránh làm kẹt WebViewer.
+    // Việc làm mới giao diện sẽ do App Inventor điều khiển khi tải đề xong!
 }
-
         // BƯỚC 3: CHÈN HÀM NÀY NGAY TRÊN ĐẦU WINDOW.ONLOAD
 function checkSelection() {
     var btnReadUp = document.getElementById("btn-read-up");
