@@ -273,38 +273,34 @@
         }
 
         // Hàm phát tín hiệu mật mã truyền về MIT App Inventor
-        function sendSignalToMIT() {
-            // BƯỚC 4: CHÈN ĐOẠN NÀY VÀO ĐẦU HÀM SENDSIGNAL
-    var btnReadUp = document.getElementById("btn-read-up");
-    if (btnReadUp) btnReadUp.disabled = true; // Mờ đi ngay lập tức khi vừa bấm xong
+       // HÀM GỬI TÍN HIỆU ĐÃ ĐƯỢC CỦA CỐ THỨ TỰ - CHỐNG LỖI RUNTIME ERROR CHUẨN 100%
+function sendSignalToMIT() {
+    var level = currentLevel;
+    var topic = currentTopic;
+    
+    // 1. BIÊN DỊCH VÀ GỬI TIN NHẮN ĐI TRƯỚC (Phải gửi khi biến vẫn còn dữ liệu)
+    var message = "COMPASS:SOAN|" + level + "|" + topic;
+    
+    if (window.AppInventor && window.AppInventor.setWebViewString) {
+        window.AppInventor.setWebViewString(message);
+    } else {
+        console.log("Mock Signal Sent: ", message);
+    }
 
-    // Reset biến trạng thái về rỗng để ép học sinh phải chọn lại từ đầu cho lượt sau
+    // 2. SAU KHI GỬI XONG MỚI RESET GIAO DIỆN VÀ KHÓA NÚT BẤM MỜ ĐI
+    var btnReadUp = document.getElementById("btn-read-up");
+    if (btnReadUp) btnReadUp.disabled = true; // Khóa mờ nút bấm ngay
+
+    // Đưa biến trạng thái về rỗng để bắt học sinh chọn lại cho lượt sau
     currentLevel = ""; 
     currentTopic = ""; 
 
-    // Trả giao diện chữ hiển thị về mặc định ban đầu
+    // Trả giao diện các nút hiển thị về chữ mặc định ban đầu
     document.getElementById("lvl-btn").innerText = "Level";
-    document.getElementById("lvl-btn").className = "w-[18%] shrink-0 h-8 font-black text-xs rounded-lg border flex items-center justify-center transition-all duration-200 active:scale-90 shadow-sm"; // reset màu nút level
+    document.getElementById("lvl-btn").className = "w-[18%] shrink-0 h-8 font-black text-xs rounded-lg border flex items-center justify-center transition-all duration-200 active:scale-90 shadow-sm"; 
     document.getElementById("top-text").innerText = "Select Topic...";
-    document.getElementById("top-btn").className = "w-[60%] flex-grow h-8 px-2 font-bold text-[11px] rounded-lg border flex items-center justify-between transition-all duration-200 active:scale-95 shadow-sm text-left"; // reset màu nút topic
-            var level = currentLevel;
-            var topic = currentTopic;
-            
-            // Biên dịch chuỗi mật mã chỉ thị cho MIT
-            var message = "COMPASS:SOAN|" + level + "|" + topic;
-            
-            if (window.AppInventor && window.AppInventor.setWebViewString) {
-                window.AppInventor.setWebViewString(message);
-            } else {
-                // Giả lập giao tiếp kiểm tra trên trình duyệt PC
-                console.log("Mock Signal Sent: ", message);
-                var btn = document.querySelector("button[onclick='sendSignalToMIT()']");
-                btn.classList.add("opacity-50");
-                setTimeout(function() {
-                    btn.classList.remove("opacity-50");
-                }, 150);
-            }
-        }
+    document.getElementById("top-btn").className = "w-[60%] flex-grow h-8 px-2 font-bold text-[11px] rounded-lg border flex items-center justify-between transition-all duration-200 active:scale-95 shadow-sm text-left"; 
+}
 
         // BƯỚC 3: CHÈN HÀM NÀY NGAY TRÊN ĐẦU WINDOW.ONLOAD
 function checkSelection() {
