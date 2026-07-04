@@ -275,12 +275,12 @@
         // Hàm phát tín hiệu mật mã truyền về MIT App Inventor
        // HÀM GỬI TÍN HIỆU ĐÃ ĐƯỢC CỦA CỐ THỨ TỰ - CHỐNG LỖI RUNTIME ERROR CHUẨN 100%
 // HÀM GỬI TÍN HIỆU SOẠN ĐỀ - BẢN RÚT GỌN TỐI ƯU, CHỐNG KẸT MÀN HÌNH CHÀO MỪNG
+// HÀM GỬI TÍN HIỆU CHUẨN: BẤM PHÁT MỜ LIỀN, CHUYỂN TRANG MƯỢT MÀ, KHÔNG LỖI RUNTIME
 function sendSignalToMIT() {
-    // 1. Lấy dữ liệu Level và Topic hiện tại
     var level = currentLevel;
     var topic = currentTopic;
     
-    // 2. Biên dịch chuỗi mật mã chuẩn xác gửi về MIT App Inventor
+    // 1. Biên dịch chuỗi mật mã gửi về MIT App Inventor trước
     var message = "COMPASS:SOAN|" + level + "|" + topic;
     
     if (window.AppInventor && window.AppInventor.setWebViewString) {
@@ -289,8 +289,18 @@ function sendSignalToMIT() {
         console.log("Mock Signal Sent: ", message);
     }
 
-    // KHÔNG reset biến, KHÔNG đổi chữ giao diện ở đây nữa để tránh làm kẹt WebViewer.
-    // Việc làm mới giao diện sẽ do App Inventor điều khiển khi tải đề xong!
+    // 2. ĐÁP ỨNG YÊU CẦU CỦA THẦY: ÉP NÚT READ UP MỜ ĐI NGAY LẬP TỨC
+    var btnReadUp = document.getElementById("btn-read-up");
+    if (btnReadUp) {
+        btnReadUp.disabled = true; // Khóa và làm mờ nút đi ngay sau khi bấm
+    }
+
+    // 3. Xóa trạng thái chọn cũ để ép học sinh phải chọn lại Level & Topic mới cho lượt sau
+    currentLevel = ""; 
+    currentTopic = ""; 
+    
+    // TUYỆT ĐỐI KHÔNG reset chữ hiển thị trên nút bằng JavaScript nữa.
+    // Chữ "Level" và "Select Topic" sẽ giữ nguyên màu sắc cho đến khi học sinh tự tay bấm chọn cái mới!
 }
         // BƯỚC 3: CHÈN HÀM NÀY NGAY TRÊN ĐẦU WINDOW.ONLOAD
 function checkSelection() {
